@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" nextobjectid="1">
+ <tileset firstgid="1" name="terrain" tilewidth="32" tileheight="32" tilecount="1024" columns="32">
+  <image source="../tilesets/terrain.png" width="1024" height="1024"/>
+ </tileset>
+ <tileset firstgid="1025" name="town_snow" tilewidth="32" tileheight="32" tilecount="30" columns="10">
+  <image source="../tilesets/town_snow.png" width="320" height="96"/>
+ </tileset>
+ <layer name="Hole" width="20" height="20">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA4WUSQ7AIAwDES9K+v/H9cIhmo7pAYEgZLGd9F6rx6qz5t0z9oJdnXuuGv/mefqkbYn/ljfL90G8kjjzT8t9w1dht/obPv7qop1hU/uLBWudcYm11UZ8mINxP9/JBXkxLdgfw5p12jnFYm3c6Ytarv3Ng3FNG/RBfKkby9PwTv1inNHOsKQ2Uo/d+Lj1oWGQODJ9m75uGCd8Ez5WBzFlHycuTc+m2VtOaR6lGEnrNoeNd5sN7CNqIcWznnoB3ho8YEAGAAA=
+  </data>
+ </layer>
+ <layer name="Ice" width="20" height="20">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+WUUQrAIAxDxSvZ3v9qY6AQnlndv4XitDZLY7W1ey17azF9TOe3zt/9J7yFqeOAa6zCDHAKySeOxr/MYWit2b0WFT9yUC7kPX7wY33k5v53wlv79HyctnHAYx61d5gVnvJhb4y+x//gOd24xt6p9AvDJ81cda30q3ok+879VC/z3J3mesUvTQ7fA96dm+0BYlQN8kAGAAA=
+  </data>
+ </layer>
+ <layer name="Finish" width="20" height="20">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA2NgGAWkgFzGgXbBKBgFo2AUDA4AAMOsiM1ABgAA
+  </data>
+ </layer>
+</map>
