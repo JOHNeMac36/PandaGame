@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" nextobjectid="1">
+ <tileset firstgid="1" name="ground" tilewidth="32" tileheight="32" tilecount="192" columns="16">
+  <image source="../tilesets/ground.png" width="512" height="384"/>
+ </tileset>
+ <tileset firstgid="193" name="terrain" tilewidth="32" tileheight="32" tilecount="1024" columns="32">
+  <image source="../tilesets/terrain.png" width="1024" height="1024"/>
+ </tileset>
+ <layer name="Background" width="20" height="20">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA2NkYGBgAmJGKtGCQCxERVoRiJWoSFPLn6P+HfXvqH9H/TvS/QsA08m46EAGAAA=
+  </data>
+ </layer>
+ <layer name="EnterState" width="20" height="20">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA2NgQIA4FoZRMApGwSgYBaOAKAAAjA8KRkAGAAA=
+  </data>
+ </layer>
+ <layer name="Objects" width="20" height="20">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA2NgoC4QYGJgEKQCFmKissOGiBspcdskRgaGj0D8iRFi1gZG6riFVnFBrPs2Qf2FD39CMusDEeonMhIft8TECS3TKz6A7q+NFMY5rvAi11xC8UCq2cSYR4q5pJhHjNnkmofL3EkUmoeeP6hd9gEAnhtrs0AGAAA=
+  </data>
+ </layer>
+ <layer name="Overhead" width="20" height="20">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA7vAyMBwkQr4EhDTClwYxG6khttg7ppAwzCkBiDWfcSECXJcEFI/nAA90iQtzR11M6rZQ8lcWgAAS3j5EkAGAAA=
+  </data>
+ </layer>
+</map>
