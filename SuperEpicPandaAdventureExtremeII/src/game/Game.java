@@ -27,15 +27,17 @@ public class Game extends StateBasedGame {
 	public static Music menuMusicIntro, menuMusicLoop, pollyWolly;
 	public static Sound pandaPunch, sadPanda, itsPanda, pandaIcecream;
 	public static String gamename = "Super Epic Panda Adventure Extreme 2!";
+	
+	public static AppGameContainer appgc;
 	// end of attributes
 	
 	public static void main(String[] args) {
-		AppGameContainer appgc;
+		
 		try {
 			appgc = new AppGameContainer(new Game(gamename));
 			appgc.setDisplayMode(640, 640, false);
 			appgc.setShowFPS(true);
-			// appgc.setTargetFrameRate(340);
+			appgc.setTargetFrameRate(340);
 			appgc.start();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -65,7 +67,7 @@ public class Game extends StateBasedGame {
 		this.getState(lvl03).init(gc, this);
 		this.getState(lvl04).init(gc, this);
 		this.getState(lvlBoss).init(gc, this);
-		this.enterState(menu);
+		this.enterState(lvl01);
 		initAnimations();
 		initSounds();
 		initImages();

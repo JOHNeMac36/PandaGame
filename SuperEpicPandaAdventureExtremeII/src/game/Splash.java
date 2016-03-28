@@ -89,7 +89,6 @@ public class Splash extends BasicGameState implements MusicListener {
 				Game.menuMusicLoop = new Music("res/oggs/Metal06Loop.ogg");
 				break;
 			case 7:
-				
 				Game.menuMusicIntro = new Music("res/oggs/Metal07Intro.ogg");
 				Game.menuMusicLoop = new Music("res/oggs/Metal07Loop.ogg");
 				break;

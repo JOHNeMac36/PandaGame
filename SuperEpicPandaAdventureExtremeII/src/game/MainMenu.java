@@ -44,9 +44,7 @@ public class MainMenu extends BasicGameState implements MusicListener {
 		// play button
 		if ((posX >= 320) && (posX <= 520) && (posY >= 300) && (posY <= 340)) {
 			if (Mouse.isButtonDown(0)) {
-				Level01.resetState();
 				sbg.enterState(Game.roam);
-				Level01.music.loop();
 			}
 		}
 		// exit button

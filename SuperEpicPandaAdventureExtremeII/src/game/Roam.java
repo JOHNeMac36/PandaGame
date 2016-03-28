@@ -155,7 +155,6 @@ public class Roam extends BasicGameState {
 			Game.confetti.draw(-60, -300 + j);
 			Game.confetti.draw(-100, -450 + j);
 			Game.confetti.draw(-140, -600 + j);
-			
 		}
 		if (input.isKeyPressed(Input.KEY_SPACE) && speaking == true) {
 			speaking = false;
