@@ -61,8 +61,7 @@ public class Level04 extends BasicGameState {
 		// down
 		if (input.isKeyDown(Input.KEY_DOWN)) {
 			panda = Game.pandaWalkDown;
-			if ((int) y < map.getHeight() - 1)
-				if (map.getTileId((int) x, (int) y + 1, objectLayer) == 0) y += 0.014;
+			if ((int) y < map.getHeight() - 1) if (map.getTileId((int) x, (int) y + 1, objectLayer) == 0) y += 0.014;
 			last = 'd';
 		}
 		
@@ -76,8 +75,7 @@ public class Level04 extends BasicGameState {
 		// right
 		if (input.isKeyDown(Input.KEY_RIGHT)) {
 			panda = Game.pandaWalkRight;
-			if ((int) x < map.getWidth() - 1)
-				if (map.getTileId((int) x + 1, (int) y, objectLayer) == 0) x += 0.014;
+			if ((int) x < map.getWidth() - 1) if (map.getTileId((int) x + 1, (int) y, objectLayer) == 0) x += 0.014;
 			last = 'r';
 		}
 		
@@ -90,8 +88,8 @@ public class Level04 extends BasicGameState {
 			if (i == 2) Game.itsPanda.play();
 		}
 		
-		if (!(input.isKeyDown(Input.KEY_UP) || input.isKeyDown(Input.KEY_DOWN)
-				|| input.isKeyDown(Input.KEY_LEFT) || input.isKeyDown(Input.KEY_RIGHT))) {
+		if (!(input.isKeyDown(Input.KEY_UP) || input.isKeyDown(Input.KEY_DOWN) || input.isKeyDown(Input.KEY_LEFT)
+				|| input.isKeyDown(Input.KEY_RIGHT))) {
 			switch (last) {
 				case 'u':
 					panda = Game.pandaStillUp;
@@ -110,8 +108,7 @@ public class Level04 extends BasicGameState {
 		
 		// enter next level
 		if (map.getTileId((int) x, (int) y, enterStateLayer) != 0) {
-			Roam.charLock4 = '9';
-			Roam.pet4Found = true;
+			Game.pet4Found = true;
 			sbg.enterState(Game.roam);
 			x = 0;
 			y = 0;

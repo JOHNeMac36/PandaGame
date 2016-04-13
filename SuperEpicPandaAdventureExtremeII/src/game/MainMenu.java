@@ -11,6 +11,7 @@ import org.newdawn.slick.state.*;
 public class MainMenu extends BasicGameState implements MusicListener {
 	
 	int song, i;
+	boolean playClicked = false;
 	
 	@Override
 	public int getID() {
@@ -23,6 +24,7 @@ public class MainMenu extends BasicGameState implements MusicListener {
 	@Override
 	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
 		i = 0;
+		Game.appgc.setDisplayMode(640, 640, false);
 	}
 	
 	@Override
@@ -44,6 +46,10 @@ public class MainMenu extends BasicGameState implements MusicListener {
 		// play button
 		if ((posX >= 320) && (posX <= 520) && (posY >= 300) && (posY <= 340)) {
 			if (Mouse.isButtonDown(0)) {
+				playClicked = true;
+				Game.menuMusicIntro.stop();
+				Game.menuMusicLoop.stop();
+				//Game.pollyWolly.loop();
 				sbg.enterState(Game.roam);
 			}
 		}
@@ -61,7 +67,7 @@ public class MainMenu extends BasicGameState implements MusicListener {
 	
 	@Override
 	public void musicEnded(Music m) {
-		Game.menuMusicLoop.loop();
+		if (!playClicked) Game.menuMusicLoop.loop();
 	}
 	
 	@Override

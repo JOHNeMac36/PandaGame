@@ -128,8 +128,7 @@ public class Level02 extends BasicGameState {
 					setMap();
 					resetState();
 				} else {
-					Roam.charLock2 = '9';
-					Roam.pet2Found = true;
+					Game.pet2Found = true;
 					sbg.enterState(Game.roam);
 					x = 0;
 					y = 0;
