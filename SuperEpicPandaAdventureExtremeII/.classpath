@@ -2,16 +2,5 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="H:/git/PandaGame/lwjgl.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="SuperEpicPandaAdventureExtremeII/lib/natives/windows"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="H:/git/PandaGame/slick.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="SuperEpicPandaAdventureExtremeII/lib/jars"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="H:/git/PandaGame/jorbis-0.0.17-1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
