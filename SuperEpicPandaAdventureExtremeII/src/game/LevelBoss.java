@@ -7,15 +7,16 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.Music;
+import org.newdawn.slick.MusicListener;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.tiled.TiledMap;
 
-public class LevelBoss extends BasicGameState {
+public class LevelBoss extends BasicGameState implements MusicListener {
 	
 	private TiledMap map;
-	private int objectLayer, overheadLayer, enterStateLayer;
+	private int objectLayer, overheadLayer, enterStateLayer, oneHit = 0;
 	private char last = 'd';
 	private static double x, y;
 	public static boolean quit;
@@ -47,6 +48,14 @@ public class LevelBoss extends BasicGameState {
 	
 	@Override
 	public void update(GameContainer gc, StateBasedGame sbg, int t) throws SlickException {
+		if (Game.isMusicOn) Game.unmuteAllMusic();
+		else
+			Game.muteAllMusic();
+		if (oneHit == 0) {
+			Game.metal11Intro.addListener(this);
+			Game.metal11Intro.play();
+		}
+		oneHit = 1;
 		map.getTileId(0, 0, objectLayer);
 		Input input = gc.getInput();
 		
@@ -108,6 +117,9 @@ public class LevelBoss extends BasicGameState {
 		// enter next level
 		if (map.getTileId((int) x, (int) y, enterStateLayer) != 0) {
 			Roam.win = true;
+			Game.metal11Intro.removeListener(this);
+			Game.stopAllMusic();
+			Game.pollyWolly.loop();
 			sbg.enterState(Game.roam);
 			resetState();
 		}
@@ -124,5 +136,15 @@ public class LevelBoss extends BasicGameState {
 		x = 0;
 		y = 0;
 		quit = false;
+	}
+	
+	@Override
+	public void musicEnded(Music arg0) {
+		Game.metal11Loop.loop();
+	}
+	
+	@Override
+	public void musicSwapped(Music arg0, Music arg1) {
+	
 	}
 }

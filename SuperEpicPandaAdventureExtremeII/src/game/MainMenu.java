@@ -1,17 +1,14 @@
 package game;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.lwjgl.input.*;
 import org.newdawn.slick.*;
 import org.newdawn.slick.state.*;
 
 public class MainMenu extends BasicGameState implements MusicListener {
 	
-	int song, i;
+	int i;
 	boolean playClicked = false;
+	private static Input input;
 	
 	@Override
 	public int getID() {
@@ -23,25 +20,31 @@ public class MainMenu extends BasicGameState implements MusicListener {
 	
 	@Override
 	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
+		input = gc.getInput();
 		i = 0;
-		Game.appgc.setDisplayMode(640, 640, false);
 	}
 	
 	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
-		
 		Game.menuScene.draw(0, 0);
 		Game.title.draw(0, 0);
 		// 200 , 40
 		Game.playNow.draw(320, 300);
 		Game.exitGame.draw(320, 350);
+		if (Game.isMusicOn) Game.musicOn.draw(565, 565);
+		else
+			Game.musicOff.draw(565, 565);
+		g.drawString(Mouse.getX() + " , " + Mouse.getY(), 0, 0);
 	}
 	
 	@Override
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException {
+		if (Game.isMusicOn) Game.unmuteAllMusic();
+		else
+			Game.muteAllMusic();
 		i++;
-		int posX = Mouse.getX();
-		int posY = Mouse.getY();
+		int posX = input.getMouseX();
+		int posY = input.getMouseY();
 		
 		// play button
 		if ((posX >= 320) && (posX <= 520) && (posY >= 300) && (posY <= 340)) {
@@ -49,12 +52,19 @@ public class MainMenu extends BasicGameState implements MusicListener {
 				playClicked = true;
 				Game.menuMusicIntro.stop();
 				Game.menuMusicLoop.stop();
-				//Game.pollyWolly.loop();
+				Game.pollyWolly.loop();
 				sbg.enterState(Game.roam);
 			}
 		}
+		
+		// toggle music
+		// if ((posX >= 573) && (posX <= 627) && (posY >= 15) && (posY <= 67)) {
+		if (input.isKeyPressed(Input.KEY_M)) {
+			Game.isMusicOn = !Game.isMusicOn;
+		}
+		
 		// exit button
-		if ((posX >= 320) && (posX <= 520) && (posY >= 245) && (posY <= 285)) {
+		if ((posX >= 320) && (posX <= 520) && (posY >= 355) && (posY <= 395)) {
 			if (Mouse.isButtonDown(0)) {
 				System.exit(0);
 			}
@@ -67,7 +77,7 @@ public class MainMenu extends BasicGameState implements MusicListener {
 	
 	@Override
 	public void musicEnded(Music m) {
-		if (!playClicked) Game.menuMusicLoop.loop();
+		Game.menuMusicLoop.loop();
 	}
 	
 	@Override
@@ -75,60 +85,6 @@ public class MainMenu extends BasicGameState implements MusicListener {
 	}
 	
 	public void startMenuMusic() throws SlickException {
-		
-		DateFormat df = new SimpleDateFormat("dd");
-		Date date = new Date();
-		song = Integer.parseInt(df.format(date));
-		switch (song % 11) {
-			
-			case 1:
-				Game.menuMusicIntro = new Music("res/oggs/Metal01Intro.ogg");
-				Game.menuMusicLoop = new Music("res/oggs/Metal01Loop.ogg");
-				break;
-			case 2:
-				Game.menuMusicIntro = new Music("res/oggs/Metal02Intro.ogg");
-				Game.menuMusicLoop = new Music("res/oggs/Metal02Loop.ogg");
-				break;
-			case 3:
-				Game.menuMusicIntro = new Music("res/oggs/Metal03Intro.ogg");
-				Game.menuMusicLoop = new Music("res/oggs/Metal03Loop.ogg");
-				break;
-			case 4:
-				Game.menuMusicIntro = new Music("res/oggs/Metal04Intro.ogg");
-				Game.menuMusicLoop = new Music("res/oggs/Metal04Loop.ogg");
-				break;
-			case 5:
-				Game.menuMusicIntro = new Music("res/oggs/Metal05Intro.ogg");
-				Game.menuMusicLoop = new Music("res/oggs/Metal05Loop.ogg");
-				break;
-			case 6:
-				Game.menuMusicIntro = new Music("res/oggs/Metal06Intro.ogg");
-				Game.menuMusicLoop = new Music("res/oggs/Metal06Loop.ogg");
-				break;
-			case 7:
-				Game.menuMusicIntro = new Music("res/oggs/Metal07Intro.ogg");
-				Game.menuMusicLoop = new Music("res/oggs/Metal07Loop.ogg");
-				break;
-			case 8:
-				Game.menuMusicIntro = new Music("res/oggs/Metal08Intro.ogg");
-				Game.menuMusicLoop = new Music("res/oggs/Metal08Loop.ogg");
-				break;
-			case 9:
-				Game.menuMusicIntro = new Music("res/oggs/Metal09Intro.ogg");
-				Game.menuMusicLoop = new Music("res/oggs/Metal09Loop.ogg");
-				break;
-			case 10:
-				Game.menuMusicIntro = new Music("res/oggs/Metal10Intro.ogg");
-				Game.menuMusicLoop = new Music("res/oggs/Metal10Loop.ogg");
-				break;
-			case 11:
-				Game.menuMusicIntro = new Music("res/oggs/Metal11Intro.ogg");
-				Game.menuMusicLoop = new Music("res/oggs/Metal11Loop.ogg");
-				break;
-			default:
-				Game.menuMusicIntro = new Music("res/oggs/Metal01Intro.ogg");
-				Game.menuMusicLoop = new Music("res/oggs/Metal01Loop.ogg");
-		}
 		Game.menuMusicIntro.addListener(this);
 		Game.menuMusicIntro.play();
 		

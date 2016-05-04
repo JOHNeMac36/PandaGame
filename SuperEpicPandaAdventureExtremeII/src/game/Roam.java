@@ -1,5 +1,7 @@
 package game;
 
+import java.io.IOException;
+
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -30,6 +32,7 @@ public class Roam extends BasicGameState {
 			overheadLayer2, overheadLayer3, overheadLayer4;
 	private static String strSpeak;
 	// end of attributes
+	private static int oneHit2;
 	
 	@Override
 	public int getID() {
@@ -40,11 +43,31 @@ public class Roam extends BasicGameState {
 	public Roam(int i) {
 	}
 	
+	// implemented methods
+	@Override
 	public void init(GameContainer gc, StateBasedGame sbg) {
 		try {
 			map = new TiledMap("res/maps/mapRoam.tmx");
 		} catch (SlickException e) {
 		}
+		
+		Game.pet1Found = false;
+		Game.pet2Found = false;
+		Game.pet3Found = false;
+		Game.pet4Found = false;
+		
+		panda = Game.pandaStillDown;
+		penguin = Game.penguinStillDown;
+		pandaHeight = (float) Game.len / (float) map.getTileHeight();
+		pandaWidth = (float) Game.wid / (float) map.getTileWidth();
+		
+		char1 = Game.char1StillDown;
+		char2 = Game.char2StillDown;
+		char3 = Game.char3StillDown;
+		char4 = Game.char4StillDown;
+		
+		tileWidth = map.getTileWidth();
+		tileHeight = map.getTileHeight();
 		
 		backgroundLayer = map.getLayerIndex("Background");
 		graphLayer = map.getLayerIndex("GraphLayer");
@@ -56,14 +79,6 @@ public class Roam extends BasicGameState {
 		overheadLayer2 = map.getLayerIndex("Overhead2");
 		overheadLayer3 = map.getLayerIndex("Overhead3");
 		overheadLayer4 = map.getLayerIndex("Overhead4");
-		
-		panda = Game.pandaStillDown;
-		penguin = Game.penguinStillDown;
-		pandaHeight = (float) Game.len / (float) map.getTileHeight();
-		pandaWidth = (float) Game.wid / (float) map.getTileWidth();
-		
-		tileWidth = map.getTileWidth();
-		tileHeight = map.getTileHeight();
 		
 		walkI = .02f;
 		x = 10;
@@ -86,7 +101,6 @@ public class Roam extends BasicGameState {
 		
 		win = false;
 		input = gc.getInput();
-		Game.pet2Found = true;
 	}
 	
 	@Override
@@ -120,64 +134,15 @@ public class Roam extends BasicGameState {
 		
 		checkExitSpeech();
 		
-	}
-	
-	private void renderConfetti(Graphics g) {
-		Game.confetti.draw(-20, -150 + j);
-		Game.confetti.draw(-60, -300 + j);
-		Game.confetti.draw(-100, -450 + j);
-		Game.confetti.draw(-140, -600 + j);
-	}
-	
-	private void renderSpeech(Graphics g) {
-		g.setColor(Color.white);
-		g.fillRect(20, 500, 600, 100);
-		g.setColor(Color.black);
-		g.drawString(strSpeak, 30, 510);
-		g.setColor(Color.red);
-		
-	}
-	
-	private void renderGroundLayers(Graphics g) {
-		g.translate((-x % 1) * tileWidth, (-y % 1) * tileHeight);
-		map.render(0, 0, (int) x, (int) y, 21, 21, backgroundLayer, true);
-		map.render(0, 0, (int) x, (int) y, 21, 21, graphLayer, true);
-		map.render(0, 0, (int) x, (int) y, 21, 21, groundLayer1, true);
-		map.render(0, 0, (int) x, (int) y, 21, 21, objectLayer, true);
-		map.render(0, 0, (int) x, (int) y, 21, 21, groundLayer2, true);
-		map.render(0, 0, (int) x, (int) y, 21, 21, enterStateLayer, true);
-		g.translate((x % 1) * tileWidth, (y % 1) * tileHeight);
-	}
-	
-	private void renderCharacters(Graphics g) {
-		char1.draw((320 - (x - char1X) * tileWidth), (320 - (y - char1Y) * tileHeight));
-		char2.draw((320 - (x - char2X) * tileWidth), (320 - (y - char2Y) * tileHeight));
-		char3.draw((320 - (x - char3X) * tileWidth), (320 - (y - char3Y) * tileHeight));
-		char4.draw((320 - (x - char4X) * tileWidth), (320 - ((y - char4Y) * tileHeight)));
-	}
-	
-	private void renderOverHead(Graphics g) {
-		g.translate((-x % 1) * tileWidth, (-y % 1) * tileHeight);
-		map.render(0, 0, (int) x, (int) y, 21, 21, overheadLayer1, true);
-		map.render(0, 0, (int) x, (int) y, 21, 21, overheadLayer2, true);
-		map.render(0, 0, (int) x, (int) y, 21, 21, overheadLayer3, true);
-		map.render(0, 0, (int) x, (int) y, 21, 21, overheadLayer4, true);
-		g.translate((x % 1) * tileWidth, (y % 1) * tileHeight);
-	}
-	
-	private void renderPets(Graphics g) {
-		if (Game.pet1Found) {
-		}
-		if (Game.pet2Found) penguin.draw((320 - (x - penX) * 32), (320 - (y - penY) * 32));
-		if (Game.pet3Found) {
-		}
-		if (Game.pet4Found) {
-		}
+		g.drawString("" + Game.isMusicOn, 0, 0);
 	}
 	
 	@Override
 	public void update(GameContainer gc, StateBasedGame sbg, int t) throws SlickException {
-		map.getTileId(0, 0, objectLayer);
+		if (Game.isMusicOn) Game.unmuteAllMusic();
+		else
+			Game.muteAllMusic();
+		sleepHandling(gc, sbg, t);
 		j++;
 		j %= 1500;
 		if (speaking) {
@@ -191,53 +156,22 @@ public class Roam extends BasicGameState {
 			checkTalk(gc, sbg, t);
 		}
 	}
+	// end of implemented methods
 	
-	private void checkPetsFound(GameContainer gc, StateBasedGame sbg, int t) {
-		if (Game.pet1Found) Game.charLock1 = '6';
-		if (Game.pet2Found) Game.charLock2 = '9';
-		if (Game.pet3Found) Game.charLock3 = '6';
-		if (Game.pet4Found) Game.charLock4 = '9';
-	}
-	
-	private static void checkMenu(GameContainer gc, StateBasedGame sbg, int t) {
-		if (input.isKeyPressed(Input.KEY_ESCAPE)) {
-			sbg.enterState(Game.menu);
-		}
-	}
-	
-	private static void checkUnlocking(GameContainer gc, StateBasedGame sbg, int t) {
-		// unlocking
-		if (oneHit == 1) {
-			say("Wait! Something's happening!!");
-			oneHit++;
-		}
-		
-		if (Game.charLock1 != '_' && Game.charLock2 != '_' && Game.charLock3 != '_' && Game.charLock4 != '_' && oneHit == 3) {
-			map = null;
-			try {
-				map = new TiledMap("res/maps/mapRoamUnlocked.tmx");
-			} catch (SlickException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			oneHit++;
-		}
-		if (oneHit == 2) oneHit++;
-		// end unlocking
-		
-	}
-	
+	// supplementary methods
 	private static void checkEnterNextLevel(GameContainer gc, StateBasedGame sbg, int t) throws SlickException {
 		// enter next level
 		if (map.getTileId((int) x + 10, (int) y + 10, enterStateLayer) != 0) {
+			Game.stopAllMusic();
 			sbg.enterState(Game.lvlBoss);
+			Game.metal11Intro.play();
 			y += 1;
 		}
 		if (lastChar != 0) {
 			switch (lastChar) {
 				case 1:
 					sbg.enterState(Game.lvl01);
-					
+					Game.appgc.setDisplayMode(640, 560, false);
 					break;
 				case 2:
 					sbg.enterState(Game.lvl02);
@@ -251,6 +185,72 @@ public class Roam extends BasicGameState {
 			}
 			lastChar = 0;
 		}
+	}
+	
+	private static void checkExitSpeech() {
+		if (input.isKeyPressed(Input.KEY_SPACE) && speaking == true) {
+			speaking = false;
+		}
+	}
+	
+	private static void checkMenu(GameContainer gc, StateBasedGame sbg, int t) {
+		if (input.isKeyPressed(Input.KEY_ESCAPE)) {
+			sbg.enterState(Game.menu);
+			Game.pollyWolly.stop();
+			Game.menuMusicIntro.play();
+		}
+	}
+	
+	private static void characterMovement(GameContainer gc, StateBasedGame sbg, int t) {
+		// penguin walking
+		i++;
+		i %= 1000;
+		if (i >= 0 && i < 250) {
+			penguin = Game.penguinWalkLeft;
+			penX -= walkI;
+		}
+		if (i >= 250 && i < 500) {
+			penguin = Game.penguinWalkDown;
+			penY += walkI;
+			
+		}
+		if (i >= 500 && i < 750) {
+			penguin = Game.penguinWalkRight;
+			penX += walkI;
+			
+		}
+		if (i >= 750 && i < 1000) {
+			penguin = Game.penguinWalkUp;
+			penY -= walkI;
+			
+		}
+		
+		// 4 characters
+		if (i >= 0 && i < 250) {
+			char1 = Game.char1StillRight;
+			char2 = Game.char2StillRight;
+			char3 = Game.char3StillRight;
+			char4 = Game.char4StillRight;
+		}
+		if (i >= 250 && i < 500) {
+			char1 = Game.char1StillDown;
+			char2 = Game.char2StillDown;
+			char3 = Game.char3StillDown;
+			char4 = Game.char4StillDown;
+		}
+		if (i >= 500 && i < 750) {
+			char1 = Game.char1StillLeft;
+			char2 = Game.char2StillLeft;
+			char3 = Game.char3StillLeft;
+			char4 = Game.char4StillLeft;
+		}
+		if (i >= 750 && i < 1000) {
+			char1 = Game.char1StillUp;
+			char2 = Game.char2StillUp;
+			char3 = Game.char3StillUp;
+			char4 = Game.char4StillUp;
+		}
+		
 	}
 	
 	private static void checkPandaMovement(GameContainer gc, StateBasedGame sbg, int t) {
@@ -354,80 +354,57 @@ public class Roam extends BasicGameState {
 		}
 	}
 	
-	private static void characterMovement(GameContainer gc, StateBasedGame sbg, int t) {
-		// penguin walking
-		i++;
-		i %= 1000;
-		if (i >= 0 && i < 250) {
-			penguin = Game.penguinWalkLeft;
-			penX -= walkI;
-		}
-		if (i >= 250 && i < 500) {
-			penguin = Game.penguinWalkDown;
-			penY += walkI;
-			
-		}
-		if (i >= 500 && i < 750) {
-			penguin = Game.penguinWalkRight;
-			penX += walkI;
-			
-		}
-		if (i >= 750 && i < 1000) {
-			penguin = Game.penguinWalkUp;
-			penY -= walkI;
-			
+	private static void checkPetsFound(GameContainer gc, StateBasedGame sbg, int t) {
+		if (Game.pet1Found) Game.charLock1 = '6';
+		if (Game.pet2Found) Game.charLock2 = '9';
+		if (Game.pet3Found) Game.charLock3 = '6';
+		if (Game.pet4Found) Game.charLock4 = '9';
+	}
+	
+	private static void checkUnlocking(GameContainer gc, StateBasedGame sbg, int t) {
+		// unlocking
+		if (oneHit == 1) {
+			say("Wait! Something's happening!!");
+			oneHit++;
 		}
 		
-		// 4 characters
-		if (i >= 0 && i < 250) {
-			char1 = Game.char1StillRight;
-			char2 = Game.char2StillRight;
-			char3 = Game.char3StillRight;
-			char4 = Game.char4StillRight;
+		if (Game.charLock1 != '_' && Game.charLock2 != '_' && Game.charLock3 != '_' && Game.charLock4 != '_' && oneHit == 3) {
+			map = null;
+			try {
+				map = new TiledMap("res/maps/mapRoamUnlocked.tmx");
+			} catch (SlickException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			oneHit++;
 		}
-		if (i >= 250 && i < 500) {
-			char1 = Game.char1StillDown;
-			char2 = Game.char2StillDown;
-			char3 = Game.char3StillDown;
-			char4 = Game.char4StillDown;
-		}
-		if (i >= 500 && i < 750) {
-			char1 = Game.char1StillLeft;
-			char2 = Game.char2StillLeft;
-			char3 = Game.char3StillLeft;
-			char4 = Game.char4StillLeft;
-		}
-		if (i >= 750 && i < 1000) {
-			char1 = Game.char1StillUp;
-			char2 = Game.char2StillUp;
-			char3 = Game.char3StillUp;
-			char4 = Game.char4StillUp;
-		}
+		if (oneHit == 2) oneHit++;
+		// end unlocking
 		
 	}
 	
 	private static void checkTalk(GameContainer gc, StateBasedGame sbg, int t) {
 		// talk
 		if (input.isKeyPressed(Input.KEY_SPACE)) {
-			if (last == 'r' && ((int) x == 49 && (int) y == 51) || ((int) x + pandaWidth == 49 && (int) y + pandaHeight == 51)) {
+			if (last == 'r' && ((int) x == 49 && (int) y == 51) || ((int) x == 49 && (int) y + pandaHeight == 51)) {
 				say("This is an ancient fountain...Look! There is a four digit lock:\n" + "                        " + Game.charLock1
 						+ "   " + Game.charLock2 + "   " + Game.charLock3 + "   " + Game.charLock4);
 				if (Game.charLock1 != '_' && Game.charLock2 != '_' && Game.charLock3 != '_' && Game.charLock4 != '_' && oneHit == 0)
 					oneHit = 1;
 			}
-			if (last == 'd' && ((int) x == 50 && (int) y == 50) || ((int) x + pandaWidth == 50 && (int) y + pandaHeight == 50)) {
+			if (last == 'd' && ((int) x == 50 && (int) y == 50) || ((int) x + pandaWidth == 50 && (int) y == 50)) {
 				say("This is an ancient fountain...Look! There is a four digit lock:\n" + "                        " + Game.charLock1
 						+ "   " + Game.charLock2 + "   " + Game.charLock3 + "   " + Game.charLock4);
 				if (Game.charLock1 != '_' && Game.charLock2 != '_' && Game.charLock3 != '_' && Game.charLock4 != '_' && oneHit == 0)
 					oneHit = 1;
 			}
-			if (last == 'l' && ((int) x == 51 && (int) y == 51) || ((int) x + pandaWidth == 51 && (int) y + pandaHeight == 51)) {
+			if (last == 'l' && ((int) x == 51 && (int) y == 51) || ((int) x == 51 && (int) y + pandaHeight == 51)) {
 				say("This is an ancient fountain...Look! There is a four digit lock:\n" + "                        " + Game.charLock1
 						+ "   " + Game.charLock2 + "   " + Game.charLock3 + "   " + Game.charLock4);
 				if (Game.charLock1 != '_' && Game.charLock2 != '_' && Game.charLock3 != '_' && Game.charLock4 != '_' && oneHit == 0)
 					oneHit = 1;
 			}
-			if (last == 'u' && ((int) x == 50 && (int) y == 52) || ((int) x + pandaWidth == 50 && (int) y + pandaHeight == 52)) {
+			if (last == 'u' && ((int) x == 50 && (int) y == 52) || ((int) x + pandaWidth == 50 && (int) y == 52)) {
 				say("This is an ancient fountain...Look! There is a four digit lock:\n" + "                        " + Game.charLock1
 						+ "   " + Game.charLock2 + "   " + Game.charLock3 + "   " + Game.charLock4);
 				if (Game.charLock1 != '_' && Game.charLock2 != '_' && Game.charLock3 != '_' && Game.charLock4 != '_' && oneHit == 0)
@@ -435,7 +412,7 @@ public class Roam extends BasicGameState {
 			}
 			
 			// char1
-			if (last == 'r' && ((int) x == 19 && (int) y == 5) || ((int) x + pandaWidth == 19 && (int) y + pandaHeight == 5)) {
+			if (last == 'r' && ((int) x == 19 && (int) y == 5) || ((int) x == 19 && (int) y + pandaHeight == 5)) {
 				char1 = Game.char1StillLeft;
 				say("Hello there! I lost my wittle pet, Fluffly, yesturday!\n" + "Can you help me find him?");
 				
@@ -446,7 +423,7 @@ public class Roam extends BasicGameState {
 				}
 				
 			}
-			if (last == 'd' && ((int) x == 20 && (int) y == 4) || ((int) x + pandaWidth == 20 && (int) y + pandaHeight == 4)) {
+			if (last == 'd' && ((int) x == 20 && (int) y == 4) || ((int) x + pandaWidth == 20 && (int) y == 4)) {
 				char1 = Game.char1StillUp;
 				say("Hello there! I lost my wittle pet, Fluffly, yesturday!\n" + "Can you help me find him?");
 				lastChar = 1;
@@ -455,7 +432,7 @@ public class Roam extends BasicGameState {
 					lastChar = 0;
 				}
 			}
-			if (last == 'l' && ((int) x == 21 && (int) y == 5) || ((int) x + pandaWidth == 21 && (int) y + pandaHeight == 5)) {
+			if (last == 'l' && ((int) x == 21 && (int) y == 5) || ((int) x == 21 && (int) y + pandaHeight == 5)) {
 				char1 = Game.char1StillRight;
 				say("Hello there! I lost my wittle pet, Fluffly, yesturday!\n" + "Can you help me find him?");
 				lastChar = 1;
@@ -464,7 +441,7 @@ public class Roam extends BasicGameState {
 					lastChar = 0;
 				}
 			}
-			if (last == 'u' && ((int) x == 20 && (int) y == 6) || ((int) x + pandaWidth == 20 && (int) y + pandaHeight == 6)) {
+			if (last == 'u' && ((int) x == 20 && (int) y == 6) || ((int) x + pandaWidth == 20 && (int) y == 6)) {
 				char1 = Game.char1StillDown;
 				say("Hello there! I lost my wittle pet, Fluffly, yesturday!\n" + "Can you help me find him?");
 				lastChar = 1;
@@ -474,7 +451,7 @@ public class Roam extends BasicGameState {
 				}
 			}
 			// char2
-			if (last == 'r' && ((int) x == 89 && (int) y == 10) || ((int) x + pandaWidth == 89 && (int) y + pandaHeight == 10)) {
+			if (last == 'r' && ((int) x == 89 && (int) y == 10) || ((int) x == 89 && (int) y + pandaHeight == 10)) {
 				char2 = Game.char2StillLeft;
 				say("Hey Mr. Pandaman! My little penguin, Flappy, ran away yesturday!\n" + "Can you find Flappy for me?");
 				lastChar = 2;
@@ -483,7 +460,7 @@ public class Roam extends BasicGameState {
 					lastChar = 0;
 				}
 			}
-			if (last == 'd' && ((int) x == 90 && (int) y == 9) || ((int) x + pandaWidth == 90 && (int) y + pandaHeight == 9)) {
+			if (last == 'd' && ((int) x == 90 && (int) y == 9) || ((int) x + pandaWidth == 90 && (int) y == 9)) {
 				char2 = Game.char2StillUp;
 				say("Hey Mr. Pandaman! My little penguin, Flappy, ran away yesturday!\n" + "Can you find Flappy for me?");
 				lastChar = 2;
@@ -492,7 +469,7 @@ public class Roam extends BasicGameState {
 					lastChar = 0;
 				}
 			}
-			if (last == 'l' && ((int) x == 91 && (int) y == 10) || ((int) x + pandaWidth == 91 && (int) y + pandaHeight == 10)) {
+			if (last == 'l' && ((int) x == 91 && (int) y == 10) || ((int) x == 91 && (int) y + pandaHeight == 10)) {
 				char2 = Game.char2StillRight;
 				say("Hey Mr. Pandaman! My little penguin, Flappy, ran away yesturday!\n" + "Can you find Flappy for me?");
 				lastChar = 2;
@@ -501,7 +478,7 @@ public class Roam extends BasicGameState {
 					lastChar = 0;
 				}
 			}
-			if (last == 'u' && ((int) x == 90 && (int) y == 11) || ((int) x + pandaWidth == 90 && (int) y + pandaHeight == 11)) {
+			if (last == 'u' && ((int) x == 90 && (int) y == 11) || ((int) x + pandaWidth == 90 && (int) y == 11)) {
 				char2 = Game.char2StillDown;
 				say("Hey Mr. Pandaman! My little penguin, Flappy, ran away yesturday!\n" + "Can you find Flappy for me?");
 				lastChar = 2;
@@ -511,7 +488,7 @@ public class Roam extends BasicGameState {
 				}
 			}
 			// char3
-			if (last == 'r' && ((int) x == 9 && (int) y == 90) || ((int) x + pandaWidth == 9 && (int) y + pandaHeight == 90)) {
+			if (last == 'r' && ((int) x == 9 && (int) y == 90) || ((int) x == 9 && (int) y + pandaHeight == 90)) {
 				char3 = Game.char3StillLeft;
 				say("Pandaman! Good thing you're here! Yesturday I lost Shelly, my turtle!\n" + "Can you help me find him?");
 				lastChar = 3;
@@ -520,7 +497,7 @@ public class Roam extends BasicGameState {
 					lastChar = 0;
 				}
 			}
-			if (last == 'd' && ((int) x == 10 && (int) y == 89) || ((int) x + pandaWidth == 10 && (int) y + pandaHeight == 89)) {
+			if (last == 'd' && ((int) x == 10 && (int) y == 89) || ((int) x + pandaWidth == 10 && (int) y == 89)) {
 				char3 = Game.char3StillUp;
 				say("Pandaman! Good thing you're here! Yesturday I lost Shelly, my turtle!\n" + "Can you help me find him?");
 				lastChar = 3;
@@ -529,7 +506,7 @@ public class Roam extends BasicGameState {
 					lastChar = 0;
 				}
 			}
-			if (last == 'l' && ((int) x == 11 && (int) y == 90) || ((int) x + pandaWidth == 11 && (int) y + pandaHeight == 90)) {
+			if (last == 'l' && ((int) x == 11 && (int) y == 90) || ((int) x == 11 && (int) y + pandaHeight == 90)) {
 				char3 = Game.char3StillRight;
 				say("Pandaman! Good thing you're here! Yesturday I lost Shelly, my turtle!\n" + "Can you help me find him?");
 				lastChar = 3;
@@ -538,7 +515,7 @@ public class Roam extends BasicGameState {
 					lastChar = 0;
 				}
 			}
-			if (last == 'u' && ((int) x == 10 && (int) y == 91) || ((int) x + pandaWidth == 10 && (int) y + pandaHeight == 91)) {
+			if (last == 'u' && ((int) x == 10 && (int) y == 91) || ((int) x + pandaWidth == 10 && (int) y == 91)) {
 				char3 = Game.char3StillDown;
 				say("Pandaman! Good thing you're here! Yesturday I lost Shelly, my turtle!\n" + "Can you help me find him?");
 				lastChar = 3;
@@ -548,7 +525,7 @@ public class Roam extends BasicGameState {
 				}
 			}
 			// char4
-			if (last == 'r' && ((int) x == 89 && (int) y == 90) || ((int) x + pandaWidth == 89 && (int) y + pandaHeight == 90)) {
+			if (last == 'r' && ((int) x == 89 && (int) y == 90) || ((int) x == 89 && (int) y + pandaHeight == 90)) {
 				char4 = Game.char4StillLeft;
 				say("I can't find Woof-Woof! He ranaway yesturday!\n" + "Can you find him for me?");
 				lastChar = 4;
@@ -566,7 +543,7 @@ public class Roam extends BasicGameState {
 					lastChar = 0;
 				}
 			}
-			if (last == 'l' && ((int) x == 91 && (int) y == 90) || ((int) x + pandaWidth == 91 && (int) y + pandaHeight == 90)) {
+			if (last == 'l' && ((int) x == 91 && (int) y == 90) || ((int) x == 91 && (int) y + pandaHeight == 90)) {
 				char4 = Game.char4StillRight;
 				say("I can't find Woof-Woof! He ranaway yesturday!\n" + "Can you find him for me?");
 				lastChar = 4;
@@ -579,10 +556,65 @@ public class Roam extends BasicGameState {
 		}
 	}
 	
-	private void checkExitSpeech() {
-		if (input.isKeyPressed(Input.KEY_SPACE) && speaking == true) {
-			speaking = false;
+	@SuppressWarnings("unused")
+	private static void resetState() {
+		x = 10;
+		y = 10;
+		quit = false;
+	}
+	
+	private static void renderCharacters(Graphics g) {
+		
+		char1.draw((320 - (x - char1X) * tileWidth), (320 - (y - char1Y) * tileHeight));
+		char2.draw((320 - (x - char2X) * tileWidth), (320 - (y - char2Y) * tileHeight));
+		char3.draw((320 - (x - char3X) * tileWidth), (320 - (y - char3Y) * tileHeight));
+		char4.draw((320 - (x - char4X) * tileWidth), (320 - ((y - char4Y) * tileHeight)));
+	}
+	
+	private static void renderConfetti(Graphics g) {
+		Game.confetti.draw(-20, -150 + j);
+		Game.confetti.draw(-60, -300 + j);
+		Game.confetti.draw(-100, -450 + j);
+		Game.confetti.draw(-140, -600 + j);
+	}
+	
+	private static void renderGroundLayers(Graphics g) {
+		g.translate((-x % 1) * tileWidth, (-y % 1) * tileHeight);
+		map.render(0, 0, (int) x, (int) y, 21, 21, backgroundLayer, true);
+		map.render(0, 0, (int) x, (int) y, 21, 21, graphLayer, true);
+		map.render(0, 0, (int) x, (int) y, 21, 21, groundLayer1, true);
+		map.render(0, 0, (int) x, (int) y, 21, 21, objectLayer, true);
+		map.render(0, 0, (int) x, (int) y, 21, 21, groundLayer2, true);
+		map.render(0, 0, (int) x, (int) y, 21, 21, enterStateLayer, true);
+		g.translate((x % 1) * tileWidth, (y % 1) * tileHeight);
+	}
+	
+	private static void renderOverHead(Graphics g) {
+		g.translate((-x % 1) * tileWidth, (-y % 1) * tileHeight);
+		map.render(0, 0, (int) x, (int) y, 21, 21, overheadLayer1, true);
+		map.render(0, 0, (int) x, (int) y, 21, 21, overheadLayer2, true);
+		map.render(0, 0, (int) x, (int) y, 21, 21, overheadLayer3, true);
+		map.render(0, 0, (int) x, (int) y, 21, 21, overheadLayer4, true);
+		g.translate((x % 1) * tileWidth, (y % 1) * tileHeight);
+	}
+	
+	private static void renderPets(Graphics g) {
+		if (Game.pet1Found) {
 		}
+		if (Game.pet2Found) penguin.draw((320 - (x - penX) * 32), (320 - (y - penY) * 32));
+		if (Game.pet3Found) {
+		}
+		if (Game.pet4Found) {
+		}
+	}
+	
+	private static void renderSpeech(Graphics g) {
+		g.setColor(Color.white);
+		g.fillRect(20, 500, 600, 100);
+		g.setColor(Color.black);
+		g.drawString(strSpeak, 30, 510);
+		g.setColor(Color.red);
+		
 	}
 	
 	private static void say(String str) {
@@ -590,10 +622,14 @@ public class Roam extends BasicGameState {
 		speaking = true;
 	}
 	
-	public static void resetState() {
-		x = 10;
-		y = 10;
-		quit = false;
+	private static void sleepHandling(GameContainer gc, StateBasedGame sbg, int t) {
+		if (sbg.getCurrentStateID() == Game.roam) {
+			oneHit2++;
+			if (oneHit2 == 1) Game.pollyWolly.loop();
+		} else {
+			oneHit2 = 0;
+			Game.pollyWolly.stop();
+		}
 	}
 	
 }

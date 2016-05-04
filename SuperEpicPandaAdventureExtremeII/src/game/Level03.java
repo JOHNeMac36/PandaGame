@@ -48,6 +48,9 @@ public class Level03 extends BasicGameState {
 	
 	@Override
 	public void update(GameContainer gc, StateBasedGame sbg, int t) throws SlickException {
+		if (Game.isMusicOn) Game.unmuteAllMusic();
+		else
+			Game.muteAllMusic();
 		map.getTileId(0, 0, objectLayer);
 		
 		// up
