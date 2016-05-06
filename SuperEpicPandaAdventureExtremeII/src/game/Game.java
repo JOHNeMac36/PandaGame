@@ -63,7 +63,7 @@ public class Game extends StateBasedGame {
 			appgc = new AppGameContainer(new Game(gamename));
 			appgc.setDisplayMode(640, 640, false);
 			appgc.setShowFPS(true);
-			appgc.setTargetFrameRate(350);
+			appgc.setTargetFrameRate(365);
 			appgc.setUpdateOnlyWhenVisible(false);
 			appgc.setSmoothDeltas(false);
 			appgc.start();

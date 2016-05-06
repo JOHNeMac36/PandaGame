@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/Users/John/Documents/workspace/SuperEpicPandaAdventureExtremeII(copy)/lib/jars/jorbis-0.0.17-1.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="SuperEpicPandaAdventureExtremeII/lib/natives/macosx"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/John/Documents/workspace/SuperEpicPandaAdventureExtremeII(copy)/lib/jars/lwjgl.jar"/>
+	<classpathentry kind="lib" path="/Users/John/Documents/workspace/SuperEpicPandaAdventureExtremeII(copy)/lib/jars/slick.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
