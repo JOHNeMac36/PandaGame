@@ -6,7 +6,6 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.tiled.TiledMap;
@@ -24,11 +23,10 @@ public class Level01 extends BasicGameState {
 	private static float mapXL;
 	private static float powerUpX, powerUpY;
 	public static Block[] blocks;
-	private static float x, y, cursorX = 76.6f, cursorY = 143f;
-	
-	private static Point[] enemyCoords;
-	private static boolean[] isEnemyDead, isEnemyFalling, enemyRight;
-	
+	private static float x, y, cursorX, cursorY;
+	@SuppressWarnings("unused")
+	private final static float enemySpeed = .0096f, powerUpSpeed = .0096f;
+	private static Enemy[] enemies;
 	public static char still = 's', hit = 'h', hitDown = 'd', broke = 'b', deadStill = 'S', deadHit = 'H', deadHitDown = 'D';
 	
 	private static boolean isDead, isJumping, isFalling, isUnderfoot, isStalled = false, isBig = false;
@@ -38,268 +36,10 @@ public class Level01 extends BasicGameState {
 	private static float zoomFactor2 = 2f;
 	private static boolean isPowerUpAvailable;
 	private static int timeOfDeath = 0;
-	private static boolean[] powerUps;
+	private static PowerUp[] powerUps;
 	
 	public Level01(int lvl01) {
 	
-	}
-	
-	private static float toHex(char b, char p, char s, char ss, char sss) {
-		int block = 0, pixel = 0, subPix = 0, subSubPix = 0, subSubSubPix = 0;
-		switch (b) {
-			case '0':
-				block = 0;
-				break;
-			case '1':
-				block = 1;
-				break;
-			case '2':
-				block = 2;
-				break;
-			case '3':
-				block = 3;
-				break;
-			case '4':
-				block = 4;
-				break;
-			case '5':
-				block = 5;
-				break;
-			case '6':
-				block = 6;
-				break;
-			case '7':
-				block = 7;
-				break;
-			case '8':
-				block = 8;
-				break;
-			case '9':
-				block = 9;
-				break;
-			case 'A':
-				block = 10;
-				break;
-			case 'B':
-				block = 11;
-				break;
-			case 'C':
-				block = 12;
-				break;
-			case 'D':
-				block = 13;
-				break;
-			case 'E':
-				block = 14;
-				break;
-			case 'F':
-				block = 15;
-				break;
-		}
-		switch (p) {
-			case '0':
-				pixel = 0;
-				break;
-			case '1':
-				pixel = 1;
-				break;
-			case '2':
-				pixel = 2;
-				break;
-			case '3':
-				pixel = 3;
-				break;
-			case '4':
-				pixel = 4;
-				break;
-			case '5':
-				pixel = 5;
-				break;
-			case '6':
-				pixel = 6;
-				break;
-			case '7':
-				pixel = 7;
-				break;
-			case '8':
-				pixel = 8;
-				break;
-			case '9':
-				pixel = 9;
-				break;
-			case 'A':
-				pixel = 10;
-				break;
-			case 'B':
-				pixel = 11;
-				break;
-			case 'C':
-				pixel = 12;
-				break;
-			case 'D':
-				pixel = 13;
-				break;
-			case 'E':
-				pixel = 14;
-				break;
-			case 'F':
-				pixel = 15;
-				break;
-		}
-		switch (s) {
-			case '0':
-				subPix = 0;
-				break;
-			case '1':
-				subPix = 1;
-				break;
-			case '2':
-				subPix = 2;
-				break;
-			case '3':
-				subPix = 3;
-				break;
-			case '4':
-				subPix = 4;
-				break;
-			case '5':
-				subPix = 5;
-				break;
-			case '6':
-				subPix = 6;
-				break;
-			case '7':
-				subPix = 7;
-				break;
-			case '8':
-				subPix = 8;
-				break;
-			case '9':
-				subPix = 9;
-				break;
-			case 'A':
-				subPix = 10;
-				break;
-			case 'B':
-				subPix = 11;
-				break;
-			case 'C':
-				subPix = 12;
-				break;
-			case 'D':
-				subPix = 13;
-				break;
-			case 'E':
-				subPix = 14;
-				break;
-			case 'F':
-				subPix = 15;
-				break;
-		}
-		switch (ss) {
-			case '0':
-				subSubPix = 0;
-				break;
-			case '1':
-				subSubPix = 1;
-				break;
-			case '2':
-				subSubPix = 2;
-				break;
-			case '3':
-				subSubPix = 3;
-				break;
-			case '4':
-				subSubPix = 4;
-				break;
-			case '5':
-				subSubPix = 5;
-				break;
-			case '6':
-				subSubPix = 6;
-				break;
-			case '7':
-				subSubPix = 7;
-				break;
-			case '8':
-				subSubPix = 8;
-				break;
-			case '9':
-				subSubPix = 9;
-				break;
-			case 'A':
-				subSubPix = 10;
-				break;
-			case 'B':
-				subSubPix = 11;
-				break;
-			case 'C':
-				subSubPix = 12;
-				break;
-			case 'D':
-				subSubPix = 13;
-				break;
-			case 'E':
-				subSubPix = 14;
-				break;
-			case 'F':
-				subSubPix = 15;
-				break;
-		}
-		switch (sss) {
-			case '0':
-				subSubSubPix = 0;
-				break;
-			case '1':
-				subSubSubPix = 1;
-				break;
-			case '2':
-				subSubSubPix = 2;
-				break;
-			case '3':
-				subSubSubPix = 3;
-				break;
-			case '4':
-				subSubSubPix = 4;
-				break;
-			case '5':
-				subSubSubPix = 5;
-				break;
-			case '6':
-				subSubSubPix = 6;
-				break;
-			case '7':
-				subSubSubPix = 7;
-				break;
-			case '8':
-				subSubSubPix = 8;
-				break;
-			case '9':
-				subSubSubPix = 9;
-				break;
-			case 'A':
-				subSubSubPix = 10;
-				break;
-			case 'B':
-				subSubSubPix = 11;
-				break;
-			case 'C':
-				subSubSubPix = 12;
-				break;
-			case 'D':
-				subSubSubPix = 13;
-				break;
-			case 'E':
-				subSubSubPix = 14;
-				break;
-			case 'F':
-				subSubSubPix = 15;
-				break;
-		}
-		System.out.println(((float) ((float) block + (float) pixel / 16f + (float) subPix / (16f * 16f)
-				+ (float) subSubPix / (16f * 16f * 16f) + (float) subSubSubPix / (16f * 16f * 16f * 16f))) / 2.5f);
-		return ((float) ((float) block + (float) pixel / 16f + (float) subPix / (16f * 16f) + (float) subSubPix / (16f * 16f * 16f)
-				+ (float) subSubSubPix / (16f * 16f * 16f * 16f))) / 2.5f;
 	}
 	
 	@Override
@@ -315,15 +55,19 @@ public class Level01 extends BasicGameState {
 		zoomFactor = 2.5f;
 		pandaHeight = 30;
 		pandaWidth = 22;
+		cursorX = 76.6f;
+		cursorY = 143f;
 		input = gc.getInput();
 		initBlocks();
 		initEnemies();
+		initPowerUps();
 		setState();
 	}
 	
 	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
 		renderMap(gc, sbg, g);
+		renderPowerUps(gc, sbg, g);
 		renderBlocks(gc, sbg, g);
 		renderEnemies(gc, sbg, g);
 		panda.draw((x - (1f / 6f) - (int) mapXL) * tileWidth * zoomFactor, y * tileHeight * zoomFactor - pandaHeight, 32, 32);
@@ -364,9 +108,11 @@ public class Level01 extends BasicGameState {
 				updateIncrements(gc, sbg, t);
 				updateJumpingFalling(gc, sbg, t);
 				updateBlocks();
+				updatePowerUpMovement();
 				checkIsDead(gc, sbg, t);
 				updateEnemyMovement();
 				checkEnemyDeath();
+				checkPowerUp();
 			}
 		}
 		
@@ -374,10 +120,10 @@ public class Level01 extends BasicGameState {
 	
 	// supplementary methods
 	private static void checkEnemyDeath() {
-		for (int i = 0; i < enemyCoords.length; i++) {
-			if (!isEnemyDead[i]) if (x >= enemyCoords[i].getX() - .56 && x <= enemyCoords[i].getX() + 1 && y - .5f < enemyCoords[i].getY()
-					&& enemyCoords[i].getY() - y <= 1.5 && isFalling)
-				isEnemyDead[i] = true;
+		for (int i = 0; i < enemies.length; i++) {
+			if (!enemies[i].isDead)
+				if (x >= enemies[i].x - .56 && x <= enemies[i].x + 1 && y - .5f < enemies[i].y && enemies[i].y - y <= 1.5 && isFalling)
+					enemies[i].isDead = true;
 		}
 	}
 	
@@ -402,84 +148,109 @@ public class Level01 extends BasicGameState {
 	
 	private static void checkIsDead(GameContainer gc, StateBasedGame sbg, int t) throws SlickException {
 		// check isDead
-		for (int i = 0; i < isEnemyDead.length; i++) {
-			if (!isEnemyDead[i] && x >= enemyCoords[i].getX() - .56 && x <= enemyCoords[i].getX() + .87
-					&& (int) y == (int) enemyCoords[i].getY()) {
+		for (int i = 0; i < enemies.length; i++) {
+			if (!enemies[i].isDead && x >= enemies[i].x - .01 && x <= enemies[i].x + .01 && (int) y == (int) enemies[i].y) {
 				isDead = true;
+			}
+		}
+	}
+	
+	private static void checkPowerUp() {
+		for (int i = 0; i < powerUps.length; i++) {
+			if (!powerUps[i].isDead && x >= powerUps[i].x - .56 && x <= powerUps[i].x + .87 && Math.abs(y - powerUps[i].y) < 0.06) {
+				powerUps[i].isDead = true;
 			}
 		}
 	}
 	
 	private static void initBlocks() {
 		blocks = new Block[43];
-		blocks[0] = new Block(16, 17, Block.Q);
-		blocks[1] = new Block(21, 17, Block.Q);
-		blocks[2] = new Block(22, 9, Block.Q);
-		blocks[3] = new Block(23, 17, Block.Q);
-		blocks[4] = new Block(78, 17, Block.Q);
-		blocks[5] = new Block(94, 9, Block.Q);
-		blocks[6] = new Block(106, 17, Block.Q);
-		blocks[7] = new Block(109, 9, Block.Q);
-		blocks[8] = new Block(109, 17, Block.Q);
-		blocks[9] = new Block(112, 17, Block.Q);
-		blocks[10] = new Block(129, 9, Block.Q);
-		blocks[11] = new Block(130, 9, Block.Q);
-		blocks[12] = new Block(170, 17, Block.Q);
+		blocks[0] = new QBlock(16, 17);
+		blocks[1] = new QBlock(21, 17);
+		blocks[2] = new QBlock(22, 9);
+		blocks[3] = new QBlock(23, 17);
+		blocks[4] = new QBlock(78, 17);
+		blocks[5] = new QBlock(94, 9);
+		blocks[6] = new QBlock(106, 17);
+		blocks[7] = new QBlock(109, 9);
+		blocks[8] = new QBlock(109, 17);
+		blocks[9] = new QBlock(112, 17);
+		blocks[10] = new QBlock(129, 9);
+		blocks[11] = new QBlock(130, 9);
+		blocks[12] = new QBlock(170, 17);
 		
-		blocks[13] = new Block(20, 17, Block.B);
-		blocks[14] = new Block(22, 17, Block.B);
-		blocks[15] = new Block(24, 17, Block.B);
-		blocks[16] = new Block(77, 17, Block.B);
-		blocks[17] = new Block(79, 17, Block.B);
-		blocks[18] = new Block(80, 9, Block.B);
-		blocks[19] = new Block(81, 9, Block.B);
-		blocks[20] = new Block(82, 9, Block.B);
-		blocks[21] = new Block(83, 9, Block.B);
-		blocks[22] = new Block(84, 9, Block.B);
-		blocks[23] = new Block(85, 9, Block.B);
-		blocks[24] = new Block(86, 9, Block.B);
-		blocks[25] = new Block(87, 9, Block.B);
-		blocks[26] = new Block(91, 9, Block.B);
-		blocks[27] = new Block(92, 9, Block.B);
-		blocks[28] = new Block(93, 9, Block.B);
-		blocks[29] = new Block(94, 17, Block.B);
-		blocks[30] = new Block(100, 17, Block.B);
-		blocks[31] = new Block(101, 17, Block.B);
-		blocks[32] = new Block(118, 17, Block.B);
-		blocks[33] = new Block(121, 9, Block.B);
-		blocks[34] = new Block(122, 9, Block.B);
-		blocks[35] = new Block(123, 9, Block.B);
-		blocks[36] = new Block(128, 9, Block.B);
-		blocks[37] = new Block(129, 17, Block.B);
-		blocks[38] = new Block(130, 17, Block.B);
-		blocks[39] = new Block(131, 9, Block.B);
-		blocks[40] = new Block(168, 17, Block.B);
-		blocks[41] = new Block(169, 17, Block.B);
-		blocks[42] = new Block(171, 17, Block.B);
+		blocks[13] = new BBlock(20, 17);
+		blocks[14] = new BBlock(22, 17);
+		blocks[15] = new BBlock(24, 17);
+		blocks[16] = new BBlock(77, 17);
+		blocks[17] = new BBlock(79, 17);
+		blocks[18] = new BBlock(80, 9);
+		blocks[19] = new BBlock(81, 9);
+		blocks[20] = new BBlock(82, 9);
+		blocks[21] = new BBlock(83, 9);
+		blocks[22] = new BBlock(84, 9);
+		blocks[23] = new BBlock(85, 9);
+		blocks[24] = new BBlock(86, 9);
+		blocks[25] = new BBlock(87, 9);
+		blocks[26] = new BBlock(91, 9);
+		blocks[27] = new BBlock(92, 9);
+		blocks[28] = new BBlock(93, 9);
+		blocks[29] = new BBlock(94, 17);
+		blocks[30] = new BBlock(100, 17);
+		blocks[31] = new BBlock(101, 17);
+		blocks[32] = new BBlock(118, 17);
+		blocks[33] = new BBlock(121, 9);
+		blocks[34] = new BBlock(122, 9);
+		blocks[35] = new BBlock(123, 9);
+		blocks[36] = new BBlock(128, 9);
+		blocks[37] = new BBlock(129, 17);
+		blocks[38] = new BBlock(130, 17);
+		blocks[39] = new BBlock(131, 9);
+		blocks[40] = new BBlock(168, 17);
+		blocks[41] = new BBlock(169, 17);
+		blocks[42] = new BBlock(171, 17);
 	}
 	
 	private static void initEnemies() {
-		enemyCoords = new Point[10];
-		enemyCoords[0] = new Point(15f, 24.999f);
-		enemyCoords[1] = new Point(30f, 24.999f);
-		enemyCoords[2] = new Point(35f, 24.999f);
-		enemyCoords[3] = new Point(45f, 24.999f);
-		enemyCoords[4] = new Point(55f, 24.999f);
-		enemyCoords[5] = new Point(65f, 24.999f);
-		enemyCoords[6] = new Point(75f, 24.999f);
-		enemyCoords[7] = new Point(171f, 16.9f);
-		enemyCoords[8] = new Point(138f, 24.999f);
-		enemyCoords[9] = new Point(102f, 17.1999f);
+		enemies = new Enemy[17];
+		enemies[0] = new Goomba(22f, 24.999f);
+		enemies[1] = new Goomba(40f, 24.999f);
+		enemies[2] = new Goomba(51f, 24.999f);
+		enemies[3] = new Goomba(52.5f, 24.999f);
+		enemies[4] = new Goomba(80f, 8f);
+		enemies[5] = new Goomba(82f, 8f);
+		enemies[6] = new Goomba(97f, 24.999f);
+		enemies[7] = new Goomba(98.5f, 24.999f);
+		enemies[8] = new Goomba(107f, 24.999f); // koopa
+		enemies[9] = new Goomba(114f, 24.999f);
+		enemies[10] = new Goomba(115.5f, 24.999f);
+		enemies[11] = new Goomba(124f, 24.999f);
+		enemies[12] = new Goomba(125.5f, 24.999f);
+		enemies[13] = new Goomba(128f, 24.999f);
+		enemies[14] = new Goomba(129.5f, 24.999f);
+		enemies[15] = new Goomba(174f, 24.999f);
+		enemies[16] = new Goomba(175.5f, 24.999f);
 		
-		isEnemyDead = new boolean[10];
-		for (int i = 0; i < isEnemyDead.length; i++)
-			isEnemyDead[i] = false;
-			
-		isEnemyFalling = new boolean[10];
-		enemyRight = new boolean[10];
-		for (int i = 0; i < enemyRight.length; i++)
-			enemyRight[i] = false;
-			
+	}
+	
+	private static void initPowerUps() {
+		powerUps = new PowerUp[13];
+		for (int i = 0; i < powerUps.length; i++) {
+			switch (i) {
+				case 2:
+				case 5:
+				case 6:
+				case 11:
+					powerUps[i] = new Mushroom(blocks[i].x, blocks[i].y - .06f);
+					break;
+				case 9:
+					powerUps[i] = new Star(blocks[i].x, blocks[i].y - .06f);
+					break;
+				default:
+					powerUps[i] = new Coin(blocks[i].x, blocks[i].y - .06f);
+					break;
+			}
+		}
 	}
 	
 	private static void renderBlocks(GameContainer gc, StateBasedGame sbg, Graphics g) {
@@ -517,9 +288,11 @@ public class Level01 extends BasicGameState {
 	private static void renderEnemies(GameContainer gc, StateBasedGame sbg, Graphics g) {
 		
 		g.scale(zoomFactor2, zoomFactor2);
-		for (int i = 0; i < isEnemyDead.length; i++) {
-			if (!isEnemyDead[i]) Game.mushroom.draw((enemyCoords[i].getX() - (int) mapXL) * tileWidth * zoomFactor / zoomFactor2,
-					(enemyCoords[i].getY()) * tileHeight * zoomFactor / zoomFactor2 - Game.mushroom.getHeight());
+		for (int i = 0; i < enemies.length; i++) {
+			if (!enemies[i].isDead) {
+				Game.mushroom.draw((enemies[i].x - (int) mapXL) * tileWidth * zoomFactor / zoomFactor2,
+						(enemies[i].y) * tileHeight * zoomFactor / zoomFactor2 - Game.mushroom.getHeight());
+			}
 		}
 		
 		g.scale(1 / zoomFactor2, 1 / zoomFactor2);
@@ -528,14 +301,11 @@ public class Level01 extends BasicGameState {
 	private static void renderInfo(GameContainer gc, StateBasedGame sbg, Graphics g) {
 		g.setColor(Color.white);
 		String str;
-		str = "( " + (mapXL + (float) input.getMouseX() / (float) tileWidth / (float) zoomFactor) + " , "
-				+ (float) input.getMouseY() / (float) tileHeight / (float) zoomFactor + " )";
+		str = "( " + (mapXL + (float) input.getMouseX() / (float) tileWidth / zoomFactor) + " , "
+				+ (float) input.getMouseY() / (float) tileHeight / zoomFactor + " )";
 		g.drawString(str, 100, 15);
-		g.drawString("i = " + i, 100, 30);
-		g.drawString("isFalling = " + isFalling, 100, 45);
-		g.drawString("isJumping = " + isJumping, 100, 60);
-		g.drawString("isUnderfoot = " + isUnderfoot, 100, 75);
 		g.drawString("(x,y) : ( " + x + " , " + y + " )", 100, 90);
+		g.drawString("(Math.abs(y - powerUps[1].y) ) : ( " + Math.abs(y - powerUps[1].y) + " )", 100, 50);
 		
 	}
 	
@@ -561,6 +331,33 @@ public class Level01 extends BasicGameState {
 		
 	}
 	
+	private static void renderPowerUps(GameContainer gc, StateBasedGame sbg, Graphics g) {
+		g.scale(zoomFactor, zoomFactor);
+		for (int i = 0; i < powerUps.length; i++) {
+			if (!powerUps[i].isDead) {
+				switch (powerUps[i].type) {
+					case PowerUp.COIN:
+						Game.pwrCoin.draw((powerUps[i].x - (int) mapXL) * tileWidth * zoomFactor / zoomFactor,
+								(powerUps[i].y) * tileHeight * zoomFactor / zoomFactor - Game.pwrCoin.getHeight());
+						break;
+					case PowerUp.FLOWER:
+						Game.pwrFlower.draw((powerUps[i].x - (int) mapXL) * tileWidth * zoomFactor / zoomFactor,
+								(powerUps[i].y) * tileHeight * zoomFactor / zoomFactor - Game.pwrFlower.getHeight());
+						break;
+					case PowerUp.MUSHROOM:
+						Game.pwrMush.draw((powerUps[i].x - (int) mapXL) * tileWidth * zoomFactor / zoomFactor,
+								(powerUps[i].y) * tileHeight * zoomFactor / zoomFactor - Game.pwrMush.getHeight());
+						break;
+					case PowerUp.STAR:
+						Game.pwrStar.draw((powerUps[i].x - (int) mapXL) * tileWidth * zoomFactor / zoomFactor,
+								(powerUps[i].y) * tileHeight * zoomFactor / zoomFactor - Game.pwrStar.getHeight());
+						break;
+				}
+			}
+		}
+		g.scale(1 / zoomFactor, 1 / zoomFactor);
+	}
+	
 	private static void resetState(GameContainer gc, StateBasedGame sbg) throws SlickException {
 		isMenuUp = true;
 		isStalled = false;
@@ -569,6 +366,7 @@ public class Level01 extends BasicGameState {
 		isStalled = true;
 		initBlocks();
 		initEnemies();
+		initPowerUps();
 		input = gc.getInput();
 		isUnderfoot = true;
 		oneHit = 0;
@@ -587,6 +385,7 @@ public class Level01 extends BasicGameState {
 		i = 0;
 		x = 2;
 		y = 24.99f;
+		cursorY = 143f;
 		isUnderfoot = true;
 	}
 	
@@ -600,48 +399,60 @@ public class Level01 extends BasicGameState {
 	}
 	
 	private static void updateBlocks() {
-		for (int i = 0; i < blocks.length; i++) {
+		for (int i = 0; i < 13; i++) {
 			if ((int) (y - 3.01f) == blocks[i].y && ((int) x == blocks[i].x || (int) (x + .5) == blocks[i].x) && !isFalling) {
+				if (blocks[i].state == Block.STILL) {
+					powerUps[i].isDead = false;
+					powerUps[i].timeOfLife = totalTime;
+					powerUps[i].isUp = true;
+				}
 				blocks[i].state = Block.HIT;
 			}
 			if (isFalling && input.isKeyDown(Input.KEY_DOWN) && (int) (y + .2f) == blocks[i].y
 					&& (((int) x == blocks[i].x) || (int) (x + .5) == blocks[i].x)) {
+					
+				if (blocks[i].state == Block.STILL) {
+					powerUps[i].isDead = false;
+					powerUps[i].timeOfLife = totalTime;
+					powerUps[i].isUp = false;
+					powerUps[i].y += 1.9f;
+				}
 				blocks[i].state = Block.HIT;
 			}
 		}
 	}
 	
 	private static void updateEnemyMovement() {
-		for (int i = 0; i < isEnemyFalling.length; i++) {
-			if (!isEnemyDead[i]) {
-				if (enemyCoords[i].getX() <= mapXL + 16f) {
-					if (!isEnemyFalling[i]) {
-						if (enemyRight[i]) {
-							if (map.getTileId((int) (enemyCoords[i].getX() + .005f), (int) enemyCoords[i].getY(), objectLayer) == 0)
-								enemyCoords[i].setX(enemyCoords[i].getX() + .005f);
-							if (enemyRight[i]
-									&& map.getTileId((int) (enemyCoords[i].getX() + .805f), (int) enemyCoords[i].getY(), objectLayer) != 0)
-								enemyRight[i] = false;
+		for (int i = 0; i < enemies.length; i++) {
+			if (!enemies[i].isDead && enemies[i].type == Enemy.GOOMBA) {
+				if (enemies[i].x <= mapXL + 16f) {
+					if (!enemies[i].isFalling) {
+						if (enemies[i].isRight) {
+							if (map.getTileId((int) (enemies[i].x + enemySpeed), (int) enemies[i].y, objectLayer) == 0)
+								enemies[i].x += enemySpeed;
+							if (enemies[i].isRight
+									&& map.getTileId((int) (enemies[i].x + .8f + enemySpeed), (int) enemies[i].y, objectLayer) != 0)
+								enemies[i].isRight = false;
 						} else {
-							if (map.getTileId((int) (enemyCoords[i].getX() - .005f), (int) enemyCoords[i].getY(), objectLayer) == 0)
-								enemyCoords[i].setX(enemyCoords[i].getX() - .005f);
-							if (!enemyRight[i]
-									&& map.getTileId((int) (enemyCoords[i].getX() - .005f), (int) enemyCoords[i].getY(), objectLayer) != 0)
-								enemyRight[i] = true;
+							if (map.getTileId((int) (enemies[i].x - enemySpeed), (int) enemies[i].y, objectLayer) == 0)
+								enemies[i].x -= enemySpeed;
+							if (!enemies[i].isRight
+									&& map.getTileId((int) (enemies[i].x - enemySpeed), (int) enemies[i].y, objectLayer) != 0)
+								enemies[i].isRight = true;
 						}
 						
 					}
 					
-					if (enemyCoords[i].getX() + .75 <= mapXL) isEnemyDead[i] = true;
+					if (enemies[i].x + .75 <= mapXL) enemies[i].isDead = true;
 					
-					if (!isEnemyDead[i]) {
-						if (enemyCoords[i].getY() >= 28) isEnemyDead[i] = true;
-						else if (map.getTileId((int) enemyCoords[i].getX(), (int) (enemyCoords[i].getY() + 0.07), objectLayer) == 0
-								&& map.getTileId((int) (enemyCoords[i].getX() + (Game.mushroom.getWidth() / (tileWidth * zoomFactor2))),
-										(int) (enemyCoords[i].getY() + 0.07f), objectLayer) == 0) {
-							enemyCoords[i].setY(enemyCoords[i].getY() + .07f);
+					if (!enemies[i].isDead) {
+						if (enemies[i].y >= 28) enemies[i].isDead = true;
+						else if (map.getTileId((int) enemies[i].x, (int) (enemies[i].y + 0.07), objectLayer) == 0
+								&& map.getTileId((int) (enemies[i].x + (Game.mushroom.getWidth() / (tileWidth * zoomFactor2))),
+										(int) (enemies[i].y + 0.07f), objectLayer) == 0) {
+							enemies[i].y += .07f;
 						} else
-							isEnemyFalling[i] = false;
+							enemies[i].isFalling = false;
 					}
 				}
 			}
@@ -738,7 +549,7 @@ public class Level01 extends BasicGameState {
 			switch (menuSelection) {
 				case 1:
 					Game.marioStarman.stop();
-					if (oneHit3 == 0) Game.marioTheme.play();
+					if (oneHit3 == 0) Game.marioTheme.loop();
 					isMenuUp = false;
 					isStalled = false;
 					break;
@@ -808,6 +619,68 @@ public class Level01 extends BasicGameState {
 		}
 	}
 	
+	private static void updatePowerUpMovement() {
+		for (int i = 0; i < powerUps.length; i++) {
+			if (!powerUps[i].isDead) {
+				switch (powerUps[i].type) {
+					case PowerUp.COIN:
+						if (powerUps[i].isUp) {
+							if (powerUps[i].timeOfLife > totalTime - 75) powerUps[i].y -= .05f;
+							if (powerUps[i].timeOfLife < totalTime - 75) powerUps[i].y += .05f;
+							if (powerUps[i].timeOfLife == totalTime - 150) powerUps[i].isDead = true;
+						} else {
+							if (powerUps[i].timeOfLife > totalTime - 75) powerUps[i].y += .05f;
+							if (powerUps[i].timeOfLife < totalTime - 75) powerUps[i].y -= .05f;
+							if (powerUps[i].timeOfLife == totalTime - 150) powerUps[i].isDead = true;
+						}
+						break;
+					case PowerUp.FLOWER:
+						if (powerUps[i].isUp) {
+							if (powerUps[i].timeOfLife > totalTime - 75) powerUps[i].y -= .05f;
+						} else {
+							if (powerUps[i].timeOfLife > totalTime - 75) powerUps[i].y += .05f;
+						}
+						break;
+					default:
+						if (map.getTileId((int) (powerUps[i].x), (int) (powerUps[i].y - .07), objectLayer) != 0) {
+							powerUps[i].y += .07;
+						} else {
+							if (powerUps[i].x <= mapXL + 16f) {
+								if (!powerUps[i].isFalling) {
+									if (powerUps[i].isRight) {
+										if (map.getTileId((int) (powerUps[i].x + powerUpSpeed), (int) powerUps[i].y, objectLayer) == 0)
+											powerUps[i].x += powerUpSpeed;
+										if (powerUps[i].isRight && map.getTileId((int) (powerUps[i].x + .8 + powerUpSpeed),
+												(int) powerUps[i].y, objectLayer) != 0)
+											powerUps[i].isRight = false;
+									} else {
+										if (map.getTileId((int) (powerUps[i].x - powerUpSpeed), (int) powerUps[i].y, objectLayer) == 0)
+											powerUps[i].x -= powerUpSpeed;
+										if (!powerUps[i].isRight && map.getTileId((int) (powerUps[i].x - powerUpSpeed), (int) powerUps[i].y,
+												objectLayer) != 0)
+											powerUps[i].isRight = true;
+									}
+									
+								}
+								
+								if (powerUps[i].x + .75 <= mapXL || powerUps[i].x >= mapXL + 15.975) powerUps[i].isDead = true;
+								
+								if (!powerUps[i].isDead) {
+									if (powerUps[i].y >= 28) powerUps[i].isDead = true;
+									else if (map.getTileId((int) powerUps[i].x, (int) (powerUps[i].y + 0.07), objectLayer) == 0
+											&& map.getTileId((int) (powerUps[i].x + (Game.mushroom.getWidth() / (tileWidth * zoomFactor2))),
+													(int) (powerUps[i].y + 0.07f), objectLayer) == 0) {
+										powerUps[i].y += .07f;
+									} else
+										powerUps[i].isFalling = false;
+								}
+							}
+						}
+				}
+			}
+		}
+	}
+	
 	private static void updateWinScene(GameContainer gc, StateBasedGame sbg, int t) throws SlickException {
 		won = true;
 		oneHitWin++;
@@ -850,28 +723,123 @@ public class Level01 extends BasicGameState {
 	}
 }
 
-class PowerUp {
-	public float x, y;
-	public int type;
-	public boolean isDead;
-	public static final int COIN = 0, MUSHROOM = 1, FLOWER = 2, STAR = 3;
+// subclasses
+class BBlock extends Block {
 	
-	public PowerUp(float x, float y, char type) {
-		this.x = x;
-		this.y = y;
-		this.isDead = true;
+	public BBlock(float x, float y) {
+		super(x, y);
+		type = Block.B;
 	}
+	
 }
 
-class Block {
+abstract class Block {
 	public float x, y;
 	public int type, state;
 	public static final int Q = 0, B = 1, STILL = 2, HIT = 3, HITDOWN = 4, BROKE = 5, DEADSTILL = 6, DEADHIT = 7, DEADHITDOWN = 9;
 	
-	public Block(float x, float y, int type) {
+	public Block(float x, float y) {
 		this.x = x;
 		this.y = y;
-		this.type = type;
 		this.state = STILL;
 	}
+	
+}
+
+class Coin extends PowerUp {
+	@SuppressWarnings("static-access")
+	public Coin(float x, float y) {
+		super(x, y);
+		type = super.COIN;
+	}
+}
+
+abstract class Enemy {
+	public float x, y;
+	public boolean isFalling, isDead, isRight;
+	public int type;
+	public static final int GOOMBA = 0, KOOPA_TROOPA = 1;
+	
+	public Enemy(float x, float y) {
+		this.x = x;
+		this.y = y;
+		isFalling = true;
+		isDead = false;
+		isRight = false;
+	}
+	
+	@Override
+	public String toString() {
+		return "Enemy x=" + x + ", y" + y + ",type" + type + "]";
+	}
+}
+
+abstract class PowerUp {
+	public float x, y, timeOfLife;
+	public int type;
+	public boolean isDead, isFalling, isRight, isUp;
+	public static final int COIN = 0, MUSHROOM = 1, FLOWER = 2, STAR = 3;
+	
+	public PowerUp(float x, float y) {
+		this.x = x;
+		this.y = y;
+		this.isDead = true;
+		this.isFalling = false;
+		this.isRight = true;
+		this.isUp = true;
+	}
+}
+
+class Flower extends PowerUp {
+	@SuppressWarnings("static-access")
+	
+	public Flower(float x, float y) {
+		super(x, y);
+		type = super.FLOWER;
+	}
+	
+}
+
+class Goomba extends Enemy {
+	
+	public Goomba(float x, float y) {
+		super(x, y);
+		type = super.GOOMBA;
+	}
+	
+}
+
+class Mushroom extends PowerUp {
+	@SuppressWarnings("static-access")
+	public Mushroom(float x, float y) {
+		super(x, y);
+		type = super.MUSHROOM;
+	}
+}
+
+class QBlock extends Block {
+	
+	public QBlock(float x, float y) {
+		super(x, y);
+		type = Block.Q;
+	}
+}
+
+class Star extends PowerUp {
+	@SuppressWarnings("static-access")
+	public Star(float x, float y) {
+		super(x, y);
+		type = super.STAR;
+	}
+}
+
+class KoopaTroopa extends Enemy {
+	public boolean isShell;
+	
+	public KoopaTroopa(float x, float y) {
+		super(x, y);
+		type = Enemy.KOOPA_TROOPA;
+		isShell = false;
+	}
+	
 }

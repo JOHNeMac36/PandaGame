@@ -56,6 +56,7 @@ public class Game extends StateBasedGame {
 	
 	public static AppGameContainer appgc;
 	// end of attributes
+	public static Animation pwrCoin, pwrFlower, pwrMush, pwrStar;
 	
 	public static void main(String[] args) {
 		
@@ -63,7 +64,7 @@ public class Game extends StateBasedGame {
 			appgc = new AppGameContainer(new Game(gamename));
 			appgc.setDisplayMode(640, 640, false);
 			appgc.setShowFPS(true);
-			appgc.setTargetFrameRate(365);
+			appgc.setTargetFrameRate(350);
 			appgc.setUpdateOnlyWhenVisible(false);
 			appgc.setSmoothDeltas(false);
 			appgc.start();
@@ -90,7 +91,7 @@ public class Game extends StateBasedGame {
 		initAnimations();
 		initSounds();
 		initImages();
-		isMusicOn = false;
+		isMusicOn = true;
 		
 		pet1Found = false;
 		pet2Found = false;
@@ -111,7 +112,7 @@ public class Game extends StateBasedGame {
 			this.getState(lvl04).init(gc, this);
 			this.getState(lvlBoss).init(gc, this);
 			this.getState(menu).init(gc, this);
-			this.enterState(lvl01);
+			this.enterState(menu);
 		} catch (SlickException e) {
 		}
 		
@@ -592,7 +593,35 @@ public class Game extends StateBasedGame {
 			
 			qBlockHitDown.addFrame(blocks.getSubImage(35, 1, 16, 16 + 8), 150);
 			qBlockHit.addFrame(blocks.getSubImage(35, 9, 16, 16 + 8), 150);
-			qBlockStill.addFrame(blocks.getSubImage(35, 9, 16, 16), 150);
+			qBlockStill.addFrame(blocks.getSubImage(35, 9, 16, 16), 270);
+			qBlockStill.addFrame(blocks.getSubImage(35 + 17, 9, 16, 16), 100);
+			qBlockStill.addFrame(blocks.getSubImage(35 + 17 * 2, 9, 16, 16), 100);
+			
+			// powerUps
+			pwrCoin = new Animation();
+			pwrFlower = new Animation();
+			pwrMush = new Animation();
+			pwrStar = new Animation();
+			
+			pwrCoin.addFrame(new Image("res/pngs/marioCoins.png").getSubImage(1, 2, 16, 16), 100);
+			pwrCoin.addFrame(new Image("res/pngs/marioCoins.png").getSubImage(15, 2, 16, 16), 100);
+			pwrCoin.addFrame(new Image("res/pngs/marioCoins.png").getSubImage(28, 2, 16, 16), 100);
+			pwrCoin.addFrame(new Image("res/pngs/marioCoins.png").getSubImage(45, 2, 16, 16), 100);
+			
+			Image pwrUps = new Image("res/pngs/powerUps.png");
+			
+			pwrFlower.addFrame(pwrUps.getSubImage(19, 2, 16, 16), 150);
+			pwrFlower.addFrame(pwrUps.getSubImage(38, 2, 16, 16), 150);
+			pwrFlower.addFrame(pwrUps.getSubImage(57, 2, 16, 16), 150);
+			pwrFlower.addFrame(pwrUps.getSubImage(76, 2, 16, 16), 150);
+			
+			pwrMush.addFrame(pwrUps.getSubImage(2, 2, 16, 16), 150);
+			
+			pwrStar.addFrame(pwrUps.getSubImage(93, 2, 14, 16), 150);
+			pwrStar.addFrame(pwrUps.getSubImage(112, 2, 14, 16), 150);
+			pwrStar.addFrame(pwrUps.getSubImage(131, 2, 14, 16), 150);
+			pwrStar.addFrame(pwrUps.getSubImage(150, 2, 14, 16), 150);
+			
 			
 		} catch (SlickException e) {
 		}
