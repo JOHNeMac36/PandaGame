@@ -30,13 +30,30 @@ public class Game extends StateBasedGame {
 	public static Animation mushroom, mushroomDead;
 	public static Animation marioPandaStillR, marioPandaWalkRight, marioPandaJumpR, marioPandaDown;
 	public static Animation marioPandaStillL, marioPandaWalkLeft, marioPandaJumpL;
-	public static Animation marioPandaBigRStill, marioPandaBigWalkRight, marioPandaBigJumpR, marioPandaBigDown;
-	public static Animation marioPandaBigLStill, marioPandaBigWalkLeft, marioPandaBigJumpL;
-	public static Animation marioPandaDownFallR, marioPandaDownFallL, marioPandaBigDownFallR, marioPandaBigDownFallL;
+	public static Animation marioPandaBigStillR, marioPandaBigWalkRight, marioPandaBigJumpR;
+	public static Animation marioPandaDownR, marioPandaDownL, marioPandaBigDownR, marioPandaBigDownL;
+	public static Animation marioPandaDownFallR, marioPandaDownFallL, marioPandaDownBigFallR, marioPandaDownBigFallL;
+	public static Animation marioPandaBigStillL, marioPandaBigWalkLeft, marioPandaBigJumpL;
+	
+	public static Animation SmarioPandaStillR, SmarioPandaWalkRight, SmarioPandaJumpR, SmarioPandaDown;
+	public static Animation SmarioPandaStillL, SmarioPandaWalkLeft, SmarioPandaJumpL;
+	public static Animation SmarioPandaBigStillR, SmarioPandaBigWalkRight, SmarioPandaBigJumpR;
+	public static Animation SmarioPandaDownR, SmarioPandaDownL, SmarioPandaBigDownR, SmarioPandaBigDownL;
+	public static Animation SmarioPandaDownFallR, SmarioPandaDownFallL, SmarioPandaDownBigFallR, SmarioPandaDownBigFallL;
+	public static Animation SmarioPandaBigStillL, SmarioPandaBigWalkLeft, SmarioPandaBigJumpL;
+	
+	public static Animation FmarioPandaStillR, FmarioPandaWalkRight, FmarioPandaJumpR, FmarioPandaDown;
+	public static Animation FmarioPandaStillL, FmarioPandaWalkLeft, FmarioPandaJumpL;
+	public static Animation FmarioPandaBigStillR, FmarioPandaBigWalkRight, FmarioPandaBigJumpR;
+	public static Animation FmarioPandaDownR, FmarioPandaDownL, FmarioPandaBigDownR, FmarioPandaBigDownL;
+	public static Animation FmarioPandaDownFallR, FmarioPandaDownFallL, FmarioPandaDownBigFallR, FmarioPandaDownBigFallL;
+	public static Animation FmarioPandaBigStillL, FmarioPandaBigWalkLeft, FmarioPandaBigJumpL;
+	
 	public static Animation powerUp;
 	public static Animation qBlockStill, qBlockHit, qBlockHitDown, qBlockDeadStill, qBlockDeadHit, qBlockDeadHitDown, bBlockStill,
 			bBlockHit, bBlockBreak, bBlockHitDown;
-			
+	public static Animation fireballShoot, fireballHit;
+	
 	public static boolean pet1Found, pet2Found, pet3Found, pet4Found;
 	public static char charLock1, charLock2, charLock3, charLock4;
 	public static boolean isMusicOn;
@@ -46,7 +63,7 @@ public class Game extends StateBasedGame {
 	public static Music marioTheme, marioUnderworld, marioCastle, marioStarman, marioLvlComplete, marioCastleComplete, marioDead,
 			marioGameOver, marioHurryUp;
 	public static Sound pandaPunch, sadPanda, itsPanda, pandaIcecream, marioBump, marioCoin, marioFireball, marioJump, marioKick, mario1Up,
-			marioPause, marioPowerUp, marioStageClear, marioFlag;
+			marioPause, marioPowerUp, marioStageClear, marioFlag, marioApearingPowerUp, marioBlockBreak, marioPowerDown, marioStomp;
 	public static Music metal01Intro, metal01Loop, metal02Intro, metal02Loop, metal03Intro, metal03Loop, metal04Intro, metal04Loop,
 			metal05Intro, metal05Loop, metal06Intro, metal06Loop, metal07Intro, metal07Loop, metal08Intro, metal08Loop, metal09Intro,
 			metal09Loop, metal10Intro, metal10Loop, metal11Intro, metal11Loop;
@@ -102,8 +119,8 @@ public class Game extends StateBasedGame {
 		charLock2 = '_';
 		charLock3 = '_';
 		charLock4 = '_';
-		
 		try {
+			this.getState(menu).init(gc, this);
 			this.getState(splash).init(gc, this);
 			this.getState(roam).init(gc, this);
 			this.getState(lvl01).init(gc, this);
@@ -111,8 +128,8 @@ public class Game extends StateBasedGame {
 			this.getState(lvl03).init(gc, this);
 			this.getState(lvl04).init(gc, this);
 			this.getState(lvlBoss).init(gc, this);
-			this.getState(menu).init(gc, this);
-			this.enterState(menu);
+			this.enterState(lvl01);
+			
 		} catch (SlickException e) {
 		}
 		
@@ -146,6 +163,10 @@ public class Game extends StateBasedGame {
 			marioPowerUp = new Sound("res/oggs/marioPowerUp.ogg");
 			marioStageClear = new Sound("res/oggs/marioStageClear.ogg");
 			marioFlag = new Sound("res/oggs/marioFlag.ogg");
+			marioApearingPowerUp = new Sound("res/oggs/marioApearingPowerUp.ogg");
+			marioBlockBreak = new Sound("res/oggs/marioBlockBreak.ogg");
+			marioPowerDown = new Sound("res/oggs/marioPowerDown.ogg");
+			marioStomp = new Sound("res/oggs/marioStomp.ogg");
 			
 			metal01Intro = new Music("res/oggs/metal01Intro.ogg");
 			metal01Loop = new Music("res/oggs/metal01Loop.ogg");
@@ -514,48 +535,202 @@ public class Game extends StateBasedGame {
 			marioPandaStillL = new Animation();
 			marioPandaWalkLeft = new Animation();
 			marioPandaJumpL = new Animation();
-			marioPandaBigRStill = new Animation();
+			marioPandaBigStillR = new Animation();
 			marioPandaBigWalkRight = new Animation();
 			marioPandaBigJumpR = new Animation();
-			marioPandaBigDown = new Animation();
-			marioPandaBigLStill = new Animation();
+			marioPandaBigDownR = new Animation();
+			marioPandaBigDownL = new Animation();
+			marioPandaDownR = new Animation();
+			marioPandaDownL = new Animation();
+			marioPandaBigStillL = new Animation();
 			marioPandaBigWalkLeft = new Animation();
 			marioPandaBigJumpL = new Animation();
-			
 			marioPandaDownFallR = new Animation();
 			marioPandaDownFallL = new Animation();
-			marioPandaBigDownFallR = new Animation();
-			marioPandaBigDownFallL = new Animation();
-			int ys = 1;
-			marioPandaStillR.addFrame(marioPanda.getSubImage(0, 32 + ys, 16, 16), 150);
-			marioPandaStillL.addFrame(marioPanda.getSubImage(0, 32 + ys, 16, 16).getFlippedCopy(true, false), 150);
+			marioPandaDownBigFallR = new Animation();
+			marioPandaDownBigFallL = new Animation();
 			
-			marioPandaWalkRight.addFrame(marioPanda.getSubImage(3 * 16, 32 + ys, 16, 16), 150);
-			marioPandaWalkLeft.addFrame(marioPanda.getSubImage(3 * 16, 32 + ys, 16, 16).getFlippedCopy(true, false), 150);
-			marioPandaBigWalkRight.addFrame(marioPanda.getSubImage(3 * 16, 0, 16, 32), 150);
-			marioPandaBigWalkLeft.addFrame(marioPanda.getSubImage(3 * 16, 0, 16, 32).getFlippedCopy(true, false), 150);
+			SmarioPandaStillR = new Animation();
+			SmarioPandaWalkRight = new Animation();
+			SmarioPandaJumpR = new Animation();
+			SmarioPandaDown = new Animation();
+			SmarioPandaStillL = new Animation();
+			SmarioPandaWalkLeft = new Animation();
+			SmarioPandaJumpL = new Animation();
+			SmarioPandaBigStillR = new Animation();
+			SmarioPandaBigWalkRight = new Animation();
+			SmarioPandaBigJumpR = new Animation();
+			SmarioPandaBigDownR = new Animation();
+			SmarioPandaBigDownL = new Animation();
+			SmarioPandaDownR = new Animation();
+			SmarioPandaDownL = new Animation();
+			SmarioPandaBigStillL = new Animation();
+			SmarioPandaBigWalkLeft = new Animation();
+			SmarioPandaBigJumpL = new Animation();
+			SmarioPandaDownFallR = new Animation();
+			SmarioPandaDownFallL = new Animation();
+			SmarioPandaDownBigFallR = new Animation();
+			SmarioPandaDownBigFallL = new Animation();
 			
-			for (int x = 1; x < 4; x++)
+			FmarioPandaStillR = new Animation();
+			FmarioPandaWalkRight = new Animation();
+			FmarioPandaJumpR = new Animation();
+			FmarioPandaDown = new Animation();
+			FmarioPandaStillL = new Animation();
+			FmarioPandaWalkLeft = new Animation();
+			FmarioPandaJumpL = new Animation();
+			FmarioPandaBigStillR = new Animation();
+			FmarioPandaBigWalkRight = new Animation();
+			FmarioPandaBigJumpR = new Animation();
+			FmarioPandaBigDownR = new Animation();
+			FmarioPandaBigDownL = new Animation();
+			FmarioPandaDownR = new Animation();
+			FmarioPandaDownL = new Animation();
+			FmarioPandaBigStillL = new Animation();
+			FmarioPandaBigWalkLeft = new Animation();
+			FmarioPandaBigJumpL = new Animation();
+			FmarioPandaDownFallR = new Animation();
+			FmarioPandaDownFallL = new Animation();
+			FmarioPandaDownBigFallR = new Animation();
+			FmarioPandaDownBigFallL = new Animation();
 			
-			{
-				marioPandaWalkRight.addFrame(marioPanda.getSubImage(x * 16, 2 * 16 + ys, 15, 16), 150);
-				marioPandaBigWalkRight.addFrame(marioPanda.getSubImage(x * 16, 0, 16, 32), 150);
-				marioPandaWalkLeft.addFrame(marioPanda.getSubImage(x * 16, 2 * 16 + ys, 16, 16).getFlippedCopy(true, false), 150);
-				marioPandaBigWalkLeft.addFrame(marioPanda.getSubImage(x * 16, 0, 16, 32).getFlippedCopy(true, false), 150);
-			}
+			// panda still
+			marioPandaStillR.addFrame(marioPanda.getSubImage(1, 34, 16, 32), 150);
+			marioPandaStillL.addFrame(marioPanda.getSubImage(1, 34, 16, 32).getFlippedCopy(true, false), 150);
+			marioPandaBigStillR.addFrame(marioPanda.getSubImage(1, 1, 16, 32), 150);
+			marioPandaBigStillL.addFrame(marioPanda.getSubImage(1, 1, 16, 32).getFlippedCopy(true, false), 150);
 			
-			marioPandaJumpR.addFrame(marioPanda.copy().getSubImage(5 * 16, 2 * 16 + ys, 16, 16), 150);
-			marioPandaJumpL.addFrame(marioPanda.copy().getSubImage(5 * 16, 2 * 16 + ys, 16, 16).getFlippedCopy(true, false), 150);
-			marioPandaBigJumpR.addFrame(marioPanda.copy().getSubImage(5 * 16, 0, 16, 32), 150);
-			marioPandaBigJumpL.addFrame(marioPanda.copy().getSubImage(5 * 16, 0, 16, 32).getFlippedCopy(true, false), 150);
+			// big Panda Right and Left
+			marioPandaBigWalkRight.addFrame(marioPanda.getSubImage(35, 1, 16, 32), 150);
+			marioPandaBigWalkRight.addFrame(marioPanda.getSubImage(18, 1, 16, 32), 150);
+			marioPandaBigWalkRight.addFrame(marioPanda.getSubImage(35, 1, 16, 32), 150);
+			marioPandaBigWalkRight.addFrame(marioPanda.getSubImage(52, 1, 16, 32), 150);
 			
-			marioPandaDown.addFrame(marioPanda.getSubImage(96, 32 + ys, 16, 16), 150);
-			marioPandaBigDown.addFrame(marioPanda.getSubImage(96, 0, 16, 32), 150);
+			marioPandaBigWalkLeft.addFrame(marioPanda.getSubImage(35, 1, 16, 32).getFlippedCopy(true, false), 150);
+			marioPandaBigWalkLeft.addFrame(marioPanda.getSubImage(18, 1, 16, 32).getFlippedCopy(true, false), 150);
+			marioPandaBigWalkLeft.addFrame(marioPanda.getSubImage(35, 1, 16, 32).getFlippedCopy(true, false), 150);
+			marioPandaBigWalkLeft.addFrame(marioPanda.getSubImage(52, 1, 16, 32).getFlippedCopy(true, false), 150);
 			
-			marioPandaDownFallR.addFrame(marioPanda.getSubImage(128, 32 + ys, 16, 16), 150);
-			marioPandaDownFallL.addFrame(marioPanda.getSubImage(128, 32 + ys, 16, 16).getFlippedCopy(true, false), 150);
-			marioPandaBigDownFallR.addFrame(marioPanda.getSubImage(128, 0, 16, 32), 150);
-			marioPandaBigDownFallL.addFrame(marioPanda.getSubImage(128, 0, 16, 32).getFlippedCopy(true, false), 150);
+			// small Panda right and left
+			marioPandaWalkRight.addFrame(marioPanda.getSubImage(35, 34, 16, 32), 150);
+			marioPandaWalkRight.addFrame(marioPanda.getSubImage(18, 34, 16, 32), 150);
+			marioPandaWalkRight.addFrame(marioPanda.getSubImage(35, 34, 16, 32), 150);
+			marioPandaWalkRight.addFrame(marioPanda.getSubImage(52, 34, 16, 32), 150);
+			
+			marioPandaWalkLeft.addFrame(marioPanda.getSubImage(35, 34, 16, 32).getFlippedCopy(true, false), 150);
+			marioPandaWalkLeft.addFrame(marioPanda.getSubImage(18, 34, 16, 32).getFlippedCopy(true, false), 150);
+			marioPandaWalkLeft.addFrame(marioPanda.getSubImage(35, 34, 16, 32).getFlippedCopy(true, false), 150);
+			marioPandaWalkLeft.addFrame(marioPanda.getSubImage(52, 34, 16, 32).getFlippedCopy(true, false), 150);
+			
+			// panda jump
+			marioPandaJumpR.addFrame(marioPanda.copy().getSubImage(86, 34, 16, 32), 150);
+			marioPandaJumpL.addFrame(marioPanda.copy().getSubImage(86, 34, 16, 32).getFlippedCopy(true, false), 150);
+			marioPandaBigJumpR.addFrame(marioPanda.copy().getSubImage(86, 1, 16, 32), 150);
+			marioPandaBigJumpL.addFrame(marioPanda.copy().getSubImage(86, 1, 16, 32).getFlippedCopy(true, false), 150);
+			
+			// panda down
+			marioPandaDownR.addFrame(marioPanda.getSubImage(120, 34, 16, 32), 150);
+			marioPandaDownL.addFrame(marioPanda.getSubImage(120, 34, 16, 32).getFlippedCopy(true, false), 150);
+			marioPandaBigDownR.addFrame(marioPanda.getSubImage(103, 1, 16, 32), 150);
+			marioPandaBigDownL.addFrame(marioPanda.getSubImage(103, 1, 16, 32).getFlippedCopy(true, false), 150);
+			
+			// panda downFall
+			marioPandaDownFallR.addFrame(marioPanda.getSubImage(139, 34, 16, 32), 150);
+			marioPandaDownFallL.addFrame(marioPanda.getSubImage(139, 34, 16, 32).getFlippedCopy(true, false), 150);
+			marioPandaDownBigFallR.addFrame(marioPanda.getSubImage(138, 1, 16, 32), 150);
+			marioPandaDownBigFallL.addFrame(marioPanda.getSubImage(138, 1, 16, 32).getFlippedCopy(true, false), 150);
+			
+			// panda still
+			SmarioPandaStillR.addFrame(marioPanda.getSubImage(1, 174, 16, 32), 150);
+			SmarioPandaStillL.addFrame(marioPanda.getSubImage(1, 174, 16, 32).getFlippedCopy(true, false), 150);
+			SmarioPandaBigStillR.addFrame(marioPanda.getSubImage(1, 141, 16, 32), 150);
+			SmarioPandaBigStillL.addFrame(marioPanda.getSubImage(1, 141, 16, 32).getFlippedCopy(true, false), 150);
+			
+			// big Panda Right and Left
+			SmarioPandaBigWalkRight.addFrame(marioPanda.getSubImage(35, 141, 16, 32), 150);
+			SmarioPandaBigWalkRight.addFrame(marioPanda.getSubImage(18, 141, 16, 32), 150);
+			SmarioPandaBigWalkRight.addFrame(marioPanda.getSubImage(35, 141, 16, 32), 150);
+			SmarioPandaBigWalkRight.addFrame(marioPanda.getSubImage(52, 141, 16, 32), 150);
+			
+			SmarioPandaBigWalkLeft.addFrame(marioPanda.getSubImage(35, 141, 16, 32).getFlippedCopy(true, false), 150);
+			SmarioPandaBigWalkLeft.addFrame(marioPanda.getSubImage(18, 141, 16, 32).getFlippedCopy(true, false), 150);
+			SmarioPandaBigWalkLeft.addFrame(marioPanda.getSubImage(35, 141, 16, 32).getFlippedCopy(true, false), 150);
+			SmarioPandaBigWalkLeft.addFrame(marioPanda.getSubImage(52, 141, 16, 32).getFlippedCopy(true, false), 150);
+			
+			// small Panda right and left
+			SmarioPandaWalkRight.addFrame(marioPanda.getSubImage(35, 174, 16, 32), 150);
+			SmarioPandaWalkRight.addFrame(marioPanda.getSubImage(18, 174, 16, 32), 150);
+			SmarioPandaWalkRight.addFrame(marioPanda.getSubImage(35, 174, 16, 32), 150);
+			SmarioPandaWalkRight.addFrame(marioPanda.getSubImage(52, 174, 16, 32), 150);
+			
+			SmarioPandaWalkLeft.addFrame(marioPanda.getSubImage(35, 174, 16, 32).getFlippedCopy(true, false), 150);
+			SmarioPandaWalkLeft.addFrame(marioPanda.getSubImage(18, 174, 16, 32).getFlippedCopy(true, false), 150);
+			SmarioPandaWalkLeft.addFrame(marioPanda.getSubImage(35, 174, 16, 32).getFlippedCopy(true, false), 150);
+			SmarioPandaWalkLeft.addFrame(marioPanda.getSubImage(52, 174, 16, 32).getFlippedCopy(true, false), 150);
+			
+			// panda jump
+			SmarioPandaJumpR.addFrame(marioPanda.copy().getSubImage(86, 174, 16, 32), 150);
+			SmarioPandaJumpL.addFrame(marioPanda.copy().getSubImage(86, 174, 16, 32).getFlippedCopy(true, false), 150);
+			SmarioPandaBigJumpR.addFrame(marioPanda.copy().getSubImage(86, 141, 16, 32), 150);
+			SmarioPandaBigJumpL.addFrame(marioPanda.copy().getSubImage(86, 141, 16, 32).getFlippedCopy(true, false), 150);
+			
+			// panda down
+			SmarioPandaDownR.addFrame(marioPanda.getSubImage(120, 174, 16, 32), 150);
+			SmarioPandaDownL.addFrame(marioPanda.getSubImage(120, 174, 16, 32).getFlippedCopy(true, false), 150);
+			SmarioPandaBigDownR.addFrame(marioPanda.getSubImage(103, 141, 16, 32), 150);
+			SmarioPandaBigDownL.addFrame(marioPanda.getSubImage(103, 141, 16, 32).getFlippedCopy(true, false), 150);
+			
+			// panda downFall
+			SmarioPandaDownFallR.addFrame(marioPanda.getSubImage(139, 174, 16, 32), 150);
+			SmarioPandaDownFallL.addFrame(marioPanda.getSubImage(139, 174, 16, 32).getFlippedCopy(true, false), 150);
+			SmarioPandaDownBigFallR.addFrame(marioPanda.getSubImage(138, 141, 16, 32), 150);
+			SmarioPandaDownBigFallL.addFrame(marioPanda.getSubImage(138, 141, 16, 32).getFlippedCopy(true, false), 150);
+			
+			// panda still
+			FmarioPandaStillR.addFrame(marioPanda.getSubImage(1, 104, 16, 32), 150);
+			FmarioPandaStillL.addFrame(marioPanda.getSubImage(1, 104, 16, 32).getFlippedCopy(true, false), 150);
+			FmarioPandaBigStillR.addFrame(marioPanda.getSubImage(1, 71, 16, 32), 150);
+			FmarioPandaBigStillL.addFrame(marioPanda.getSubImage(1, 71, 16, 32).getFlippedCopy(true, false), 150);
+			
+			// big Panda Right and Left
+			FmarioPandaBigWalkRight.addFrame(marioPanda.getSubImage(35, 71, 16, 32), 150);
+			FmarioPandaBigWalkRight.addFrame(marioPanda.getSubImage(18, 71, 16, 32), 150);
+			FmarioPandaBigWalkRight.addFrame(marioPanda.getSubImage(35, 71, 16, 32), 150);
+			FmarioPandaBigWalkRight.addFrame(marioPanda.getSubImage(52, 71, 16, 32), 150);
+			
+			FmarioPandaBigWalkLeft.addFrame(marioPanda.getSubImage(35, 71, 16, 32).getFlippedCopy(true, false), 150);
+			FmarioPandaBigWalkLeft.addFrame(marioPanda.getSubImage(18, 71, 16, 32).getFlippedCopy(true, false), 150);
+			FmarioPandaBigWalkLeft.addFrame(marioPanda.getSubImage(35, 71, 16, 32).getFlippedCopy(true, false), 150);
+			FmarioPandaBigWalkLeft.addFrame(marioPanda.getSubImage(52, 71, 16, 32).getFlippedCopy(true, false), 150);
+			
+			// small Panda right and left
+			FmarioPandaWalkRight.addFrame(marioPanda.getSubImage(35, 104, 16, 32), 150);
+			FmarioPandaWalkRight.addFrame(marioPanda.getSubImage(18, 104, 16, 32), 150);
+			FmarioPandaWalkRight.addFrame(marioPanda.getSubImage(35, 104, 16, 32), 150);
+			FmarioPandaWalkRight.addFrame(marioPanda.getSubImage(52, 104, 16, 32), 150);
+			
+			FmarioPandaWalkLeft.addFrame(marioPanda.getSubImage(35, 104, 16, 32).getFlippedCopy(true, false), 150);
+			FmarioPandaWalkLeft.addFrame(marioPanda.getSubImage(18, 104, 16, 32).getFlippedCopy(true, false), 150);
+			FmarioPandaWalkLeft.addFrame(marioPanda.getSubImage(35, 104, 16, 32).getFlippedCopy(true, false), 150);
+			FmarioPandaWalkLeft.addFrame(marioPanda.getSubImage(52, 104, 16, 32).getFlippedCopy(true, false), 150);
+			
+			// panda jump
+			FmarioPandaJumpR.addFrame(marioPanda.copy().getSubImage(86, 104, 16, 32), 150);
+			FmarioPandaJumpL.addFrame(marioPanda.copy().getSubImage(86, 104, 16, 32).getFlippedCopy(true, false), 150);
+			FmarioPandaBigJumpR.addFrame(marioPanda.copy().getSubImage(86, 71, 16, 32), 150);
+			FmarioPandaBigJumpL.addFrame(marioPanda.copy().getSubImage(86, 71, 16, 32).getFlippedCopy(true, false), 150);
+			
+			// panda down
+			FmarioPandaDownR.addFrame(marioPanda.getSubImage(120, 104, 16, 32), 150);
+			FmarioPandaDownL.addFrame(marioPanda.getSubImage(120, 104, 16, 32).getFlippedCopy(true, false), 150);
+			FmarioPandaBigDownR.addFrame(marioPanda.getSubImage(104, 71, 16, 32), 150);
+			FmarioPandaBigDownL.addFrame(marioPanda.getSubImage(104, 71, 16, 32).getFlippedCopy(true, false), 150);
+			
+			// panda downFall
+			FmarioPandaDownFallR.addFrame(marioPanda.getSubImage(139, 104, 16, 32), 150);
+			FmarioPandaDownFallL.addFrame(marioPanda.getSubImage(139, 104, 16, 32).getFlippedCopy(true, false), 150);
+			FmarioPandaDownBigFallR.addFrame(marioPanda.getSubImage(138, 71, 16, 32), 150);
+			FmarioPandaDownBigFallL.addFrame(marioPanda.getSubImage(138, 71, 16, 32).getFlippedCopy(true, false), 150);
 			
 			// mushroom enemy
 			Image mush = new Image("res/sprites/mushroom.png");
@@ -622,6 +797,19 @@ public class Game extends StateBasedGame {
 			pwrStar.addFrame(pwrUps.getSubImage(131, 2, 14, 16), 150);
 			pwrStar.addFrame(pwrUps.getSubImage(150, 2, 14, 16), 150);
 			
+			fireballShoot = new Animation();
+			fireballHit = new Animation();
+			
+			Image fireballs = new Image("res/pngs/fireballs.png");
+			
+			fireballShoot.addFrame(fireballs.getSubImage(1, 1, 16, 16), 80);
+			fireballShoot.addFrame(fireballs.getSubImage(17 + 1, 1, 16, 16), 80);
+			fireballShoot.addFrame(fireballs.getSubImage(2 * 17 + 1, 1, 16, 16), 80);
+			fireballShoot.addFrame(fireballs.getSubImage(3 * 17 + 1, 1, 16, 16), 80);
+			
+			fireballHit.addFrame(fireballs.getSubImage(4 * 17 + 1, 1, 16, 16), 150);
+			fireballHit.addFrame(fireballs.getSubImage(5 * 17 + 1, 1, 16, 16), 150);
+			fireballHit.addFrame(fireballs.getSubImage(6 * 17 + 1, 1, 16, 16), 150);
 			
 		} catch (SlickException e) {
 		}
