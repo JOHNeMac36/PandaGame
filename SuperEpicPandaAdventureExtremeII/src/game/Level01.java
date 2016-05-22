@@ -6,6 +6,7 @@ import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
@@ -14,6 +15,8 @@ import org.newdawn.slick.tiled.TiledMap;
 
 public class Level01 extends BasicGameState {
 	
+	private Animation bBlockBreak;
+	private static Animation[] a;
 	private static Mario panda;
 	private static TiledMap map;
 	private static Input input;
@@ -75,6 +78,7 @@ public class Level01 extends BasicGameState {
 		renderMap(gc, sbg, g);
 		renderPowerUps(gc, sbg, g);
 		renderBlocks(gc, sbg, g);
+		renderBlockBreaks(gc, sbg, g);
 		renderEnemies(gc, sbg, g);
 		renderFireball(gc, sbg, g);
 		panda.panda.draw((panda.x - (int) mapXL) * tileWidth * zoomFactor, panda.y * tileHeight * zoomFactor - 64, 32, 64);
@@ -114,7 +118,7 @@ public class Level01 extends BasicGameState {
 				updateMovement(gc, sbg, t);
 				updateFireball(gc, sbg, t);
 				updateJumpingFalling(gc, sbg, t);
-				updateBlocks();
+				updateBlocks(t);
 				updatePowerUpMovement(t);
 				checkIsDead(gc, sbg, t);
 				updateEnemyMovement();
@@ -137,7 +141,7 @@ public class Level01 extends BasicGameState {
 		}
 	}
 	
-	private static void checkEnterState(GameContainer gc, StateBasedGame sbg, int t) throws SlickException {
+	private void checkEnterState(GameContainer gc, StateBasedGame sbg, int t) throws SlickException {
 		// enterState
 		if (map.getTileId((int) panda.x, (int) panda.y, enterStateLayer) != 0) {
 			panda.panda = Game.marioPandaDown;
@@ -224,7 +228,17 @@ public class Level01 extends BasicGameState {
 		}
 	}
 	
-	private static void initBlocks() {
+	private void initBlocks() throws SlickException {
+		a = new Animation[30];
+		Image im = new Image("res/pngs/marioBlocks.png");
+		bBlockBreak = new Animation();
+		bBlockBreak.addFrame(im.getSubImage(1, 65, 88, 90), 50);
+		bBlockBreak.addFrame(im.getSubImage(81, 65, 90, 90), 50);
+		bBlockBreak.addFrame(im.getSubImage(192, 65, 90, 90), 50);
+		bBlockBreak.addFrame(im.getSubImage(1, 1, 1, 1), 100000);
+		for (int i = 0; i < a.length; i++) {
+			a[i] = bBlockBreak;
+		}
 		blocks = new Block[43];
 		blocks[0] = new QBlock(16, 17);
 		blocks[1] = new QBlock(21, 17);
@@ -315,35 +329,40 @@ public class Level01 extends BasicGameState {
 	}
 	
 	private static void renderBlocks(GameContainer gc, StateBasedGame sbg, Graphics g) {
-		g.scale(zoomFactor, zoomFactor);
+		// g.scale(zoomFactor, zoomFactor);
 		
 		for (int i = 0; i < blocks.length; i++) {
-			switch (blocks[i].type) {
-				case Block.Q:
-					if (blocks[i].x >= mapXL - 1 && blocks[i].x <= mapXL + 25) {
-						switch (blocks[i].state) {
-							case Block.STILL:
-								Game.qBlockStill.draw((blocks[i].x - (int) mapXL) * tileWidth * zoomFactor / zoomFactor,
-										(blocks[i].y) * tileHeight * zoomFactor / zoomFactor);
-								break;
-							case Block.HIT:
-								Game.qBlockDeadStill.draw((blocks[i].x - (int) mapXL) * tileWidth * zoomFactor / zoomFactor,
-										(blocks[i].y) * tileHeight * zoomFactor / zoomFactor);
-								break;
-						}
-					}
-					break;
-				case Block.B:
-					if (blocks[i].x >= mapXL - 1 && blocks[i].x <= mapXL + 25)
-						Game.bBlockStill.draw((blocks[i].x - (int) mapXL) * tileWidth * zoomFactor / zoomFactor,
-								(blocks[i].y) * tileHeight * zoomFactor / zoomFactor);
-					break;
+			if (blocks[i].x >= mapXL - 1 && blocks[i].x <= mapXL + 25) {
+				switch (blocks[i].type) {
+					case Block.B:
+						if (blocks[i].x >= mapXL - 1 && blocks[i].x <= mapXL + 25) if (blocks[i].state != Block.BROKE)
+							Game.bBlock.draw((blocks[i].x - (int) mapXL) * tileWidth * zoomFactor, (blocks[i].y) * tileHeight * zoomFactor);
+						break;
+					case Block.Q:
+						if (blocks[i].isDead) Game.qBlockDead.draw((blocks[i].x - (int) mapXL) * tileWidth * zoomFactor,
+								(blocks[i].y) * tileHeight * zoomFactor);
+						else
+							Game.qBlock.draw((blocks[i].x - (int) mapXL) * tileWidth * zoomFactor, (blocks[i].y) * tileHeight * zoomFactor);
+				}
 			}
 		}
-		for (int i = 0; i < blocks.length; i++) {
 		
+		// g.scale(1f / zoomFactor, 1f / zoomFactor);
+	}
+	
+	private void renderBlockBreaks(GameContainer gc, StateBasedGame sbg, Graphics g) {
+		for (int i = 0; i < blocks.length; i++) {
+			if (blocks[i].x >= mapXL - 1 && blocks[i].x <= mapXL + 25) {
+				switch (blocks[i].type) {
+					case Block.B:
+						if (blocks[i].x >= mapXL - 1 && blocks[i].x <= mapXL + 25)
+							if (blocks[i].state == Block.BROKE && totalTime - blocks[i].timeOfHit < 151) {
+							a[i - 13].draw((blocks[i].x - (int) mapXL) * tileWidth * zoomFactor, (blocks[i].y) * tileHeight * zoomFactor);
+						}
+						break;
+				}
+			}
 		}
-		g.scale(1 / zoomFactor, 1 / zoomFactor);
 	}
 	
 	private static void renderEnemies(GameContainer gc, StateBasedGame sbg, Graphics g) {
@@ -376,6 +395,7 @@ public class Level01 extends BasicGameState {
 		g.scale(1f / zoomFactor, 1f / zoomFactor);
 	}
 	
+	@SuppressWarnings("unused")
 	private static void renderInfo(GameContainer gc, StateBasedGame sbg, Graphics g) {
 		g.setColor(Color.white);
 		String str;
@@ -458,7 +478,7 @@ public class Level01 extends BasicGameState {
 		g.scale(1 / zoomFactor, 1 / zoomFactor);
 	}
 	
-	private static void resetState(GameContainer gc, StateBasedGame sbg) throws SlickException {
+	private void resetState(GameContainer gc, StateBasedGame sbg) throws SlickException {
 		isMenuUp = true;
 		isStalled = false;
 		panda.isDead = false;
@@ -496,27 +516,107 @@ public class Level01 extends BasicGameState {
 		}
 	}
 	
-	private static void updateBlocks() {
-		for (int i = 0; i < 13; i++) {
+	private static void updateBlocks(int t) {
+		for (int i = 0; i < blocks.length; i++) {
 			if ((int) (panda.isSmall ? panda.y - 3.01f : panda.y - 6.02f) == blocks[i].y
-					&& (((int) panda.x == blocks[i].x || (int) (panda.x + .5) == blocks[i].x)) && !panda.isFalling) {
-				if (blocks[i].state == Block.STILL) {
-					powerUps[i].isDead = false;
-					powerUps[i].timeOfLife = totalTime;
-					powerUps[i].isUp = true;
+					&& (((int) panda.x == blocks[i].x || (int) (panda.x + .5f) == blocks[i].x)) && !panda.isFalling) {
+				if (blocks[i].type == Block.Q) {
+					if (!blocks[i].isDead) {
+						powerUps[i].isDead = false;
+						powerUps[i].timeOfLife = totalTime;
+						powerUps[i].isUp = true;
+					}
+					blocks[i].state = Block.HIT;
+					blocks[i].isDead = true;
+					blocks[i].timeOfHit = totalTime;
+					for (int j = 0; j < enemies.length; j++) {
+						if (!enemies[j].isDead && Math.abs((int) enemies[j].x - blocks[i].x) < .8f
+								&& Math.abs((int) enemies[j].x - blocks[i].x) < .8f)
+							enemies[j].isDead = true;
+					}
 				}
-				blocks[i].state = Block.HIT;
+				if (blocks[i].type == Block.B && !blocks[i].isDead) {
+					blocks[i].state = panda.isSmall ? Block.HIT : Block.BROKE;
+					if (blocks[i].state == Block.BROKE) blocks[i].isDead = true;
+					blocks[i].timeOfHit = totalTime;
+					if (panda.isSmall) Game.marioBump.play();
+					else
+						Game.marioBlockBreak.play();
+					if (blocks[i].timeOfHit == totalTime && blocks[i].type == Block.B) a[i - 13].restart();
+					if (!panda.isSmall) {
+						map.setTileId((int) blocks[i].x, (int) blocks[i].y, objectLayer, 0);
+						map.setTileId((int) blocks[i].x, (int) blocks[i].y + 1, objectLayer, 0);
+						panda.isFalling = true;
+						panda.isJumping = false;
+					}
+					for (int j = 0; j < enemies.length; j++) {
+						if (!enemies[j].isDead && Math.abs((int) enemies[j].x - blocks[i].x) < .8f
+								&& Math.abs((int) enemies[j].x - blocks[i].x) < .8f)
+							enemies[j].isDead = true;
+					}
+				}
 			}
-			if (panda.isFalling && input.isKeyDown(Input.KEY_DOWN) && (int) (panda.y + .2f) == blocks[i].y
-					&& (((int) panda.x == blocks[i].x) || (int) (panda.x + .5) == blocks[i].x)) {
-					
-				if (blocks[i].state == Block.STILL) {
-					powerUps[i].isDead = false;
-					powerUps[i].timeOfLife = totalTime;
-					powerUps[i].isUp = false;
-					powerUps[i].y += 1.9f;
+			if (panda.isFalling && input.isKeyDown(Input.KEY_DOWN) && (int) (panda.y + .8f) == blocks[i].y
+					&& (((int) panda.x == blocks[i].x) || (int) (panda.x + .8f) == blocks[i].x)) {
+				if (blocks[i].type == Block.Q && blocks[i].state == Block.STILL) {
+					if (!blocks[i].isDead) {
+						powerUps[i].isDead = false;
+						powerUps[i].timeOfLife = totalTime;
+						powerUps[i].isUp = false;
+						powerUps[i].y += 1.9f;
+					}
+					blocks[i].state = Block.HITDOWN;
+					blocks[i].isDead = true;
+					blocks[i].timeOfHit = totalTime;
+					for (int j = 0; j < enemies.length; j++) {
+						if (!enemies[j].isDead && Math.abs((int) enemies[j].x - blocks[i].x) < .8f
+								&& Math.abs((int) enemies[j].x - blocks[i].x) < .8f)
+							enemies[j].isDead = true;
+					}
 				}
-				blocks[i].state = Block.HIT;
+				if (blocks[i].type == Block.B && !blocks[i].isDead) {
+					blocks[i].state = panda.isSmall ? Block.HITDOWN : Block.BROKE;
+					if (blocks[i].state == Block.BROKE) blocks[i].isDead = true;
+					blocks[i].timeOfHit = totalTime;
+					if (panda.isSmall) Game.marioBump.play();
+					else
+						Game.marioBlockBreak.play();
+					if (blocks[i].timeOfHit == totalTime) a[i - 13].restart();
+					if (!panda.isSmall) {
+						map.setTileId((int) blocks[i].x, (int) blocks[i].y, objectLayer, 0);
+						map.setTileId((int) blocks[i].x, (int) blocks[i].y + 1, objectLayer, 0);
+					}
+					for (int j = 0; j < enemies.length; j++) {
+						if (!enemies[j].isDead && Math.abs((int) enemies[j].x - blocks[i].x) < .8f
+								&& Math.abs((int) enemies[j].x - blocks[i].x) < .8f)
+							enemies[j].isDead = true;
+					}
+				}
+			}
+			
+			if (blocks[i].timeOfHit != -1) {
+				if (blocks[i].state != Block.BROKE && totalTime - blocks[i].timeOfHit < 20) {
+					if (blocks[i].state == Block.HIT) blocks[i].y -= .02f;
+					if (blocks[i].state == Block.HITDOWN) blocks[i].y += .02f;
+				}
+				if (blocks[i].state != Block.BROKE && totalTime - blocks[i].timeOfHit >= 20 && totalTime - blocks[i].timeOfHit < 40) {
+					if (blocks[i].state == Block.HIT) blocks[i].y += .02f;
+					if (blocks[i].state == Block.HITDOWN) blocks[i].y -= .02f;
+				}
+				if (blocks[i].state != Block.BROKE && totalTime - blocks[i].timeOfHit == 100) {
+					blocks[i].timeOfHit = -1;
+					blocks[i].state = Block.STILL;
+				}
+			}
+			
+			// if (i > 0 && blocks[i].timeOfHit != -1 && blocks[i - 1].timeOfHit
+			// != -1) {
+			// blocks[i - 1].timeOfHit = -1;
+			// blocks[i - 1].state = Block.STILL;
+			// }
+			if (blocks[i].type == Block.B && blocks[i].state == Block.BROKE) {
+				blocks[i].y += fireballSpeed;
+				blocks[i].isDead = true;
 			}
 		}
 	}
@@ -839,14 +939,13 @@ public class Level01 extends BasicGameState {
 			panda.isJumping = true;
 			if (Game.isMusicOn) Game.marioJump.play();
 		}
-		panda.fireballCoolDown--;
+		
 		if (input.isKeyPressed(Input.KEY_Z) && panda.isFlower) {
 			fireballs.add(new Fireball(panda.x + .8f, panda.y - (panda.isSmall ? 1 : 2), (panda.isSmall ? 1 : 2)));
-			panda.fireballCoolDown = 5000;
 			Game.marioFireball.play();
 		}
 		if (!(input.isKeyDown(Input.KEY_LEFT) || input.isKeyDown(Input.KEY_RIGHT) || panda.isJumping || panda.isFalling)) {
-			switch (panda.last) {
+			switch (Mario.last) {
 				case 'l':
 					if (panda.isSmall) {
 						panda.panda = Game.marioPandaStillL;
@@ -911,7 +1010,7 @@ public class Level01 extends BasicGameState {
 				}
 			}
 			
-			panda.last = 'l';
+			Mario.last = 'l';
 			if (panda.y <= 1) panda.x -= .03f;
 			else if (panda.x - .03f >= mapXL
 					&& map.getTileId((int) (panda.x - 0.03f), (int) (panda.isSmall ? panda.y - 1f / 6f : panda.y - 1f / 6f),
@@ -1044,7 +1143,7 @@ public class Level01 extends BasicGameState {
 		}
 	}
 	
-	private static void updateWinScene(GameContainer gc, StateBasedGame sbg, int t) throws SlickException {
+	private void updateWinScene(GameContainer gc, StateBasedGame sbg, int t) throws SlickException {
 		won = true;
 		oneHitWin++;
 		
@@ -1095,7 +1194,7 @@ public class Level01 extends BasicGameState {
 					if (panda.isFlower) panda.panda = Game.FmarioPandaStillR;
 					if (panda.isStarred) panda.panda = Game.SmarioPandaStillR;
 				} else {
-					panda.panda = Game.marioPandaBigWalkRight;
+					panda.panda = Game.marioPandaBigStillR;
 					if (panda.isFlower) panda.panda = Game.FmarioPandaBigStillR;
 					if (panda.isStarred) panda.panda = Game.SmarioPandaBigStillR;
 				}
@@ -1125,15 +1224,17 @@ class BBlock extends Block {
 
 abstract class Block {
 	public float x, y;
-	public int type, state;
-	public static final int Q = 0, B = 1, STILL = 2, HIT = 3, HITDOWN = 4, BROKE = 5, DEADSTILL = 6, DEADHIT = 7, DEADHITDOWN = 9;
+	public int type, state, timeOfHit;
+	public static final int Q = 0, B = 1, STILL = 2, HIT = 3, HITDOWN = 4, BROKE = 5;
+	public boolean isDead;
 	
 	public Block(float x, float y) {
 		this.x = x;
 		this.y = y;
 		this.state = STILL;
+		this.timeOfHit = -1;
+		this.isDead = false;
 	}
-	
 }
 
 class Coin extends PowerUp {
@@ -1194,6 +1295,7 @@ class Flower extends PowerUp {
 
 class Goomba extends Enemy {
 	
+	@SuppressWarnings("static-access")
 	public Goomba(float x, float y) {
 		super(x, y);
 		type = super.GOOMBA;

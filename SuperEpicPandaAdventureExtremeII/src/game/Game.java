@@ -50,8 +50,8 @@ public class Game extends StateBasedGame {
 	public static Animation FmarioPandaBigStillL, FmarioPandaBigWalkLeft, FmarioPandaBigJumpL;
 	
 	public static Animation powerUp;
-	public static Animation qBlockStill, qBlockHit, qBlockHitDown, qBlockDeadStill, qBlockDeadHit, qBlockDeadHitDown, bBlockStill,
-			bBlockHit, bBlockBreak, bBlockHitDown;
+	public static Animation qBlock, qBlockDead, bBlock;
+	public Animation bBlockBreak;
 	public static Animation fireballShoot, fireballHit;
 	
 	public static boolean pet1Found, pet2Found, pet3Found, pet4Found;
@@ -80,7 +80,7 @@ public class Game extends StateBasedGame {
 		try {
 			appgc = new AppGameContainer(new Game(gamename));
 			appgc.setDisplayMode(640, 640, false);
-			appgc.setShowFPS(true);
+			appgc.setShowFPS(false);
 			appgc.setTargetFrameRate(350);
 			appgc.setUpdateOnlyWhenVisible(false);
 			appgc.setSmoothDeltas(false);
@@ -99,8 +99,7 @@ public class Game extends StateBasedGame {
 		this.addState(new Level02(lvl02));
 		this.addState(new Level03(lvl03));
 		this.addState(new Level04(lvl04));
-		this.addState(new LevelBoss(lvl01));
-		
+		this.addState(new LevelBoss(lvlBoss));
 	}
 	
 	@Override
@@ -741,36 +740,24 @@ public class Game extends StateBasedGame {
 			mushroomDead.addFrame(mush.getSubImage(35, 1, 16, 16), 150);
 			
 			// blocks
-			qBlockStill = new Animation();
-			qBlockHit = new Animation();
-			qBlockHitDown = new Animation();
-			qBlockDeadHit = new Animation();
-			qBlockDeadStill = new Animation();
-			qBlockDeadHitDown = new Animation();
-			bBlockStill = new Animation();
-			bBlockHit = new Animation();
+			qBlock = new Animation();
+			qBlockDead = new Animation();
+			bBlock = new Animation();
 			bBlockBreak = new Animation();
-			bBlockHitDown = new Animation();
 			
 			Image blocks = new Image("res/pngs/marioBlocks.png");
 			
-			bBlockHitDown.addFrame(blocks.getSubImage(1, 1, 16, 16 + 8), 150);
-			bBlockHit.addFrame(blocks.getSubImage(1, 16 + 1 + 8, 16, 16 + 8), 150);
-			bBlockStill.addFrame(blocks.getSubImage(1, 9, 16, 16), 150);
-			bBlockBreak.addFrame(blocks.getSubImage(1, 33, 16, 17), 150);
-			bBlockBreak.addFrame(blocks.getSubImage(1, 33, 16, 17), 150);
-			bBlockBreak.addFrame(blocks.getSubImage(19, 33, 17, 18), 150);
-			bBlockBreak.addFrame(blocks.getSubImage(37, 33, 19, 19), 150);
+			bBlock.addFrame(blocks.getSubImage(1, 1, 40, 40), 150);
+			qBlockDead.addFrame(blocks.getSubImage(42, 1, 40, 40), 150);
 			
-			qBlockDeadHitDown.addFrame(blocks.getSubImage(18, 1, 16, 16 + 8), 150);
-			qBlockDeadHit.addFrame(blocks.getSubImage(18, 16 + 1 + 8, 16, 16 + 8), 150);
-			qBlockDeadStill.addFrame(blocks.getSubImage(18, 9, 16, 16), 150);
+			qBlock.addFrame(blocks.getSubImage(83, 1, 40, 40), 270 * 2);
+			qBlock.addFrame(blocks.getSubImage(124, 1, 40, 40), 200);
+			qBlock.addFrame(blocks.getSubImage(165, 1, 40, 40), 200);
 			
-			qBlockHitDown.addFrame(blocks.getSubImage(35, 1, 16, 16 + 8), 150);
-			qBlockHit.addFrame(blocks.getSubImage(35, 9, 16, 16 + 8), 150);
-			qBlockStill.addFrame(blocks.getSubImage(35, 9, 16, 16), 270);
-			qBlockStill.addFrame(blocks.getSubImage(35 + 17, 9, 16, 16), 100);
-			qBlockStill.addFrame(blocks.getSubImage(35 + 17 * 2, 9, 16, 16), 100);
+			bBlockBreak.addFrame(blocks.getSubImage(1, 65, 90, 90), 150);
+			bBlockBreak.addFrame(blocks.getSubImage(81, 65, 90, 90), 150);
+			bBlockBreak.addFrame(blocks.getSubImage(192, 65, 90, 90), 300);
+			bBlockBreak.addFrame(blocks.getSubImage(1, 1, 1, 1), 100000);
 			
 			// powerUps
 			pwrCoin = new Animation();
