@@ -415,7 +415,7 @@ public class Roam extends BasicGameState {
 				
 				lastChar = 1;
 				if (Game.pet1Found) {
-					say("Thanks for your help!! Here Flappy...");
+					say("Thanks for your help!! Here Fluffly...");
 					lastChar = 0;
 				}
 				
@@ -425,7 +425,7 @@ public class Roam extends BasicGameState {
 				say("Hello there! I lost my wittle pet, Fluffly, yesturday!\n" + "Can you help me find him?");
 				lastChar = 1;
 				if (Game.pet1Found) {
-					say("Thanks for your help!! Here Flappy...");
+					say("Thanks for your help!! Here Fluffly...");
 					lastChar = 0;
 				}
 			}
@@ -434,7 +434,7 @@ public class Roam extends BasicGameState {
 				say("Hello there! I lost my wittle pet, Fluffly, yesturday!\n" + "Can you help me find him?");
 				lastChar = 1;
 				if (Game.pet1Found) {
-					say("Thanks for your help!! Here Flappy...");
+					say("Thanks for your help!! Here Fluffly...");
 					lastChar = 0;
 				}
 			}
@@ -443,7 +443,7 @@ public class Roam extends BasicGameState {
 				say("Hello there! I lost my wittle pet, Fluffly, yesturday!\n" + "Can you help me find him?");
 				lastChar = 1;
 				if (Game.pet1Found) {
-					say("Thanks for your help!! Here Flappy...");
+					say("Thanks for your help!! Here Fluffly...");
 					lastChar = 0;
 				}
 			}
@@ -490,7 +490,7 @@ public class Roam extends BasicGameState {
 				say("Pandaman! Good thing you're here! Yesturday I lost Shelly, my turtle!\n" + "Can you help me find him?");
 				lastChar = 3;
 				if (Game.pet3Found) {
-					say("Thanks for your help!! Here Flappy...");
+					say("Thanks for your help!! Here Shelly...");
 					lastChar = 0;
 				}
 			}
@@ -499,7 +499,7 @@ public class Roam extends BasicGameState {
 				say("Pandaman! Good thing you're here! Yesturday I lost Shelly, my turtle!\n" + "Can you help me find him?");
 				lastChar = 3;
 				if (Game.pet3Found) {
-					say("Thanks for your help!! Here Flappy...");
+					say("Thanks for your help!! Here Shelly...");
 					lastChar = 0;
 				}
 			}
@@ -508,7 +508,7 @@ public class Roam extends BasicGameState {
 				say("Pandaman! Good thing you're here! Yesturday I lost Shelly, my turtle!\n" + "Can you help me find him?");
 				lastChar = 3;
 				if (Game.pet3Found) {
-					say("Thanks for your help!! Here Flappy...");
+					say("Thanks for your help!! Here Shelly...");
 					lastChar = 0;
 				}
 			}
@@ -517,7 +517,7 @@ public class Roam extends BasicGameState {
 				say("Pandaman! Good thing you're here! Yesturday I lost Shelly, my turtle!\n" + "Can you help me find him?");
 				lastChar = 3;
 				if (Game.pet3Found) {
-					say("Thanks for your help!! Here Flappy...");
+					say("Thanks for your help!! Here Shelly...");
 					lastChar = 0;
 				}
 			}
@@ -527,7 +527,7 @@ public class Roam extends BasicGameState {
 				say("I can't find Woof-Woof! He ranaway yesturday!\n" + "Can you find him for me?");
 				lastChar = 4;
 				if (Game.pet4Found) {
-					say("Thanks for your help!! Here Flappy...");
+					say("Thanks for your help!! Here Woof-Woof...");
 					lastChar = 0;
 				}
 			}
@@ -536,7 +536,7 @@ public class Roam extends BasicGameState {
 				say("I can't find Woof-Woof! He ranaway yesturday!\n" + "Can you find him for me?");
 				lastChar = 4;
 				if (Game.pet4Found) {
-					say("Thanks for your help!! Here Flappy...");
+					say("Thanks for your help!! Here Woof-Woof...");
 					lastChar = 0;
 				}
 			}
@@ -544,11 +544,19 @@ public class Roam extends BasicGameState {
 				char4 = Game.char4StillRight;
 				say("I can't find Woof-Woof! He ranaway yesturday!\n" + "Can you find him for me?");
 				lastChar = 4;
+				if (Game.pet4Found) {
+					say("Thanks for your help!! Here Woof-Woof...");
+					lastChar = 0;
+				}
 			}
 			if (last == 'u' && ((int) x == 90 && (int) y == 91) || ((int) x + pandaWidth == 90 && (int) y == 91)) {
 				char4 = Game.char4StillDown;
 				say("I can't find Woof-Woof! He ranaway yesturday!\n" + "Can you find him for me?");
 				lastChar = 4;
+				if (Game.pet4Found) {
+					say("Thanks for your help!! Here Woof-Woof...");
+					lastChar = 0;
+				}
 			}
 		}
 	}

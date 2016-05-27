@@ -54,6 +54,20 @@ public class Game extends StateBasedGame {
 	public Animation bBlockBreak;
 	public static Animation fireballShoot, fireballHit;
 	
+	public static Animation dkHowHigh, dkRollRight;
+	public static Animation dkPickUpBarrel;
+	public static Animation dkStill;
+	public static Animation dkStillSmile;
+	public static Animation dkBlueRollDown;
+	public static Animation dkCarryUp;
+	public static Animation dkQuake;
+	public static Animation dkPoundChest;
+	public static Animation dkRollDown;
+	public static Animation dkBarrelRollRight, dkBarrelRollLeft, dkBarrelRollDown, dkFire;
+	public static Animation dkBlueBarrelRollRight, dkBluePickUpBarrel, dkBlueBarrelRollDown, dkBlueFire;
+	public static Animation jmStillRight, jmStillLeft, jmWalkRight, jmWalkLeft, jmClimb, jmPushUp, jmStillForward;
+	public static Animation HjmStillRight, HjmStillLeft, HjmWalkRight, HjmWalkLeft, jmJumpR, jmJumpL;
+	
 	public static boolean pet1Found, pet2Found, pet3Found, pet4Found;
 	public static char charLock1, charLock2, charLock3, charLock4;
 	public static boolean isMusicOn;
@@ -67,6 +81,9 @@ public class Game extends StateBasedGame {
 	public static Music metal01Intro, metal01Loop, metal02Intro, metal02Loop, metal03Intro, metal03Loop, metal04Intro, metal04Loop,
 			metal05Intro, metal05Loop, metal06Intro, metal06Loop, metal07Intro, metal07Loop, metal08Intro, metal08Loop, metal09Intro,
 			metal09Loop, metal10Intro, metal10Loop, metal11Intro, metal11Loop;
+	public static Sound dkBackground;
+	public static Sound dkDeath, dkHammer, dkHowHighMusic, dkIntro, dkItemGet, dkJump, dkJumpBarrel, dkWin;
+	public static Music dkWalking;
 	public static String gamename = "Super Epic Panda Adventure Extreme 2!";
 	
 	public static final int len = 30, wid = 28, xSpace = wid + 1, ySpace = len + 1;
@@ -127,7 +144,7 @@ public class Game extends StateBasedGame {
 			this.getState(lvl03).init(gc, this);
 			this.getState(lvl04).init(gc, this);
 			this.getState(lvlBoss).init(gc, this);
-			this.enterState(lvl01);
+			this.enterState(lvl03);
 			
 		} catch (SlickException e) {
 		}
@@ -243,6 +260,17 @@ public class Game extends StateBasedGame {
 					Game.menuMusicIntro = new Music("res/oggs/Metal01Intro.ogg");
 					Game.menuMusicLoop = new Music("res/oggs/Metal01Loop.ogg");
 			}
+			dkBackground = new Sound("res/oggs/DKbacmusic.ogg");
+			dkDeath = new Sound("res/oggs/DKdeath.ogg");
+			dkHammer = new Sound("res/oggs/DKhammer.ogg");
+			dkHowHighMusic = new Sound("res/oggs/DKhowhigh.ogg");
+			dkIntro = new Sound("res/oggs/DKintro1_long.ogg");
+			dkItemGet = new Sound("res/oggs/DKitemget.ogg");
+			dkJump = new Sound("res/oggs/DKjump.ogg");
+			dkJumpBarrel = new Sound("res/oggs/DKjumpbar.ogg");
+			dkWalking = new Music("res/oggs/DKwalking.ogg");
+			dkWin = new Sound("res/oggs/DKwin1.ogg");
+			
 		} catch (SlickException e) {
 		}
 	}
@@ -797,6 +825,134 @@ public class Game extends StateBasedGame {
 			fireballHit.addFrame(fireballs.getSubImage(4 * 17 + 1, 1, 16, 16), 150);
 			fireballHit.addFrame(fireballs.getSubImage(5 * 17 + 1, 1, 16, 16), 150);
 			fireballHit.addFrame(fireballs.getSubImage(6 * 17 + 1, 1, 16, 16), 150);
+			
+			/**
+			 * Donkey Kong
+			 */
+			
+			dkHowHigh = new Animation();
+			dkRollRight = new Animation();
+			dkPickUpBarrel = new Animation();
+			dkCarryUp = new Animation();
+			dkStill = new Animation();
+			dkStillSmile = new Animation();
+			dkRollDown = new Animation();
+			dkBlueRollDown = new Animation();
+			dkBarrelRollRight = new Animation();
+			dkBarrelRollLeft = new Animation();
+			dkBarrelRollDown = new Animation();
+			dkFire = new Animation();
+			dkBlueBarrelRollRight = new Animation();
+			dkBluePickUpBarrel = new Animation();
+			dkBlueBarrelRollDown = new Animation();
+			dkBlueFire = new Animation();
+			
+			jmStillRight = new Animation();
+			jmStillLeft = new Animation();
+			jmWalkRight = new Animation();
+			jmWalkLeft = new Animation();
+			jmClimb = new Animation();
+			jmPushUp = new Animation();
+			jmStillForward = new Animation();
+			HjmStillRight = new Animation();
+			HjmStillLeft = new Animation();
+			HjmWalkRight = new Animation();
+			HjmWalkLeft = new Animation();
+			jmJumpR = new Animation();
+			jmJumpL = new Animation();
+			
+			Image dkSprites = new Image("res/sprites/DKsprites.png");
+			
+			dkHowHigh.addFrame(dkSprites.getSubImage(16, 206, 46, 33), 150);
+			dkRollRight.addFrame(dkSprites.getSubImage(70, 138, 43, 32), 1000);
+			dkPickUpBarrel.addFrame(dkSprites.getSubImage(70, 138, 43, 32).getFlippedCopy(true, false), 1000);
+			dkBluePickUpBarrel.addFrame(dkSprites.getSubImage(209, 191, 16, 16), 125);
+			dkCarryUp.addFrame(dkSprites.getSubImage(25, 67, 37, 36), 500);
+			dkCarryUp.addFrame(dkSprites.getSubImage(66, 67, 37, 36), 500);
+			dkStill.addFrame(dkSprites.getSubImage(25, 1, 39, 32), 1000);
+			dkStillSmile.addFrame(dkSprites.getSubImage(26, 105, 41, 30).getFlippedCopy(false, true), 1000);
+			dkRollDown.addFrame(dkSprites.getSubImage(21, 172, 40, 32), 1000);
+			dkBlueRollDown.addFrame(dkSprites.getSubImage(72, 1, 40, 32), 1000);
+			dkBarrelRollRight.addFrame(dkSprites.getSubImage(154, 101, 12, 10), 250);
+			dkBarrelRollRight.addFrame(dkSprites.getSubImage(170, 101, 12, 10), 250);
+			dkBarrelRollRight.addFrame(dkSprites.getSubImage(186, 101, 12, 10), 250);
+			dkBarrelRollRight.addFrame(dkSprites.getSubImage(203, 101, 12, 10), 250);
+			
+			dkBarrelRollLeft.addFrame(dkSprites.getSubImage(203, 101, 12, 10), 250);
+			dkBarrelRollLeft.addFrame(dkSprites.getSubImage(186, 101, 12, 10), 250);
+			dkBarrelRollLeft.addFrame(dkSprites.getSubImage(170, 101, 12, 10), 250);
+			dkBarrelRollLeft.addFrame(dkSprites.getSubImage(154, 101, 12, 10), 250);
+			
+			dkBarrelRollDown.addFrame(dkSprites.getSubImage(131, 101, 16, 10), 500);
+			dkBarrelRollDown.addFrame(dkSprites.getSubImage(116, 101, 16, 10), 500);
+			
+			dkBlueBarrelRollDown.addFrame(dkSprites.getSubImage(131, 116, 16, 10), 500);
+			dkBlueBarrelRollDown.addFrame(dkSprites.getSubImage(116, 116, 16, 10), 500);
+			
+			dkFire.addFrame(dkSprites.getSubImage(218, 95, 15, 16), 500);
+			dkFire.addFrame(dkSprites.getSubImage(218, 95, 15, 16).getFlippedCopy(true, false), 500);
+			
+			dkBlueFire.addFrame(dkSprites.getSubImage(218, 115, 15, 16), 500);
+			dkBlueFire.addFrame(dkSprites.getSubImage(218, 115, 15, 16).getFlippedCopy(true, false), 500);
+			
+			jmStillRight.addFrame(dkSprites.getSubImage(162, 193, 10, 16).getFlippedCopy(true, false), 125);
+			jmStillLeft.addFrame(dkSprites.getSubImage(162, 193, 10, 16), 125);
+			
+			jmJumpL.addFrame(dkSprites.getSubImage(176, 193, 16, 16), 125);
+			jmJumpR.addFrame(dkSprites.getSubImage(176, 193, 16, 16).getFlippedCopy(true, false), 125);
+			
+			jmWalkLeft.addFrame(dkSprites.getSubImage(158, 193, 16, 16), 125);
+			jmWalkLeft.addFrame(dkSprites.getSubImage(175, 193, 16, 16), 125);
+			jmWalkLeft.addFrame(dkSprites.getSubImage(158, 193, 16, 16), 125);
+			jmWalkLeft.addFrame(dkSprites.getSubImage(191, 207, 16, 16), 125);
+			
+			jmWalkRight.addFrame(dkSprites.getSubImage(158, 193, 16, 16).getFlippedCopy(true, false), 125);
+			jmWalkRight.addFrame(dkSprites.getSubImage(175, 193, 16, 16).getFlippedCopy(true, false), 125);
+			jmWalkRight.addFrame(dkSprites.getSubImage(158, 193, 16, 16).getFlippedCopy(true, false), 125);
+			jmWalkRight.addFrame(dkSprites.getSubImage(191, 207, 16, 16).getFlippedCopy(true, false), 125);
+			
+			jmClimb.addFrame(dkSprites.getSubImage(209, 193, 13, 16), 125);
+			jmClimb.addFrame(dkSprites.getSubImage(209, 193, 13, 16).getFlippedCopy(true, false), 125);
+			
+			jmPushUp.addFrame(dkSprites.getSubImage(224, 193, 14, 16), 125);
+			jmPushUp.addFrame(dkSprites.getSubImage(239, 193, 16, 16), 125);
+			jmPushUp.addFrame(dkSprites.getSubImage(209, 193, 13, 16), 125);
+			jmPushUp.addFrame(dkSprites.getSubImage(209, 193, 13, 16).getFlippedCopy(true, false), 125);
+			jmPushUp.addFrame(dkSprites.getSubImage(209, 191, 16, 16), 125);
+			
+			jmStillForward.addFrame(dkSprites.getSubImage(209, 191, 16, 16), 125);
+			
+			jmStillRight.setAutoUpdate(false);
+			jmStillLeft.setAutoUpdate(false);
+			jmWalkRight.setAutoUpdate(false);
+			jmWalkLeft.setAutoUpdate(false);
+			jmClimb.setAutoUpdate(false);
+			jmPushUp.setAutoUpdate(false);
+			jmStillForward.setAutoUpdate(false);
+			HjmStillRight.setAutoUpdate(false);
+			HjmStillLeft.setAutoUpdate(false);
+			HjmWalkRight.setAutoUpdate(false);
+			HjmWalkLeft.setAutoUpdate(false);
+			
+//			dkStill.addFrame(dkSprites.getSubImage(24, 33, 40, 32), 125);
+//			dkStillSmile.addFrame(dkSprites.getSubImage(26, 105, 41, 30).getFlippedCopy(false, true), 125);
+//			dkHowHigh.addFrame(dkSprites.getSubImage(17, 206, 46, 32), 125);
+//			dkRollRight.addFrame(dkSprites.getSubImage(70, 138, 43, 32), 125);
+//			dkPickUpBarrel.addFrame(dkSprites.getSubImage(70, 138, 43, 32).getFlippedCopy(true, false), 125);
+//			dkCarryUp.addFrame(dkSprites.getSubImage(25, 68, 38, 36), 125);
+//			dkCarryUp.addFrame(dkSprites.getSubImage(66, 68, 43, 36), 125);
+//			
+//			dkRollDown.addFrame(dkSprites.getSubImage(21, 172, 40, 32), 125);
+//			dkBlueRollDown.addFrame(dkSprites.getSubImage(72, 1, 40, 32), 125);
+//			
+//			dkBarrelRollRight.addFrame(dkSprites.getSubImage(209, 191, 16, 16), 125);
+//			dkBarrelRollLeft.addFrame(dkSprites.getSubImage(209, 191, 16, 16), 125);
+//			dkBarrelRollDown.addFrame(dkSprites.getSubImage(209, 191, 16, 16), 125);
+//			dkFire.addFrame(dkSprites.getSubImage(209, 191, 16, 16), 125);
+//			dkBlueBarrelRollRight.addFrame(dkSprites.getSubImage(209, 191, 16, 16), 125);
+//			dkBluePickUpBarrel.addFrame(dkSprites.getSubImage(209, 191, 16, 16), 125);
+//			dkBlueBarrelRollDown.addFrame(dkSprites.getSubImage(209, 191, 16, 16), 125);
+//			dkBlueFire.addFrame(dkSprites.getSubImage(209, 191, 16, 16), 125);
 			
 		} catch (SlickException e) {
 		}

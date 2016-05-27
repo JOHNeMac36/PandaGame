@@ -511,7 +511,6 @@ public class Level01 extends BasicGameState {
 		if (sbg.getCurrentStateID() == Game.lvl01) {
 			Game.appgc.setDisplayMode(640, 560, false);
 		} else {
-			Game.appgc.setDisplayMode(640, 640, false);
 			oneHit = 0;
 		}
 	}
