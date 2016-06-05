@@ -52,7 +52,7 @@ public class Game extends StateBasedGame {
 	public static Animation powerUp;
 	public static Animation qBlock, qBlockDead, bBlock;
 	public Animation bBlockBreak;
-	public static Animation fireballShoot, fireballHit;
+	public static Animation fireballShoot, fireballHit, barrellStack, oilFire, girraffe, giraffeLove;
 	
 	public static Animation dkHowHigh, dkRollRight;
 	public static Animation dkPickUpBarrel;
@@ -65,7 +65,7 @@ public class Game extends StateBasedGame {
 	public static Animation dkRollDown;
 	public static Animation dkBarrelRollRight, dkBarrelRollLeft, dkBarrelRollDown, dkFire;
 	public static Animation dkBlueBarrelRollRight, dkBluePickUpBarrel, dkBlueBarrelRollDown, dkBlueFire;
-	public static Animation jmStillRight, jmStillLeft, jmWalkRight, jmWalkLeft, jmClimb, jmPushUp, jmStillForward;
+	public static Animation jmStillRight, jmStillLeft, jmWalkRight, jmWalkLeft, jmClimb, jmPushUp, jmStillForward, jmDead;
 	public static Animation HjmStillRight, HjmStillLeft, HjmWalkRight, HjmWalkLeft, jmJumpR, jmJumpL;
 	
 	public static boolean pet1Found, pet2Found, pet3Found, pet4Found;
@@ -74,13 +74,12 @@ public class Game extends StateBasedGame {
 	public static GameContainer gc;
 	public static Image playNow, exitGame, menuScene, title, musicOn, musicOff, confetti, marioTitle, marioCursor;
 	public static Music menuMusicIntro, menuMusicLoop, pollyWolly;
-	public static Music marioTheme, marioUnderworld, marioCastle, marioStarman, marioLvlComplete, marioCastleComplete, marioDead,
-			marioGameOver, marioHurryUp;
-	public static Sound pandaPunch, sadPanda, itsPanda, pandaIcecream, marioBump, marioCoin, marioFireball, marioJump, marioKick, mario1Up,
-			marioPause, marioPowerUp, marioStageClear, marioFlag, marioApearingPowerUp, marioBlockBreak, marioPowerDown, marioStomp;
-	public static Music metal01Intro, metal01Loop, metal02Intro, metal02Loop, metal03Intro, metal03Loop, metal04Intro, metal04Loop,
-			metal05Intro, metal05Loop, metal06Intro, metal06Loop, metal07Intro, metal07Loop, metal08Intro, metal08Loop, metal09Intro,
-			metal09Loop, metal10Intro, metal10Loop, metal11Intro, metal11Loop;
+	public static Music marioTheme, marioUnderworld, marioCastle, marioStarman, marioLvlComplete, marioCastleComplete, marioDead, marioGameOver, marioHurryUp;
+	public static Sound pandaPunch, sadPanda, itsPanda, pandaIcecream, marioBump, marioCoin, marioFireball, marioJump, marioKick, mario1Up, marioPause, marioPowerUp,
+			marioStageClear, marioFlag, marioApearingPowerUp, marioBlockBreak, marioPowerDown, marioStomp;
+	public static Music metal01Intro, metal01Loop, metal02Intro, metal02Loop, metal03Intro, metal03Loop, metal04Intro, metal04Loop, metal05Intro, metal05Loop,
+			metal06Intro, metal06Loop, metal07Intro, metal07Loop, metal08Intro, metal08Loop, metal09Intro, metal09Loop, metal10Intro, metal10Loop, metal11Intro,
+			metal11Loop;
 	public static Sound dkBackground;
 	public static Sound dkDeath, dkHammer, dkHowHighMusic, dkIntro, dkItemGet, dkJump, dkJumpBarrel, dkWin;
 	public static Music dkWalking;
@@ -455,7 +454,6 @@ public class Game extends StateBasedGame {
 			char4StillRight = new Animation();
 			
 			// panda
-			
 			Image panda, sU, sD, sL, sR;
 			panda = new Image("res/sprites/panda.png");
 			sD = panda.getSubImage(xSpace, 0 * ySpace, wid, len);
@@ -514,8 +512,7 @@ public class Game extends StateBasedGame {
 			char1StillDown.addFrame(chars.getSubImage(X * charsWid + X, Y * charsLen + Y, charsWid, charsLen), 150);
 			Y = 1;
 			char1StillRight.addFrame(chars.getSubImage(X * charsWid + X, Y * charsLen + Y, charsWid, charsLen), 150);
-			char1StillLeft.addFrame(chars.getSubImage(X * charsWid + X, Y * charsLen + Y, charsWid, charsLen).getFlippedCopy(true, false),
-					150);
+			char1StillLeft.addFrame(chars.getSubImage(X * charsWid + X, Y * charsLen + Y, charsWid, charsLen).getFlippedCopy(true, false), 150);
 			Y = 2;
 			char1StillUp.addFrame(chars.getSubImage(X * charsWid + X, Y * charsLen + Y + 1, charsWid, charsLen), 150);
 			// end char1
@@ -525,8 +522,7 @@ public class Game extends StateBasedGame {
 			char2StillDown.addFrame(chars.getSubImage(X * charsWid + X, Y * charsLen + Y, charsWid, charsLen), 150);
 			Y = 1;
 			char2StillRight.addFrame(chars.getSubImage(X * charsWid + X, Y * charsLen + Y, charsWid, charsLen), 150);
-			char2StillLeft.addFrame(chars.getSubImage(X * charsWid + X, Y * charsLen + Y, charsWid, charsLen).getFlippedCopy(true, false),
-					150);
+			char2StillLeft.addFrame(chars.getSubImage(X * charsWid + X, Y * charsLen + Y, charsWid, charsLen).getFlippedCopy(true, false), 150);
 			Y = 2;
 			char2StillUp.addFrame(chars.getSubImage(X * charsWid + X, Y * charsLen + Y + 1, charsWid, charsLen), 150);
 			// end char2
@@ -536,8 +532,7 @@ public class Game extends StateBasedGame {
 			char3StillDown.addFrame(chars.getSubImage(X * charsWid + X, Y * charsLen + Y, charsWid, charsLen), 150);
 			Y = 1;
 			char3StillRight.addFrame(chars.getSubImage(X * charsWid + X, Y * charsLen + Y, charsWid, charsLen), 150);
-			char3StillLeft.addFrame(chars.getSubImage(X * charsWid + X, Y * charsLen + Y, charsWid, charsLen).getFlippedCopy(true, false),
-					150);
+			char3StillLeft.addFrame(chars.getSubImage(X * charsWid + X, Y * charsLen + Y, charsWid, charsLen).getFlippedCopy(true, false), 150);
 			Y = 2;
 			char3StillUp.addFrame(chars.getSubImage(X * charsWid + X, Y * charsLen + Y + 1, charsWid, charsLen), 150);
 			// end char3
@@ -546,8 +541,7 @@ public class Game extends StateBasedGame {
 			char4StillDown.addFrame(chars.getSubImage(X * charsWid + X, Y * charsLen + Y, charsWid, charsLen), 150);
 			Y = 1;
 			char4StillRight.addFrame(chars.getSubImage(X * charsWid + X, Y * charsLen + Y, charsWid, charsLen), 150);
-			char4StillLeft.addFrame(chars.getSubImage(X * charsWid + X, Y * charsLen + Y, charsWid, charsLen).getFlippedCopy(true, false),
-					150);
+			char4StillLeft.addFrame(chars.getSubImage(X * charsWid + X, Y * charsLen + Y, charsWid, charsLen).getFlippedCopy(true, false), 150);
 			Y = 2;
 			char4StillUp.addFrame(chars.getSubImage(X * charsWid + X, Y * charsLen + Y + 1, charsWid, charsLen), 150);
 			// end char4
@@ -846,6 +840,7 @@ public class Game extends StateBasedGame {
 			dkBluePickUpBarrel = new Animation();
 			dkBlueBarrelRollDown = new Animation();
 			dkBlueFire = new Animation();
+			dkPoundChest = new Animation();
 			
 			jmStillRight = new Animation();
 			jmStillLeft = new Animation();
@@ -860,6 +855,12 @@ public class Game extends StateBasedGame {
 			HjmWalkLeft = new Animation();
 			jmJumpR = new Animation();
 			jmJumpL = new Animation();
+			jmDead = new Animation();
+			
+			barrellStack = new Animation();
+			oilFire = new Animation();
+			girraffe = new Animation();
+			giraffeLove = new Animation();
 			
 			Image dkSprites = new Image("res/sprites/DKsprites.png");
 			
@@ -873,27 +874,36 @@ public class Game extends StateBasedGame {
 			dkStillSmile.addFrame(dkSprites.getSubImage(26, 105, 41, 30).getFlippedCopy(false, true), 1000);
 			dkRollDown.addFrame(dkSprites.getSubImage(21, 172, 40, 32), 1000);
 			dkBlueRollDown.addFrame(dkSprites.getSubImage(72, 1, 40, 32), 1000);
-			dkBarrelRollRight.addFrame(dkSprites.getSubImage(154, 101, 12, 10), 250);
-			dkBarrelRollRight.addFrame(dkSprites.getSubImage(170, 101, 12, 10), 250);
-			dkBarrelRollRight.addFrame(dkSprites.getSubImage(186, 101, 12, 10), 250);
-			dkBarrelRollRight.addFrame(dkSprites.getSubImage(203, 101, 12, 10), 250);
+			dkBarrelRollRight.addFrame(dkSprites.getSubImage(154, 101, 12, 10), 50);
+			dkBarrelRollRight.addFrame(dkSprites.getSubImage(170, 101, 12, 10), 50);
+			dkBarrelRollRight.addFrame(dkSprites.getSubImage(186, 101, 12, 10), 50);
+			dkBarrelRollRight.addFrame(dkSprites.getSubImage(203, 101, 12, 10), 50);
 			
-			dkBarrelRollLeft.addFrame(dkSprites.getSubImage(203, 101, 12, 10), 250);
-			dkBarrelRollLeft.addFrame(dkSprites.getSubImage(186, 101, 12, 10), 250);
-			dkBarrelRollLeft.addFrame(dkSprites.getSubImage(170, 101, 12, 10), 250);
-			dkBarrelRollLeft.addFrame(dkSprites.getSubImage(154, 101, 12, 10), 250);
+			dkBarrelRollLeft.addFrame(dkSprites.getSubImage(203, 101, 12, 10), 50);
+			dkBarrelRollLeft.addFrame(dkSprites.getSubImage(186, 101, 12, 10), 50);
+			dkBarrelRollLeft.addFrame(dkSprites.getSubImage(170, 101, 12, 10), 50);
+			dkBarrelRollLeft.addFrame(dkSprites.getSubImage(154, 101, 12, 10), 50);
 			
-			dkBarrelRollDown.addFrame(dkSprites.getSubImage(131, 101, 16, 10), 500);
-			dkBarrelRollDown.addFrame(dkSprites.getSubImage(116, 101, 16, 10), 500);
+			dkBarrelRollDown.addFrame(dkSprites.getSubImage(133, 101, 16, 10), 50);
+			dkBarrelRollDown.addFrame(dkSprites.getSubImage(116, 101, 16, 10), 50);
 			
-			dkBlueBarrelRollDown.addFrame(dkSprites.getSubImage(131, 116, 16, 10), 500);
-			dkBlueBarrelRollDown.addFrame(dkSprites.getSubImage(116, 116, 16, 10), 500);
+			dkBlueBarrelRollDown.addFrame(dkSprites.getSubImage(133, 116, 16, 10), 50);
+			dkBlueBarrelRollDown.addFrame(dkSprites.getSubImage(116, 116, 16, 10), 50);
 			
 			dkFire.addFrame(dkSprites.getSubImage(218, 95, 15, 16), 500);
 			dkFire.addFrame(dkSprites.getSubImage(218, 95, 15, 16).getFlippedCopy(true, false), 500);
 			
 			dkBlueFire.addFrame(dkSprites.getSubImage(218, 115, 15, 16), 500);
 			dkBlueFire.addFrame(dkSprites.getSubImage(218, 115, 15, 16).getFlippedCopy(true, false), 500);
+			
+			dkPoundChest.addFrame(dkSprites.getSubImage(73, 35, 46, 32), 500);
+			
+			barrellStack.addFrame(dkSprites.getSubImage(1, 40, 20, 32), 500);
+			oilFire.addFrame(dkSprites.getSubImage(3, 1, 16, 30), 500);
+			girraffe.addFrame(dkSprites.getSubImage(138, 11, 35, 24), 500);
+			girraffe.addFrame(dkSprites.getSubImage(177, 10, 35, 24), 500);
+			
+			giraffeLove.addFrame(dkSprites.getSubImage(138, 64, 27, 30), 500);
 			
 			jmStillRight.addFrame(dkSprites.getSubImage(162, 193, 10, 16).getFlippedCopy(true, false), 125);
 			jmStillLeft.addFrame(dkSprites.getSubImage(162, 193, 10, 16), 125);
@@ -922,6 +932,14 @@ public class Game extends StateBasedGame {
 			
 			jmStillForward.addFrame(dkSprites.getSubImage(209, 191, 16, 16), 125);
 			
+			for (int i = 0; i < 3; i++) {
+				jmDead.addFrame(dkSprites.getSubImage(291, 192, 16, 16), 250);
+				jmDead.addFrame(dkSprites.getSubImage(308, 192, 16, 16), 250);
+				jmDead.addFrame(dkSprites.getSubImage(291, 192, 16, 16).getFlippedCopy(false, true), 250);
+				jmDead.addFrame(dkSprites.getSubImage(308, 192, 16, 16).getFlippedCopy(true, false), 250);
+			}
+			jmDead.addFrame(dkSprites.getSubImage(274, 192, 16, 16), 6000);
+			
 			jmStillRight.setAutoUpdate(false);
 			jmStillLeft.setAutoUpdate(false);
 			jmWalkRight.setAutoUpdate(false);
@@ -934,25 +952,36 @@ public class Game extends StateBasedGame {
 			HjmWalkRight.setAutoUpdate(false);
 			HjmWalkLeft.setAutoUpdate(false);
 			
-//			dkStill.addFrame(dkSprites.getSubImage(24, 33, 40, 32), 125);
-//			dkStillSmile.addFrame(dkSprites.getSubImage(26, 105, 41, 30).getFlippedCopy(false, true), 125);
-//			dkHowHigh.addFrame(dkSprites.getSubImage(17, 206, 46, 32), 125);
-//			dkRollRight.addFrame(dkSprites.getSubImage(70, 138, 43, 32), 125);
-//			dkPickUpBarrel.addFrame(dkSprites.getSubImage(70, 138, 43, 32).getFlippedCopy(true, false), 125);
-//			dkCarryUp.addFrame(dkSprites.getSubImage(25, 68, 38, 36), 125);
-//			dkCarryUp.addFrame(dkSprites.getSubImage(66, 68, 43, 36), 125);
-//			
-//			dkRollDown.addFrame(dkSprites.getSubImage(21, 172, 40, 32), 125);
-//			dkBlueRollDown.addFrame(dkSprites.getSubImage(72, 1, 40, 32), 125);
-//			
-//			dkBarrelRollRight.addFrame(dkSprites.getSubImage(209, 191, 16, 16), 125);
-//			dkBarrelRollLeft.addFrame(dkSprites.getSubImage(209, 191, 16, 16), 125);
-//			dkBarrelRollDown.addFrame(dkSprites.getSubImage(209, 191, 16, 16), 125);
-//			dkFire.addFrame(dkSprites.getSubImage(209, 191, 16, 16), 125);
-//			dkBlueBarrelRollRight.addFrame(dkSprites.getSubImage(209, 191, 16, 16), 125);
-//			dkBluePickUpBarrel.addFrame(dkSprites.getSubImage(209, 191, 16, 16), 125);
-//			dkBlueBarrelRollDown.addFrame(dkSprites.getSubImage(209, 191, 16, 16), 125);
-//			dkBlueFire.addFrame(dkSprites.getSubImage(209, 191, 16, 16), 125);
+			// dkStill.addFrame(dkSprites.getSubImage(24, 33, 40, 32), 125);
+			// dkStillSmile.addFrame(dkSprites.getSubImage(26, 105, 41,
+			// 30).getFlippedCopy(false, true), 125);
+			// dkHowHigh.addFrame(dkSprites.getSubImage(17, 206, 46, 32), 125);
+			// dkRollRight.addFrame(dkSprites.getSubImage(70, 138, 43, 32),
+			// 125);
+			// dkPickUpBarrel.addFrame(dkSprites.getSubImage(70, 138, 43,
+			// 32).getFlippedCopy(true, false), 125);
+			// dkCarryUp.addFrame(dkSprites.getSubImage(25, 68, 38, 36), 125);
+			// dkCarryUp.addFrame(dkSprites.getSubImage(66, 68, 43, 36), 125);
+			//
+			// dkRollDown.addFrame(dkSprites.getSubImage(21, 172, 40, 32), 125);
+			// dkBlueRollDown.addFrame(dkSprites.getSubImage(72, 1, 40, 32),
+			// 125);
+			//
+			// dkBarrelRollRight.addFrame(dkSprites.getSubImage(209, 191, 16,
+			// 16), 125);
+			// dkBarrelRollLeft.addFrame(dkSprites.getSubImage(209, 191, 16,
+			// 16), 125);
+			// dkBarrelRollDown.addFrame(dkSprites.getSubImage(209, 191, 16,
+			// 16), 125);
+			// dkFire.addFrame(dkSprites.getSubImage(209, 191, 16, 16), 125);
+			// dkBlueBarrelRollRight.addFrame(dkSprites.getSubImage(209, 191,
+			// 16, 16), 125);
+			// dkBluePickUpBarrel.addFrame(dkSprites.getSubImage(209, 191, 16,
+			// 16), 125);
+			// dkBlueBarrelRollDown.addFrame(dkSprites.getSubImage(209, 191, 16,
+			// 16), 125);
+			// dkBlueFire.addFrame(dkSprites.getSubImage(209, 191, 16, 16),
+			// 125);
 			
 		} catch (SlickException e) {
 		}
