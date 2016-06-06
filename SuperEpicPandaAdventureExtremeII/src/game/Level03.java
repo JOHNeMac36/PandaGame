@@ -27,6 +27,7 @@ public class Level03 extends BasicGameState {
 	private int timeOfWin = -1;
 	private float barrelSpeed = .048f, barrelFallSpeed = .25f, jumpSpeed = .25f, jumpTime = 150, pandaWalkSpeed = .035f, pandaClimbSpeed = .14f;
 	private final int barrelSpawnSpeed = 300;
+	private float barrelLockFallSpeed = .35f;
 	public static boolean quit, won;
 	public static Music music;
 	public static JumpMan panda;
@@ -111,13 +112,10 @@ public class Level03 extends BasicGameState {
 	// supplementary methods
 	private boolean intersects(JumpMan panda, Barrel barrel) {
 		
-		panda.collider = new Rectangle(
-				panda.x * tileWidth - ((panda.panda.equals(Game.jmStillRight) || panda.panda.equals(Game.jmStillLeft)) ? 1 : .5f) * (float) panda.panda.getWidth() / 2f,
-				(panda.y * tileHeight + 4) - panda.panda.getHeight(), (Game.jmStillLeft.getWidth()), panda.panda.getHeight() - 4f);
-				
-		barrel.collider = new Ellipse((barrel.x * tileWidth), barrel.y * tileHeight - barrel.barrel.getHeight() / 2f, (barrel.barrel.getWidth() / 2),
-				(barrel.barrel.getHeight() / 2));
-				
+		panda.collider = new Rectangle(panda.x * tileWidth - ((panda.panda.equals(Game.jmStillRight) || panda.panda.equals(Game.jmStillLeft)) ? 1 : .5f) * (float) panda.panda.getWidth() / 2f, (panda.y * tileHeight + 4) - panda.panda.getHeight(), (Game.jmStillLeft.getWidth()), panda.panda.getHeight() - 4f);
+		
+		barrel.collider = new Ellipse((barrel.x * tileWidth), barrel.y * tileHeight - barrel.barrel.getHeight() / 2f, (barrel.barrel.getWidth() / 2), (barrel.barrel.getHeight() / 2));
+		
 		try {
 			return panda.collider.intersects(barrel.collider);
 		} catch (NullPointerException e) {
@@ -213,12 +211,14 @@ public class Level03 extends BasicGameState {
 			try {
 				if (barrels.get(i).isDownLock) {
 					barrels.get(i).barrel = Game.dkBarrelRollDown;
-					barrels.get(i).y += barrelFallSpeed;
+					barrels.get(i).y += barrelLockFallSpeed;
+					if ((barrels.get(i).y - 84 < 1 && barrels.get(i).y - 84 > 0) || (barrels.get(i).y - 119 < 1 && barrels.get(i).y - 119 > 0) || (barrels.get(i).y - 145 < 1 && barrels.get(i).y - 145 > 0) || (barrels.get(i).y - 145 < 1 && barrels.get(i).y - 145 > 0) || (barrels.get(i).y - 185 < 1 && barrels.get(i).y - 185 > 0)
+							|| (barrels.get(i).y - 211 < 1 && barrels.get(i).y - 211 > 0) || (barrels.get(i).y - 248 < 1 && barrels.get(i).y - 248 > 0))
+						barrels.get(i).y -= barrelLockFallSpeed - .05f;
 				} else {
 					if (barrels.get(i).isLaddering) {
 						barrels.get(i).barrel = Game.dkBarrelRollDown;
-						if (map.getTileId((int) (barrels.get(i).x + (barrels.get(i).isRight ? 0 : barrels.get(i).barrel.getWidth() / tileWidth)),
-								(int) (barrels.get(i).y), objectLayer) == 0) {
+						if (map.getTileId((int) (barrels.get(i).x + (barrels.get(i).isRight ? 0 : barrels.get(i).barrel.getWidth() / tileWidth)), (int) (barrels.get(i).y), objectLayer) == 0) {
 							barrels.get(i).y += barrelFallSpeed;
 						} else {
 							barrels.get(i).isLaddering = false;
@@ -228,8 +228,7 @@ public class Level03 extends BasicGameState {
 					} else {
 						barrels.get(i).barrel = (barrels.get(i).isRight ? Game.dkBarrelRollRight : Game.dkBarrelRollLeft);
 						if (barrels.get(i).isFalling) {
-							if (map.getTileId((int) (barrels.get(i).x + (barrels.get(i).isRight ? barrelSpeed : -barrelSpeed)
-									+ (barrels.get(i).isRight ? 0 : barrels.get(i).barrel.getWidth() / tileWidth)), (int) barrels.get(i).y, objectLayer) == 0) {
+							if (map.getTileId((int) (barrels.get(i).x + (barrels.get(i).isRight ? barrelSpeed : -barrelSpeed) + (barrels.get(i).isRight ? 0 : barrels.get(i).barrel.getWidth() / tileWidth)), (int) barrels.get(i).y, objectLayer) == 0) {
 								barrels.get(i).y++;
 								barrels.get(i).x += barrels.get(i).isRight ? barrelSpeed * .9 : -barrelSpeed;
 								
@@ -239,39 +238,23 @@ public class Level03 extends BasicGameState {
 								if (barrels.get(i).level <= panda.level + 1) barrels.get(i).isRight = !barrels.get(i).isRight;
 							}
 						} else {
-							if (map.getTileId((int) (barrels.get(i).x + (barrels.get(i).isRight ? 0 : barrels.get(i).barrel.getWidth() / tileWidth)
-									+ (barrels.get(i).isRight ? barrelSpeed : -barrelSpeed)), (int) barrels.get(i).y, objectLayer) != 0)
-								barrels.get(i).x += barrels.get(i).isRight ? barrelSpeed : -barrelSpeed;
+							if (map.getTileId((int) (barrels.get(i).x + (barrels.get(i).isRight ? 0 : barrels.get(i).barrel.getWidth() / tileWidth) + (barrels.get(i).isRight ? barrelSpeed : -barrelSpeed)), (int) barrels.get(i).y, objectLayer) != 0) barrels.get(i).x += barrels.get(i).isRight ? barrelSpeed : -barrelSpeed;
 							else {
-								if (barrels.get(i).x + (barrels.get(i).isRight ? 0 : barrels.get(i).barrel.getWidth() / tileWidth)
-										+ (barrels.get(i).isRight ? barrelSpeed : -barrelSpeed) < 27)
-									if (map.getTileId((int) (barrels.get(i).x + (barrels.get(i).isRight ? barrelSpeed : -barrelSpeed)), (int) barrels.get(i).y + 1,
-											objectLayer) != 0) {
+								if (barrels.get(i).x + (barrels.get(i).isRight ? 0 : barrels.get(i).barrel.getWidth() / tileWidth) + (barrels.get(i).isRight ? barrelSpeed : -barrelSpeed) < 27) if (map.getTileId((int) (barrels.get(i).x + (barrels.get(i).isRight ? barrelSpeed : -barrelSpeed)), (int) barrels.get(i).y + 1, objectLayer) != 0) {
 									barrels.get(i).y++;
 									barrels.get(i).x += barrels.get(i).isRight ? barrelSpeed : -barrelSpeed;
 								}
-								if ((int) barrels.get(i).x
-										+ (barrels.get(i).isRight ? 0
-												: barrels.get(i).barrel.getWidth()
-														/ tileWidth)
-										+ (barrels.get(i).isRight ? barrelSpeed
-												: -barrelSpeed) < 27)
-									if (map.getTileId((int) (barrels.get(i).x + (barrels.get(i).isRight ? 0 : barrels.get(i).barrel.getWidth() / tileWidth)
-											+ (barrels.get(i).isRight ? barrelSpeed : -barrelSpeed)), (int) barrels.get(i).y - 1, objectLayer) != 0) {
+								if ((int) barrels.get(i).x + (barrels.get(i).isRight ? 0 : barrels.get(i).barrel.getWidth() / tileWidth) + (barrels.get(i).isRight ? barrelSpeed : -barrelSpeed) < 27)
+									if (map.getTileId((int) (barrels.get(i).x + (barrels.get(i).isRight ? 0 : barrels.get(i).barrel.getWidth() / tileWidth) + (barrels.get(i).isRight ? barrelSpeed : -barrelSpeed)), (int) barrels.get(i).y - 1, objectLayer) != 0) {
 									barrels.get(i).y--;
 									barrels.get(i).x += barrels.get(i).isRight ? barrelSpeed : -barrelSpeed;
 								}
 							}
-							if (map.getTileId(
-									(int) (barrels.get(i).x + (barrels.get(i).isRight ? 0 : barrels.get(i).barrel.getWidth() / tileWidth)
-											+ (barrels.get(i).isRight ? barrelSpeed : -barrelSpeed)),
-									(int) barrels.get(i).y, objectLayer) == 0
-									&& map.getTileId((int) (barrels.get(i).x + (barrels.get(i).isRight ? 0 : barrels.get(i).barrel.getWidth() / tileWidth)
-											+ (barrels.get(i).isRight ? barrelSpeed : -barrelSpeed)), (int) barrels.get(i).y + 1, objectLayer) == 0) {
+							if (map.getTileId((int) (barrels.get(i).x + (barrels.get(i).isRight ? 0 : barrels.get(i).barrel.getWidth() / tileWidth) + (barrels.get(i).isRight ? barrelSpeed : -barrelSpeed)), (int) barrels.get(i).y, objectLayer) == 0
+									&& map.getTileId((int) (barrels.get(i).x + (barrels.get(i).isRight ? 0 : barrels.get(i).barrel.getWidth() / tileWidth) + (barrels.get(i).isRight ? barrelSpeed : -barrelSpeed)), (int) barrels.get(i).y + 1, objectLayer) == 0) {
 								barrels.get(i).isFalling = true;
 							}
-							if (map.getTileId((int) (barrels.get(i).x), (int) (barrels.get(i).y), ladderingLayer) != 0
-									&& barrels.get(i).x - (int) barrels.get(i).x < .04) {
+							if (map.getTileId((int) (barrels.get(i).x), (int) (barrels.get(i).y), ladderingLayer) != 0 && Math.abs(barrels.get(i).x - (int) barrels.get(i).x) < barrelSpeed) {
 								Random rand = new Random();
 								if (rand.nextBoolean() && (barrels.get(i).level <= panda.level)) {
 									barrels.get(i).isLaddering = true;
@@ -337,8 +320,7 @@ public class Level03 extends BasicGameState {
 	}
 	
 	private void updateMovement(int t) {
-		if ((input.isKeyDown(Input.KEY_UP) || input.isKeyDown(Input.KEY_DOWN)) && (input.isKeyDown(Input.KEY_RIGHT) || input.isKeyDown(Input.KEY_LEFT))
-				|| (input.isKeyDown(Input.KEY_RIGHT) && input.isKeyDown(Input.KEY_LEFT)) || (input.isKeyDown(Input.KEY_UP) && input.isKeyDown(Input.KEY_DOWN))) {
+		if ((input.isKeyDown(Input.KEY_UP) || input.isKeyDown(Input.KEY_DOWN)) && (input.isKeyDown(Input.KEY_RIGHT) || input.isKeyDown(Input.KEY_LEFT)) || (input.isKeyDown(Input.KEY_RIGHT) && input.isKeyDown(Input.KEY_LEFT)) || (input.isKeyDown(Input.KEY_UP) && input.isKeyDown(Input.KEY_DOWN))) {
 			Game.dkWalking.setVolume(0);
 			switch (last) {
 				case 'L':
@@ -406,8 +388,7 @@ public class Level03 extends BasicGameState {
 			}
 			
 			// left
-			if (input.isKeyDown(Input.KEY_LEFT) && !input.isKeyDown(Input.KEY_UP) && !input.isKeyDown(Input.KEY_DOWN)
-					&& !(panda.isFalling || panda.isJumping || panda.isClimbing)) {
+			if (input.isKeyDown(Input.KEY_LEFT) && !input.isKeyDown(Input.KEY_UP) && !input.isKeyDown(Input.KEY_DOWN) && !(panda.isFalling || panda.isJumping || panda.isClimbing)) {
 				Game.dkWalking.setVolume(1);
 				Game.jmWalkLeft.update(t);
 				last = 'L';
@@ -427,9 +408,8 @@ public class Level03 extends BasicGameState {
 			}
 			
 			// right
-			if (input.isKeyDown(Input.KEY_RIGHT) && !input.isKeyDown(Input.KEY_UP) && !input.isKeyDown(Input.KEY_DOWN)
-					&& !(panda.isFalling || panda.isJumping || panda.isClimbing)) {
-					
+			if (input.isKeyDown(Input.KEY_RIGHT) && !input.isKeyDown(Input.KEY_UP) && !input.isKeyDown(Input.KEY_DOWN) && !(panda.isFalling || panda.isJumping || panda.isClimbing)) {
+				
 				Game.dkWalking.setVolume(1);
 				Game.jmWalkRight.update(t);
 				last = 'R';
@@ -437,8 +417,7 @@ public class Level03 extends BasicGameState {
 				
 				if ((int) panda.x + pandaWalkSpeed < 27) if (map.getTileId((int) (panda.x + pandaWalkSpeed), (int) panda.y, objectLayer) != 0) panda.x += pandaWalkSpeed;
 				else {
-					if (!panda.isClimbing && (int) panda.x + pandaWalkSpeed < 27)
-						if (map.getTileId((int) (panda.x + pandaWalkSpeed), (int) panda.y + 1, objectLayer) != 0) {
+					if (!panda.isClimbing && (int) panda.x + pandaWalkSpeed < 27) if (map.getTileId((int) (panda.x + pandaWalkSpeed), (int) panda.y + 1, objectLayer) != 0) {
 						panda.y++;
 						panda.x += pandaWalkSpeed;
 					}
@@ -455,8 +434,7 @@ public class Level03 extends BasicGameState {
 				Game.dkJump.play();
 			}
 			
-			if (!(input.isKeyDown(Input.KEY_UP) || input.isKeyDown(Input.KEY_DOWN) || input.isKeyDown(Input.KEY_LEFT) || input.isKeyDown(Input.KEY_RIGHT))
-					&& !(panda.isFalling || panda.isJumping || panda.isClimbing)) {
+			if (!(input.isKeyDown(Input.KEY_UP) || input.isKeyDown(Input.KEY_DOWN) || input.isKeyDown(Input.KEY_LEFT) || input.isKeyDown(Input.KEY_RIGHT)) && !(panda.isFalling || panda.isJumping || panda.isClimbing)) {
 				Game.dkWalking.setVolume(0);
 				switch (last) {
 					case 'L':
