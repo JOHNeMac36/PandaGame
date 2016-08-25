@@ -112,7 +112,7 @@ public class Level03 extends BasicGameState {
 	// supplementary methods
 	private boolean intersects(JumpMan panda, Barrel barrel) {
 		
-		panda.collider = new Rectangle(panda.x * tileWidth - ((panda.panda.equals(Game.jmStillRight) || panda.panda.equals(Game.jmStillLeft)) ? 1 : .5f) * (float) panda.panda.getWidth() / 2f, (panda.y * tileHeight + 4) - panda.panda.getHeight(), (Game.jmStillLeft.getWidth()), panda.panda.getHeight() - 4f);
+		panda.collider = new Ellipse((panda.x * tileWidth), panda.y * tileHeight - panda.panda.getHeight() / 2f, (panda.panda.getWidth() / 2 - .2f), (panda.panda.getHeight() / 2) - .2f);
 		
 		barrel.collider = new Ellipse((barrel.x * tileWidth), barrel.y * tileHeight - barrel.barrel.getHeight() / 2f, (barrel.barrel.getWidth() / 2), (barrel.barrel.getHeight() / 2));
 		
@@ -479,10 +479,10 @@ public class Level03 extends BasicGameState {
 			barrels.clear();
 			Game.dkWalking.stop();
 			Game.dkBackground.stop();
-			Game.dkWin.play();
 			panda.panda = Game.jmStillLeft;
 		}
-		if (!Game.dkWin.playing()) sbg.enterState(Game.roam);
+		if(totalTime == timeOfWin + 2)Game.dkWin.play();
+		if (!Game.dkWin.playing() && totalTime > timeOfWin + 1) sbg.enterState(Game.roam);
 	}
 	
 	public static void resetState(GameContainer gc, StateBasedGame sbg, int t) {

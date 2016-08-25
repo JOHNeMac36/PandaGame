@@ -111,7 +111,7 @@ public class Level02 extends BasicGameState {
 		if (input.isKeyPressed(Input.KEY_SPACE)) {
 			Random rand = new Random();
 			int i = rand.nextInt(40);
-			if (i == 0) Game.pandaPunch.play();
+			if (i == 0) Game.pandaPunchInPuss.play();
 			if (i == 1) Game.sadPanda.play();
 			if (i == 2) Game.itsPanda.play();
 		}

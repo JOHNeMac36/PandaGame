@@ -17,7 +17,7 @@ public class Game extends StateBasedGame {
 	
 	public static int song;
 	// attributes
-	public static final int splash = -1, menu = 0, roam = -99, lvl01 = 1, lvl02 = 2, lvl03 = 3, lvlBoss = 100, lvl04 = 4;
+	public static final int splash = -1, menu = 0, roam = -99, lvl01 = 1, lvl02 = 2, lvl03 = 3, lvl04 = 4, lvlLava = 99, lvlBoss = 100;
 	public static int currentState;
 	public static Animation pandaStillDown, pandaStillUp, pandaStillLeft, pandaStillRight;
 	public static Animation pandaWalkUp, pandaWalkDown, pandaWalkLeft, pandaWalkRight;
@@ -52,6 +52,7 @@ public class Game extends StateBasedGame {
 	public static Animation powerUp;
 	public static Animation qBlock, qBlockDead, bBlock;
 	public Animation bBlockBreak;
+	
 	public static Animation fireballShoot, fireballHit, barrellStack, oilFire, girraffe, giraffeLove;
 	
 	public static Animation dkHowHigh, dkRollRight;
@@ -68,6 +69,7 @@ public class Game extends StateBasedGame {
 	public static Animation jmStillRight, jmStillLeft, jmWalkRight, jmWalkLeft, jmClimb, jmPushUp, jmStillForward, jmDead;
 	public static Animation HjmStillRight, HjmStillLeft, HjmWalkRight, HjmWalkLeft, jmJumpR, jmJumpL;
 	
+	public static Animation invader1, invader2, invader3, ufo, invaderExplosion, player, playerExplosion, invaderShot, playerShot;
 	public static boolean pet1Found, pet2Found, pet3Found, pet4Found;
 	public static char charLock1, charLock2, charLock3, charLock4;
 	public static boolean isMusicOn;
@@ -75,18 +77,22 @@ public class Game extends StateBasedGame {
 	public static Image playNow, exitGame, menuScene, title, musicOn, musicOff, confetti, marioTitle, marioCursor;
 	public static Music menuMusicIntro, menuMusicLoop, pollyWolly;
 	public static Music marioTheme, marioUnderworld, marioCastle, marioStarman, marioLvlComplete, marioCastleComplete, marioDead, marioGameOver, marioHurryUp;
-	public static Sound pandaPunch, sadPanda, itsPanda, pandaIcecream, marioBump, marioCoin, marioFireball, marioJump, marioKick, mario1Up, marioPause, marioPowerUp,
-			marioStageClear, marioFlag, marioApearingPowerUp, marioBlockBreak, marioPowerDown, marioStomp;
-	public static Music metal01Intro, metal01Loop, metal02Intro, metal02Loop, metal03Intro, metal03Loop, metal04Intro, metal04Loop, metal05Intro, metal05Loop,
-			metal06Intro, metal06Loop, metal07Intro, metal07Loop, metal08Intro, metal08Loop, metal09Intro, metal09Loop, metal10Intro, metal10Loop, metal11Intro,
-			metal11Loop;
+	public static Sound pandaPunchInPuss, sadPanda, itsPanda, pandaIcecream, marioBump, marioCoin, marioFireball, marioJump, marioKick, mario1Up, marioPause, marioPowerUp, marioStageClear, marioFlag, marioApearingPowerUp, marioBlockBreak, marioPowerDown, marioStomp;
+	public static Music metal01Intro, metal01Loop, metal02Intro, metal02Loop, metal03Intro, metal03Loop, metal04Intro, metal04Loop, metal05Intro, metal05Loop, metal06Intro, metal06Loop, metal07Intro, metal07Loop, metal08Intro, metal08Loop, metal09Intro, metal09Loop, metal10Intro, metal10Loop, metal11Intro, metal11Loop;
 	public static Sound dkBackground;
 	public static Sound dkDeath, dkHammer, dkHowHighMusic, dkIntro, dkItemGet, dkJump, dkJumpBarrel, dkWin;
 	public static Music dkWalking;
 	public static String gamename = "Super Epic Panda Adventure Extreme 2!";
-	
+	public static Sound invaderMove1, invaderMove2, invaderMove3, invaderMove4, shipExplosion, playerShoot, invaderShipExplosion, ufoSound;
 	public static final int len = 30, wid = 28, xSpace = wid + 1, ySpace = len + 1;
 	
+	public static Animation lmStill, lmDodgeR, lmDodgeL, lmSheild, lmJabL, lmJabR, lmUpperCutL, lmUpperCutR, lmHitL, lmHitR, lmLose, lmWin, lmFatigue;
+	public static Animation lmCutScene1, lmCutScene2, lmCutScene3;
+	
+	public static Animation vkStill, vkDodgeR, vkDodgeL, vkSheild, vkJabL, vkJabR, vkUpperCutL, vkUpperCutR, vkHitL, vkHitR, vkLose, vkWin, vkFatigue;
+	public static Animation vkCutScene1, vkCutScene2, vkCutScene3;
+	
+	public static Music panda;
 	public static AppGameContainer appgc;
 	// end of attributes
 	public static Animation pwrCoin, pwrFlower, pwrMush, pwrStar;
@@ -96,7 +102,7 @@ public class Game extends StateBasedGame {
 		try {
 			appgc = new AppGameContainer(new Game(gamename));
 			appgc.setDisplayMode(640, 640, false);
-			appgc.setShowFPS(false);
+			appgc.setShowFPS(true);
 			appgc.setTargetFrameRate(350);
 			appgc.setUpdateOnlyWhenVisible(false);
 			appgc.setSmoothDeltas(false);
@@ -115,6 +121,7 @@ public class Game extends StateBasedGame {
 		this.addState(new Level02(lvl02));
 		this.addState(new Level03(lvl03));
 		this.addState(new Level04(lvl04));
+		this.addState(new Lava(lvlLava));
 		this.addState(new LevelBoss(lvlBoss));
 	}
 	
@@ -142,8 +149,10 @@ public class Game extends StateBasedGame {
 			this.getState(lvl02).init(gc, this);
 			this.getState(lvl03).init(gc, this);
 			this.getState(lvl04).init(gc, this);
+			this.getState(lvlLava).init(gc, this);
 			this.getState(lvlBoss).init(gc, this);
-			this.enterState(lvl03);
+			
+			this.enterState(menu);
 			
 		} catch (SlickException e) {
 		}
@@ -152,7 +161,7 @@ public class Game extends StateBasedGame {
 	
 	public void initSounds() {
 		try {
-			pandaPunch = new Sound("res/oggs/PandaPunch.ogg");
+			pandaPunchInPuss = new Sound("res/oggs/PandaPunch.ogg");
 			sadPanda = new Sound("res/oggs/Sad Panda.ogg");
 			itsPanda = new Sound("res/oggs/itsPanda.ogg");
 			pandaIcecream = new Sound("res/oggs/pandaIcecream.ogg");
@@ -270,6 +279,16 @@ public class Game extends StateBasedGame {
 			dkWalking = new Music("res/oggs/DKwalking.ogg");
 			dkWin = new Sound("res/oggs/DKwin1.ogg");
 			
+			invaderMove1 = new Sound("res/oggs/fastinvader1.wav");
+			invaderMove2 = new Sound("res/oggs/fastinvader2.wav");
+			invaderMove3 = new Sound("res/oggs/fastinvader3.wav");
+			invaderMove4 = new Sound("res/oggs/fastinvader4.wav");
+			shipExplosion = new Sound("res/oggs/explosion.ogg");
+			playerShoot = new Sound("res/oggs/shoot.ogg");
+			invaderShipExplosion = new Sound("res/oggs/invaderkilled.ogg");
+			ufoSound = new Sound("res/oggs/ufo_highpitch.wav");
+			
+			panda = new Music("res/oggs/panda.ogg");
 		} catch (SlickException e) {
 		}
 	}
@@ -456,6 +475,7 @@ public class Game extends StateBasedGame {
 			// panda
 			Image panda, sU, sD, sL, sR;
 			panda = new Image("res/sprites/panda.png");
+			panda.setFilter(Image.FILTER_NEAREST);
 			sD = panda.getSubImage(xSpace, 0 * ySpace, wid, len);
 			sR = panda.getSubImage(xSpace, 1 * ySpace, wid, len);
 			sL = panda.getSubImage(xSpace, 1 * ySpace, wid, len).getFlippedCopy(true, false);
@@ -480,6 +500,7 @@ public class Game extends StateBasedGame {
 			
 			// penguin
 			Image pen = new Image("res/sprites/Penguin.png");
+			pen.setFilter(Image.FILTER_NEAREST);
 			penguinWalkDown.addFrame(pen.getSubImage(32, 0, 32, 32), 150);
 			penguinStillDown.addFrame(pen.getSubImage(32, 0, 32, 32), 150);
 			penguinWalkLeft.addFrame(pen.getSubImage(32, 32, 32, 32), 150);
@@ -504,7 +525,7 @@ public class Game extends StateBasedGame {
 			
 			// 4 characters
 			Image chars = new Image("res/sprites/chars.png");
-			
+			chars.setFilter(Image.FILTER_NEAREST);
 			int charsWid = 32, charsLen = 32, X, Y;
 			
 			X = 0;
@@ -548,7 +569,7 @@ public class Game extends StateBasedGame {
 			
 			// marioPanda
 			Image marioPanda = new Image("res/sprites/marioPanda.png");
-			
+			marioPanda.setFilter(Image.FILTER_NEAREST);
 			marioPandaStillR = new Animation();
 			marioPandaWalkRight = new Animation();
 			marioPandaJumpR = new Animation();
@@ -755,6 +776,7 @@ public class Game extends StateBasedGame {
 			
 			// mushroom enemy
 			Image mush = new Image("res/sprites/mushroom.png");
+			mush.setFilter(Image.FILTER_NEAREST);
 			mushroom = new Animation();
 			mushroom.addFrame(mush.getSubImage(1, 1, 16, 16), 150);
 			mushroom.addFrame(mush.getSubImage(18, 1, 16, 16), 150);
@@ -768,7 +790,7 @@ public class Game extends StateBasedGame {
 			bBlockBreak = new Animation();
 			
 			Image blocks = new Image("res/pngs/marioBlocks.png");
-			
+			blocks.setFilter(Image.FILTER_NEAREST);
 			bBlock.addFrame(blocks.getSubImage(1, 1, 40, 40), 150);
 			qBlockDead.addFrame(blocks.getSubImage(42, 1, 40, 40), 150);
 			
@@ -793,7 +815,7 @@ public class Game extends StateBasedGame {
 			pwrCoin.addFrame(new Image("res/pngs/marioCoins.png").getSubImage(45, 2, 16, 16), 100);
 			
 			Image pwrUps = new Image("res/pngs/powerUps.png");
-			
+			pwrUps.setFilter(Image.FILTER_NEAREST);
 			pwrFlower.addFrame(pwrUps.getSubImage(19, 2, 16, 16), 150);
 			pwrFlower.addFrame(pwrUps.getSubImage(38, 2, 16, 16), 150);
 			pwrFlower.addFrame(pwrUps.getSubImage(57, 2, 16, 16), 150);
@@ -810,7 +832,7 @@ public class Game extends StateBasedGame {
 			fireballHit = new Animation();
 			
 			Image fireballs = new Image("res/pngs/fireballs.png");
-			
+			fireballs.setFilter(Image.FILTER_NEAREST);
 			fireballShoot.addFrame(fireballs.getSubImage(1, 1, 16, 16), 80);
 			fireballShoot.addFrame(fireballs.getSubImage(17 + 1, 1, 16, 16), 80);
 			fireballShoot.addFrame(fireballs.getSubImage(2 * 17 + 1, 1, 16, 16), 80);
@@ -863,7 +885,7 @@ public class Game extends StateBasedGame {
 			giraffeLove = new Animation();
 			
 			Image dkSprites = new Image("res/sprites/DKsprites.png");
-			
+			dkSprites.setFilter(Image.FILTER_NEAREST);
 			dkHowHigh.addFrame(dkSprites.getSubImage(16, 206, 46, 33), 150);
 			dkRollRight.addFrame(dkSprites.getSubImage(70, 138, 43, 32), 1000);
 			dkPickUpBarrel.addFrame(dkSprites.getSubImage(70, 138, 43, 32).getFlippedCopy(true, false), 1000);
@@ -982,6 +1004,171 @@ public class Game extends StateBasedGame {
 			// 16), 125);
 			// dkBlueFire.addFrame(dkSprites.getSubImage(209, 191, 16, 16),
 			// 125);
+			
+			invader1 = new Animation();
+			invader2 = new Animation();
+			invader3 = new Animation();
+			ufo = new Animation();
+			invaderExplosion = new Animation();
+			player = new Animation();
+			playerExplosion = new Animation();
+			invaderShot = new Animation();
+			playerShot = new Animation();
+			Image si = new Image("res/sprites/SpaceInvadersSprites.png");
+			
+			invader1.addFrame(si.getSubImage(21, 3, 12, 8), 1);
+			invader1.addFrame(si.getSubImage(36, 3, 12, 8), 1);
+			
+			invader2.addFrame(si.getSubImage(51, 3, 11, 8), 1);
+			invader2.addFrame(si.getSubImage(65, 3, 11, 8), 1);
+			
+			invader3.addFrame(si.getSubImage(79, 3, 8, 8), 1);
+			invader3.addFrame(si.getSubImage(91, 3, 8, 8), 1);
+			
+			ufo.addFrame(si.getSubImage(2, 4, 16, 7), 1);
+			
+			invaderExplosion.addFrame(si.getSubImage(102, 3, 13, 8), 1);
+			
+			player.addFrame(si.getSubImage(36, 18, 13, 8), 1);
+			
+			playerExplosion.addFrame(si.getSubImage(52, 18, 16, 8), 250);
+			playerExplosion.addFrame(si.getSubImage(69, 18, 16, 8), 2500);
+			
+			invaderShot.addFrame(si.getSubImage(100, 19, 3, 7), 25);
+			invaderShot.addFrame(si.getSubImage(105, 19, 3, 7), 25);
+			
+			playerShot.addFrame(si.getSubImage(31, 21, 1, 4), 2500);
+			
+			invader1.setAutoUpdate(false);
+			invader2.setAutoUpdate(false);
+			invader3.setAutoUpdate(false);
+			ufo.setAutoUpdate(false);
+			
+			lmStill = new Animation();
+			lmDodgeR = new Animation();
+			lmDodgeL = new Animation();
+			lmSheild = new Animation();
+			lmJabL = new Animation();
+			lmJabR = new Animation();
+			lmUpperCutL = new Animation();
+			lmUpperCutR = new Animation();
+			lmHitL = new Animation();
+			lmHitR = new Animation();
+			lmLose = new Animation();
+			lmWin = new Animation();
+			lmFatigue = new Animation();
+			lmCutScene1 = new Animation();
+			lmCutScene2 = new Animation();
+			lmCutScene3 = new Animation();
+			
+			vkStill = new Animation();
+			vkDodgeR = new Animation();
+			vkDodgeL = new Animation();
+			vkSheild = new Animation();
+			vkJabL = new Animation();
+			vkJabR = new Animation();
+			vkUpperCutL = new Animation();
+			vkUpperCutR = new Animation();
+			vkHitL = new Animation();
+			vkHitR = new Animation();
+			vkLose = new Animation();
+			vkWin = new Animation();
+			vkFatigue = new Animation();
+			vkCutScene1 = new Animation();
+			vkCutScene2 = new Animation();
+			vkCutScene3 = new Animation();
+			
+			Image lm = new Image("res/tilesets/PunchOutTileset/lm.png");
+			lm.setFilter(Image.FILTER_NEAREST);
+			Image vk = new Image("res/tilesets/PunchOutTileset/vk.png");
+			
+			int w = 31, h = 81;
+			int punchFrames = 100;
+			
+			lmStill.addFrame(lm.getSubImage(0, 0, 31, 81), 250);
+			lmStill.addFrame(lm.getSubImage(w, 0, 31, h), 250);
+			
+			lmDodgeL.addFrame(lm.getSubImage(0, 81, 31, 81), 250);
+			lmDodgeL.addFrame(lm.getSubImage(w, 81, 31, 81), 250);
+			lmDodgeL.addFrame(lm.getSubImage(2 * w, 81, 31, 81), 5000);
+			
+			lmDodgeL.setAutoUpdate(false);
+			
+			lmDodgeR.addFrame(lm.getSubImage(0, 81, 31, 81).getFlippedCopy(true, false), 250);
+			lmDodgeR.addFrame(lm.getSubImage(w, 81, 31, 81).getFlippedCopy(true, false), 250);
+			lmDodgeR.addFrame(lm.getSubImage(2 * w, 81, 31, 81).getFlippedCopy(true, false), 5000);
+			lmDodgeR.setAutoUpdate(false);
+			
+			lmSheild.addFrame(lm.getSubImage(w, 3 * h, w, h), 250);
+			
+			lmJabL.addFrame(lm.getSubImage(0, 3 * h, w, h), punchFrames);
+			lmJabL.addFrame(lm.getSubImage(w, 3 * h, w, h), punchFrames);
+			lmJabL.addFrame(lm.getSubImage(2 * w, 3 * h, w, h), punchFrames);
+			lmJabL.addFrame(lm.getSubImage(w, 3 * h, w, h), punchFrames);
+			lmJabL.addFrame(lm.getSubImage(0, 3 * h, w, h), punchFrames);
+			
+			lmJabL.setAutoUpdate(false);
+			lmJabL.setLooping(false);
+			
+			lmJabR.addFrame(lm.getSubImage(0, 3 * h, w, h).getFlippedCopy(true, false), punchFrames);
+			lmJabR.addFrame(lm.getSubImage(w, 3 * h, w, h).getFlippedCopy(true, false), punchFrames);
+			lmJabR.addFrame(lm.getSubImage(2 * w, 3 * h, w, h).getFlippedCopy(true, false), punchFrames);
+			lmJabR.addFrame(lm.getSubImage(w, 3 * h, w, h).getFlippedCopy(true, false), punchFrames);
+			lmJabR.addFrame(lm.getSubImage(0, 3 * h, w, h).getFlippedCopy(true, false), punchFrames);
+			
+			lmJabR.setAutoUpdate(false);
+			lmJabR.setLooping(false);
+			
+			lmUpperCutL.addFrame(lm.getSubImage(0, 4 * h, w, h), punchFrames);
+			lmUpperCutL.addFrame(lm.getSubImage(w, 4 * h, w, h), punchFrames);
+			lmUpperCutL.addFrame(lm.getSubImage(2 * w, 4 * h, w, h), punchFrames);
+			lmUpperCutL.addFrame(lm.getSubImage(w, 4 * h, w, h), punchFrames);
+			lmUpperCutL.addFrame(lm.getSubImage(0, 4 * h, w, h), punchFrames);
+			
+			lmUpperCutL.setAutoUpdate(false);
+			lmUpperCutL.setLooping(false);
+			
+			lmUpperCutR.addFrame(lm.getSubImage(0, 4 * h, w, h).getFlippedCopy(true, false), punchFrames);
+			lmUpperCutR.addFrame(lm.getSubImage(w, 4 * h, w, h).getFlippedCopy(true, false), punchFrames);
+			lmUpperCutR.addFrame(lm.getSubImage(2 * w, 4 * h, w, h).getFlippedCopy(true, false), punchFrames);
+			lmUpperCutR.addFrame(lm.getSubImage(w, 4 * h, w, h).getFlippedCopy(true, false), punchFrames);
+			lmUpperCutR.addFrame(lm.getSubImage(0, 4 * h, w, h).getFlippedCopy(true, false), punchFrames);
+			
+			lmUpperCutR.setAutoUpdate(false);
+			lmUpperCutR.setLooping(false);
+			
+			lmHitL.addFrame(lm.getSubImage(0, 8 * h, w, h).getFlippedCopy(false, false), 250);
+			lmHitL.addFrame(lm.getSubImage(w, 8 * h, w, h).getFlippedCopy(false, false), 250);
+			
+			lmHitR.addFrame(lm.getSubImage(0, 8 * h, w, h).getFlippedCopy(true, false), 250);
+			lmHitR.addFrame(lm.getSubImage(w, 8 * h, w, h).getFlippedCopy(true, false), 250);
+			
+			lmLose.addFrame(lm.getSubImage(3 * w, 9 * h, w, h).getFlippedCopy(false, false), 2500);
+			
+			lmWin.addFrame(lm.getSubImage(0, 10 * h, w, h).getFlippedCopy(false, false), 2500);
+			lmWin.addFrame(lm.getSubImage(w, 10 * h, w, h).getFlippedCopy(false, false), 2500);
+			
+			lmFatigue.addFrame(lm.getSubImage(0, 6 * h, w, h).getFlippedCopy(false, false), 150);
+			lmFatigue.addFrame(lm.getSubImage(w, 6 * h, w, h).getFlippedCopy(false, false), 150);
+			
+			w = 80;
+			h = 68;
+			int o1 = 973, o2 = 3;
+			
+			lmCutScene1.addFrame(lm.getSubImage(0 * (w + o2), h * 0 + o1 + o2, w, h), 250);
+			lmCutScene1.addFrame(lm.getSubImage(1 * (w + o2), h * 0 + o1 + o2, w, h), 250);
+			lmCutScene1.addFrame(lm.getSubImage(2 * (w + o2), h * 0 + o1 + o2, w, h), 250);
+			lmCutScene1.addFrame(lm.getSubImage(3 * (w + o2), h * 0 + o1 + o2, w, h), 250);
+			
+			lmCutScene2.addFrame(lm.getSubImage(0 * (w + o2), h + o1 + o2, w, h), 250);
+			lmCutScene2.addFrame(lm.getSubImage(1 * (w + o2), h + o1 + o2, w, h), 250);
+			lmCutScene2.addFrame(lm.getSubImage(2 * (w + o2), h + o1 + o2, w, h), 250);
+			lmCutScene2.addFrame(lm.getSubImage(3 * (w + o2), h + o1 + o2, w, h), 250);
+			
+			lmCutScene3.addFrame(lm.getSubImage(0 * (w + o2), 2 * h + o1 + o2, w, h), 250);
+			lmCutScene3.addFrame(lm.getSubImage(1 * (w + o2), 2 * h + o1 + o2, w, h), 250);
+			lmCutScene3.addFrame(lm.getSubImage(2 * (w + o2), 2 * h + o1 + o2, w, h), 250);
+			lmCutScene3.addFrame(lm.getSubImage(3 * (w + o2), 2 * h + o1 + o2, w, h), 250);
 			
 		} catch (SlickException e) {
 		}
