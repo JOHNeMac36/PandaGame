@@ -13,7 +13,6 @@ public class Level02 extends BasicGameState {
 	private static int iceLayer, holeLayer, finishLayer;
 	private static int x, y, subLevel;
 	public static boolean quit, dead, flag, flag2;
-	public static Music music;
 	public static Animation panda;
 	public static Input input;
 	public int i, j;
@@ -31,7 +30,7 @@ public class Level02 extends BasicGameState {
 		finishLayer = map.getLayerIndex("Finish");
 		flag = false;
 		flag2 = false;
-		music = new Music("res/oggs/music.ogg");
+		
 		panda = Game.pandaStillUp;
 		x = 3;
 		y = 16;
@@ -133,10 +132,11 @@ public class Level02 extends BasicGameState {
 				} else {
 					Game.pet2Found = true;
 					sbg.enterState(Game.roam);
+					Game.pollyWolly.loop();
 					x = 0;
 					y = 0;
 					resetState();
-					music.loop();
+//					music.loop();
 				}
 			}
 		}
@@ -160,7 +160,6 @@ public class Level02 extends BasicGameState {
 	}
 	
 	public static void resetState() {
-		music.stop();
 		x = 3;
 		y = 16;
 		quit = false;

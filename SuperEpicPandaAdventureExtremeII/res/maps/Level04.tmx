@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="217" height="248" tilewidth="1" tileheight="1" nextobjectid="1">
+<map version="1.0.0" orientation="orthogonal" renderorder="right-down" width="217" height="248" tilewidth="1" tileheight="1" nextobjectid="1">
  <tileset firstgid="1" name="siTileset" tilewidth="1" tileheight="1" tilecount="352" columns="22">
   <image source="../tilesets/siTileset.png" width="22" height="16"/>
  </tileset>
  <tileset firstgid="353" name="SpaceInvaders-Gameplay" tilewidth="1" tileheight="1" tilecount="53816" columns="217">
-  <image source="../../../../../Documents/SpaceInvaders-Gameplay.gif" width="217" height="248"/>
+  <image source="SpaceInvaders-Gameplay.gif" width="217" height="248"/>
  </tileset>
  <layer name="Fill" width="217" height="248">
   <data encoding="base64" compression="gzip">

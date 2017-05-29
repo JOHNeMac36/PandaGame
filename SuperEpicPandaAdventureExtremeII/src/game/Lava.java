@@ -37,8 +37,8 @@ public class Lava extends BasicGameState {
 		panda = Game.pandaStillDown;
 		music = Game.panda;
 		input = gc.getInput();
-		x = 15;
-		y = 15;
+		x = 19;
+		y = 19;
 	}
 	
 	@Override
@@ -50,7 +50,9 @@ public class Lava extends BasicGameState {
 	
 	@Override
 	public void update(GameContainer gc, StateBasedGame sbg, int t) throws SlickException {
-		if (oneHit == 0) music.loop(1f, 1f);
+		if (oneHit == 0) {
+			music.loop(0f, 0f);
+			}
 		oneHit++;
 		
 		// up

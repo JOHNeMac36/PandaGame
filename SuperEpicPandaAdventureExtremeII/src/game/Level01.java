@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -38,6 +39,8 @@ public class Level01 extends BasicGameState {
 	private static float cursorX, cursorY;
 	private final static float enemySpeed = .0096f, powerUpSpeed = .0096f, fireballSpeed = .0096f * 3;
 	private static Enemy[] enemies;
+	private int score = 0;
+	private Timer timer;
 	// public static char still = 's', hit = 'h', hitDown = 'd', broke = 'b',
 	// deadStill = 'S', deadHit = 'H', deadHitDown = 'D';
 	
@@ -67,10 +70,12 @@ public class Level01 extends BasicGameState {
 		cursorY = 143f;
 		input = gc.getInput();
 		fireballs = new ArrayList<Fireball>();
+		timer = new Timer(1, 0);
 		initBlocks();
 		initEnemies();
 		initPowerUps();
 		setState();
+		
 	}
 	
 	@Override
@@ -81,6 +86,7 @@ public class Level01 extends BasicGameState {
 		renderBlockBreaks(gc, sbg, g);
 		renderEnemies(gc, sbg, g);
 		renderFireball(gc, sbg, g);
+		renderStats(gc, sbg, g);
 		panda.panda.draw((panda.x - (int) mapXL) * tileWidth * zoomFactor, panda.y * tileHeight * zoomFactor - 64, 32, 64);
 		// renderInfo(gc, sbg, g);
 		if (isMenuUp) renderMenu(gc, sbg, g);
@@ -113,6 +119,7 @@ public class Level01 extends BasicGameState {
 				}
 				updateMenu(gc, sbg, t);
 			} else {
+				timer.updateTimer(t);
 				checkInGameMenu();
 				updateIncrements(gc, sbg, t);
 				updateMovement(gc, sbg, t);
@@ -124,6 +131,7 @@ public class Level01 extends BasicGameState {
 				updateEnemyMovement();
 				checkEnemyDeath();
 				checkPowerUp();
+				if (timer.isDone()) panda.isDead = true;
 			}
 		}
 	}
@@ -131,9 +139,7 @@ public class Level01 extends BasicGameState {
 	// supplementary methods
 	private static void checkEnemyDeath() {
 		for (int i = 0; i < enemies.length; i++) {
-			if (!enemies[i].isDead) if (panda.x >= enemies[i].x - .56 && panda.x <= enemies[i].x + 1
-					&& (panda.y - .5f < enemies[i].y && (enemies[i].y - panda.y <= 2 && panda.isFalling)
-							|| (panda.isStarred && panda.isUnderfoot))) {
+			if (!enemies[i].isDead) if (panda.x >= enemies[i].x - .56 && panda.x <= enemies[i].x + 1 && (panda.y - .5f < enemies[i].y && (enemies[i].y - panda.y <= 2 && panda.isFalling) || (panda.isStarred && panda.isUnderfoot))) {
 				enemies[i].isDead = true;
 				Game.marioKick.play();
 				enemies[i].timeOfDeath = totalTime;
@@ -166,20 +172,14 @@ public class Level01 extends BasicGameState {
 			if (panda.timeOfInvincibility == 0) {
 				if (panda.isSmall && !panda.isFlower) {
 					if (!enemies[i].isDead) {
-						if (((panda.x - .825f <= enemies[i].x && panda.x >= enemies[i].x)
-								|| (panda.x + .8f >= enemies[i].x && panda.x + .8 <= enemies[i].x + .825f))
-								&& ((panda.y <= enemies[i].y && panda.y >= enemies[i].y - 1.65f) || (!panda.isFalling
-										&& panda.y - 1.65f <= enemies[i].y && panda.y - 1.65f >= enemies[i].y - 1.65))) {
+						if (((panda.x - .825f <= enemies[i].x && panda.x >= enemies[i].x) || (panda.x + .8f >= enemies[i].x && panda.x + .8 <= enemies[i].x + .825f)) && ((panda.y <= enemies[i].y && panda.y >= enemies[i].y - 1.65f) || (!panda.isFalling && panda.y - 1.65f <= enemies[i].y && panda.y - 1.65f >= enemies[i].y - 1.65))) {
 							panda.isDead = true;
 						}
 					}
 				}
 				if (!panda.isSmall || panda.isFlower) {
 					if (!enemies[i].isDead) {
-						if (((panda.x - .825f <= enemies[i].x && panda.x >= enemies[i].x)
-								|| (panda.x + .8f >= enemies[i].x && panda.x + .8 <= enemies[i].x + .825f))
-								&& (!panda.isFalling && (panda.y <= enemies[i].y && panda.y >= enemies[i].y - 3.15f)
-										|| (panda.y - 1.65f <= enemies[i].y && panda.y - 3.15f >= enemies[i].y - 1.65))) {
+						if (((panda.x - .825f <= enemies[i].x && panda.x >= enemies[i].x) || (panda.x + .8f >= enemies[i].x && panda.x + .8 <= enemies[i].x + .825f)) && (!panda.isFalling && (panda.y <= enemies[i].y && panda.y >= enemies[i].y - 3.15f) || (panda.y - 1.65f <= enemies[i].y && panda.y - 3.15f >= enemies[i].y - 1.65))) {
 							panda.isSmall = true;
 							panda.isFlower = false;
 							panda.timeOfInvincibility = 400;
@@ -197,9 +197,7 @@ public class Level01 extends BasicGameState {
 			if (panda.isSmall && powerUps[i].type == PowerUp.FLOWER && powerUps[i].timeOfLife == -1) powerUps[i].type = PowerUp.MUSHROOM;
 			if (!panda.isSmall && powerUps[i].type == PowerUp.MUSHROOM && powerUps[i].timeOfLife == -1) powerUps[i].type = PowerUp.FLOWER;
 			
-			if (!powerUps[i].isDead && panda.x >= powerUps[i].x - .56 && panda.x <= powerUps[i].x + .87
-					&& (Math.abs(panda.y - powerUps[i].y) < 0.06
-							|| (powerUps[i].type == PowerUp.FLOWER && Math.abs(panda.y - powerUps[i].y - 2) < 0.06))) {
+			if (!powerUps[i].isDead && panda.x >= powerUps[i].x - .56 && panda.x <= powerUps[i].x + .87 && (Math.abs(panda.y - powerUps[i].y) < 0.06 || (powerUps[i].type == PowerUp.FLOWER && Math.abs(panda.y - powerUps[i].y - 2) < 0.06))) {
 				powerUps[i].isDead = true;
 				switch (powerUps[i].type) {
 					case PowerUp.MUSHROOM:
@@ -335,12 +333,10 @@ public class Level01 extends BasicGameState {
 			if (blocks[i].x >= mapXL - 1 && blocks[i].x <= mapXL + 25) {
 				switch (blocks[i].type) {
 					case Block.B:
-						if (blocks[i].x >= mapXL - 1 && blocks[i].x <= mapXL + 25) if (blocks[i].state != Block.BROKE)
-							Game.bBlock.draw((blocks[i].x - (int) mapXL) * tileWidth * zoomFactor, (blocks[i].y) * tileHeight * zoomFactor);
+						if (blocks[i].x >= mapXL - 1 && blocks[i].x <= mapXL + 25) if (blocks[i].state != Block.BROKE) Game.bBlock.draw((blocks[i].x - (int) mapXL) * tileWidth * zoomFactor, (blocks[i].y) * tileHeight * zoomFactor);
 						break;
 					case Block.Q:
-						if (blocks[i].isDead) Game.qBlockDead.draw((blocks[i].x - (int) mapXL) * tileWidth * zoomFactor,
-								(blocks[i].y) * tileHeight * zoomFactor);
+						if (blocks[i].isDead) Game.qBlockDead.draw((blocks[i].x - (int) mapXL) * tileWidth * zoomFactor, (blocks[i].y) * tileHeight * zoomFactor);
 						else
 							Game.qBlock.draw((blocks[i].x - (int) mapXL) * tileWidth * zoomFactor, (blocks[i].y) * tileHeight * zoomFactor);
 				}
@@ -355,8 +351,7 @@ public class Level01 extends BasicGameState {
 			if (blocks[i].x >= mapXL - 1 && blocks[i].x <= mapXL + 25) {
 				switch (blocks[i].type) {
 					case Block.B:
-						if (blocks[i].x >= mapXL - 1 && blocks[i].x <= mapXL + 25)
-							if (blocks[i].state == Block.BROKE && totalTime - blocks[i].timeOfHit < 151) {
+						if (blocks[i].x >= mapXL - 1 && blocks[i].x <= mapXL + 25) if (blocks[i].state == Block.BROKE && totalTime - blocks[i].timeOfHit < 151) {
 							a[i - 13].draw((blocks[i].x - (int) mapXL) * tileWidth * zoomFactor, (blocks[i].y) * tileHeight * zoomFactor);
 						}
 						break;
@@ -370,12 +365,10 @@ public class Level01 extends BasicGameState {
 		g.scale(zoomFactor2, zoomFactor2);
 		for (int i = 0; i < enemies.length; i++) {
 			if (!enemies[i].isDead) {
-				Game.mushroom.draw((enemies[i].x - (int) mapXL) * tileWidth * zoomFactor / zoomFactor2,
-						(enemies[i].y) * tileHeight * zoomFactor / zoomFactor2 - Game.mushroom.getHeight());
+				Game.mushroom.draw((enemies[i].x - (int) mapXL) * tileWidth * zoomFactor / zoomFactor2, (enemies[i].y) * tileHeight * zoomFactor / zoomFactor2 - Game.mushroom.getHeight());
 			}
 			if (enemies[i].isDead && enemies[i].timeOfDeath + 75 > totalTime) {
-				Game.mushroomDead.draw((enemies[i].x - (int) mapXL) * tileWidth * zoomFactor / zoomFactor2,
-						(enemies[i].y) * tileHeight * zoomFactor / zoomFactor2 - Game.mushroom.getHeight());
+				Game.mushroomDead.draw((enemies[i].x - (int) mapXL) * tileWidth * zoomFactor / zoomFactor2, (enemies[i].y) * tileHeight * zoomFactor / zoomFactor2 - Game.mushroom.getHeight());
 			}
 		}
 		
@@ -385,10 +378,8 @@ public class Level01 extends BasicGameState {
 	private static void renderFireball(GameContainer gc, StateBasedGame sbg, Graphics g) {
 		g.scale(zoomFactor, zoomFactor);
 		for (int i = 0; i < fireballs.size(); i++) {
-			if (!fireballs.get(i).isDead)
-				Game.fireballShoot.draw((fireballs.get(i).x - mapXL) * tileWidth, (fireballs.get(i).y - 1) * tileHeight);
-			else if (fireballs.get(i).timeOfLife + 70 > totalTime)
-				Game.fireballHit.draw((fireballs.get(i).x - mapXL) * tileWidth, (fireballs.get(i).y - 1) * tileHeight);
+			if (!fireballs.get(i).isDead) Game.fireballShoot.draw((fireballs.get(i).x - mapXL + mapXL % 1) * tileWidth, (fireballs.get(i).y - 1) * tileHeight);
+			else if (fireballs.get(i).timeOfLife + 70 > totalTime) Game.fireballHit.draw((fireballs.get(i).x - mapXL) * tileWidth, (fireballs.get(i).y - 1) * tileHeight);
 			else
 				fireballs.remove(i);
 		}
@@ -399,14 +390,12 @@ public class Level01 extends BasicGameState {
 	private static void renderInfo(GameContainer gc, StateBasedGame sbg, Graphics g) {
 		g.setColor(Color.white);
 		String str;
-		str = "( " + (mapXL + (float) input.getMouseX() / (float) tileWidth / zoomFactor) + " , "
-				+ (float) input.getMouseY() / (float) tileHeight / zoomFactor + " )";
+		str = "( " + (mapXL + (float) input.getMouseX() / (float) tileWidth / zoomFactor) + " , " + (float) input.getMouseY() / (float) tileHeight / zoomFactor + " )";
 		g.drawString(str, 100, 15);
 		g.drawString("timeOfInvisibility : ( " + panda.timeOfInvincibility + " )", 100, 90);
 		g.drawString("PandaHeight " + panda.pandaWidth, 100, 75);
 		g.drawString("x,y [Mush02x,y]: " + panda.x + " , " + panda.y + " [ " + enemies[1].x + " , " + enemies[1].y + " ]", 100, 30);
-		g.drawString("isUnderFoot, isFalling, isJumping : " + panda.isUnderfoot + " , " + panda.isFalling + " , " + panda.isJumping, 100,
-				45);
+		g.drawString("isUnderFoot, isFalling, isJumping : " + panda.isUnderfoot + " , " + panda.isFalling + " , " + panda.isJumping, 100, 45);
 		g.drawString("i: " + i, 100, 60);
 		
 		g.setColor(Color.red);
@@ -418,8 +407,7 @@ public class Level01 extends BasicGameState {
 		g.setColor(Color.black);
 		g.fillRect((panda.x - (int) mapXL) * tileWidth * zoomFactor, (panda.y) * tileHeight * zoomFactor, 3, 3);
 		g.setColor(Color.red);
-		if (fireballs.size() > 0) g.fillRect((fireballs.get(0).x - .01f - (int) mapXL) * tileWidth * zoomFactor,
-				fireballs.get(0).y * tileHeight * zoomFactor, 3, 3);
+		if (fireballs.size() > 0) g.fillRect((fireballs.get(0).x - .01f - (int) mapXL) * tileWidth * zoomFactor, fireballs.get(0).y * tileHeight * zoomFactor, 3, 3);
 		g.setColor(Color.cyan);
 		g.fillRect((panda.x - (int) mapXL) * tileWidth * zoomFactor, panda.y * tileHeight * zoomFactor - 64 - 3.01f, 3, 3);
 		g.setColor(Color.white);
@@ -434,6 +422,7 @@ public class Level01 extends BasicGameState {
 		g.scale(zoomFactor, zoomFactor);
 		g.translate((-mapXL % 1) * tileWidth, 0);
 		map.render(0, 0, (int) mapXL, 0, 21, 28);
+		
 		g.scale(1 / zoomFactor, 1 / zoomFactor);
 	}
 	
@@ -453,29 +442,36 @@ public class Level01 extends BasicGameState {
 			if (!powerUps[i].isDead) {
 				switch (powerUps[i].type) {
 					case PowerUp.COIN:
-						Game.pwrCoin.draw((powerUps[i].x - (int) mapXL) * tileWidth * zoomFactor / zoomFactor,
-								(powerUps[i].y) * tileHeight * zoomFactor / zoomFactor - Game.pwrCoin.getHeight());
+						Game.pwrCoin.draw((powerUps[i].x - (int) mapXL) * tileWidth * zoomFactor / zoomFactor, (powerUps[i].y) * tileHeight * zoomFactor / zoomFactor - Game.pwrCoin.getHeight());
 						break;
 					case PowerUp.FLOWER:
-						if (powerUps[i].isUp) Game.pwrFlower.draw((powerUps[i].x - (int) mapXL) * tileWidth * zoomFactor / zoomFactor,
-								(powerUps[i].y) * tileHeight * zoomFactor / zoomFactor - Game.pwrFlower.getHeight());
+						if (powerUps[i].isUp) Game.pwrFlower.draw((powerUps[i].x - (int) mapXL) * tileWidth * zoomFactor / zoomFactor, (powerUps[i].y) * tileHeight * zoomFactor / zoomFactor - Game.pwrFlower.getHeight());
 						else
-							Game.pwrFlower.getCurrentFrame().getFlippedCopy(false, true).draw(
-									(powerUps[i].x - (int) mapXL) * tileWidth * zoomFactor / zoomFactor,
-									(powerUps[i].y) * tileHeight * zoomFactor / zoomFactor - Game.pwrFlower.getHeight());
+							Game.pwrFlower.getCurrentFrame().getFlippedCopy(false, true).draw((powerUps[i].x - (int) mapXL) * tileWidth * zoomFactor / zoomFactor, (powerUps[i].y) * tileHeight * zoomFactor / zoomFactor - Game.pwrFlower.getHeight());
 						break;
 					case PowerUp.MUSHROOM:
-						Game.pwrMush.draw((powerUps[i].x - (int) mapXL) * tileWidth * zoomFactor / zoomFactor,
-								(powerUps[i].y) * tileHeight * zoomFactor / zoomFactor - Game.pwrMush.getHeight());
+						Game.pwrMush.draw((powerUps[i].x - (int) mapXL) * tileWidth * zoomFactor / zoomFactor, (powerUps[i].y) * tileHeight * zoomFactor / zoomFactor - Game.pwrMush.getHeight());
 						break;
 					case PowerUp.STAR:
-						Game.pwrStar.draw((powerUps[i].x - (int) mapXL) * tileWidth * zoomFactor / zoomFactor,
-								(powerUps[i].y) * tileHeight * zoomFactor / zoomFactor - Game.pwrStar.getHeight());
+						Game.pwrStar.draw((powerUps[i].x - (int) mapXL) * tileWidth * zoomFactor / zoomFactor, (powerUps[i].y) * tileHeight * zoomFactor / zoomFactor - Game.pwrStar.getHeight());
 						break;
 				}
 			}
 		}
 		g.scale(1 / zoomFactor, 1 / zoomFactor);
+	}
+	
+	private void renderStats(GameContainer gc, StateBasedGame sbg, Graphics g) {
+		
+		Color col = g.getColor();
+		Font f = g.getFont();
+		g.setColor(Color.white);
+		g.setFont(Game.ttFont);
+		g.drawString(timer.getMinutes() + ":" + timer.getSeconds(), ((13 + mapXL % 1) * tileWidth) * zoomFactor, 2f * zoomFactor);
+		g.drawString("Score: " + score, ((1 + (mapXL % 1) * tileWidth)) * zoomFactor, 2f * zoomFactor);
+		g.setColor(col);
+		g.setFont(f);
+		
 	}
 	
 	private void resetState(GameContainer gc, StateBasedGame sbg) throws SlickException {
@@ -494,6 +490,7 @@ public class Level01 extends BasicGameState {
 		oneHitWin = 0;
 		timeOfWin = 0;
 		panda.timeOfDeath = 0;
+		timer = new Timer(1, 0);
 		setState();
 	}
 	
@@ -517,8 +514,7 @@ public class Level01 extends BasicGameState {
 	
 	private static void updateBlocks(int t) {
 		for (int i = 0; i < blocks.length; i++) {
-			if ((int) (panda.isSmall ? panda.y - 3.01f : panda.y - 6.02f) == blocks[i].y
-					&& (((int) panda.x == blocks[i].x || (int) (panda.x + .5f) == blocks[i].x)) && !panda.isFalling) {
+			if ((int) (panda.isSmall ? panda.y - 3.01f : panda.y - 6.02f) == blocks[i].y && (((int) panda.x == blocks[i].x || (int) (panda.x + .5f) == blocks[i].x)) && !panda.isFalling) {
 				if (blocks[i].type == Block.Q) {
 					if (!blocks[i].isDead) {
 						powerUps[i].isDead = false;
@@ -529,9 +525,7 @@ public class Level01 extends BasicGameState {
 					blocks[i].isDead = true;
 					blocks[i].timeOfHit = totalTime;
 					for (int j = 0; j < enemies.length; j++) {
-						if (!enemies[j].isDead && Math.abs((int) enemies[j].x - blocks[i].x) < .8f
-								&& Math.abs((int) enemies[j].x - blocks[i].x) < .8f)
-							enemies[j].isDead = true;
+						if (!enemies[j].isDead && Math.abs((int) enemies[j].x - blocks[i].x) < .8f && Math.abs((int) enemies[j].x - blocks[i].x) < .8f) enemies[j].isDead = true;
 					}
 				}
 				if (blocks[i].type == Block.B && !blocks[i].isDead) {
@@ -549,14 +543,11 @@ public class Level01 extends BasicGameState {
 						panda.isJumping = false;
 					}
 					for (int j = 0; j < enemies.length; j++) {
-						if (!enemies[j].isDead && Math.abs((int) enemies[j].x - blocks[i].x) < .8f
-								&& Math.abs((int) enemies[j].x - blocks[i].x) < .8f)
-							enemies[j].isDead = true;
+						if (!enemies[j].isDead && Math.abs((int) enemies[j].x - blocks[i].x) < .8f && Math.abs((int) enemies[j].x - blocks[i].x) < .8f) enemies[j].isDead = true;
 					}
 				}
 			}
-			if (panda.isFalling && input.isKeyDown(Input.KEY_DOWN) && (int) (panda.y + .8f) == blocks[i].y
-					&& (((int) panda.x == blocks[i].x) || (int) (panda.x + .8f) == blocks[i].x)) {
+			if (panda.isFalling && input.isKeyDown(Input.KEY_DOWN) && (int) (panda.y + .8f) == blocks[i].y && (((int) panda.x == blocks[i].x) || (int) (panda.x + .8f) == blocks[i].x)) {
 				if (blocks[i].type == Block.Q && blocks[i].state == Block.STILL) {
 					if (!blocks[i].isDead) {
 						powerUps[i].isDead = false;
@@ -568,9 +559,7 @@ public class Level01 extends BasicGameState {
 					blocks[i].isDead = true;
 					blocks[i].timeOfHit = totalTime;
 					for (int j = 0; j < enemies.length; j++) {
-						if (!enemies[j].isDead && Math.abs((int) enemies[j].x - blocks[i].x) < .8f
-								&& Math.abs((int) enemies[j].x - blocks[i].x) < .8f)
-							enemies[j].isDead = true;
+						if (!enemies[j].isDead && Math.abs((int) enemies[j].x - blocks[i].x) < .8f && Math.abs((int) enemies[j].x - blocks[i].x) < .8f) enemies[j].isDead = true;
 					}
 				}
 				if (blocks[i].type == Block.B && !blocks[i].isDead) {
@@ -586,9 +575,7 @@ public class Level01 extends BasicGameState {
 						map.setTileId((int) blocks[i].x, (int) blocks[i].y + 1, objectLayer, 0);
 					}
 					for (int j = 0; j < enemies.length; j++) {
-						if (!enemies[j].isDead && Math.abs((int) enemies[j].x - blocks[i].x) < .8f
-								&& Math.abs((int) enemies[j].x - blocks[i].x) < .8f)
-							enemies[j].isDead = true;
+						if (!enemies[j].isDead && Math.abs((int) enemies[j].x - blocks[i].x) < .8f && Math.abs((int) enemies[j].x - blocks[i].x) < .8f) enemies[j].isDead = true;
 					}
 				}
 			}
@@ -626,17 +613,11 @@ public class Level01 extends BasicGameState {
 				if (enemies[i].x <= mapXL + 16f) {
 					if (!enemies[i].isFalling) {
 						if (enemies[i].isRight) {
-							if (map.getTileId((int) (enemies[i].x + enemySpeed), (int) enemies[i].y, objectLayer) == 0)
-								enemies[i].x += enemySpeed;
-							if (enemies[i].isRight
-									&& map.getTileId((int) (enemies[i].x + .8f + enemySpeed), (int) enemies[i].y, objectLayer) != 0)
-								enemies[i].isRight = false;
+							if (map.getTileId((int) (enemies[i].x + enemySpeed), (int) enemies[i].y, objectLayer) == 0) enemies[i].x += enemySpeed;
+							if (enemies[i].isRight && map.getTileId((int) (enemies[i].x + .8f + enemySpeed), (int) enemies[i].y, objectLayer) != 0) enemies[i].isRight = false;
 						} else {
-							if (map.getTileId((int) (enemies[i].x - enemySpeed), (int) enemies[i].y, objectLayer) == 0)
-								enemies[i].x -= enemySpeed;
-							if (!enemies[i].isRight
-									&& map.getTileId((int) (enemies[i].x - enemySpeed), (int) enemies[i].y, objectLayer) != 0)
-								enemies[i].isRight = true;
+							if (map.getTileId((int) (enemies[i].x - enemySpeed), (int) enemies[i].y, objectLayer) == 0) enemies[i].x -= enemySpeed;
+							if (!enemies[i].isRight && map.getTileId((int) (enemies[i].x - enemySpeed), (int) enemies[i].y, objectLayer) != 0) enemies[i].isRight = true;
 						}
 						
 					}
@@ -645,9 +626,7 @@ public class Level01 extends BasicGameState {
 					
 					if (!enemies[i].isDead) {
 						if (enemies[i].y >= 28) enemies[i].isDead = true;
-						else if (map.getTileId((int) enemies[i].x, (int) (enemies[i].y + 0.07), objectLayer) == 0
-								&& map.getTileId((int) (enemies[i].x + (Game.mushroom.getWidth() / (tileWidth * zoomFactor2))),
-										(int) (enemies[i].y + 0.07f), objectLayer) == 0) {
+						else if (map.getTileId((int) enemies[i].x, (int) (enemies[i].y + 0.07), objectLayer) == 0 && map.getTileId((int) (enemies[i].x + (Game.mushroom.getWidth() / (tileWidth * zoomFactor2))), (int) (enemies[i].y + 0.07f), objectLayer) == 0) {
 							enemies[i].y += .07f;
 						} else
 							enemies[i].isFalling = false;
@@ -677,22 +656,18 @@ public class Level01 extends BasicGameState {
 						}
 						
 					} else {
-						if (map.getTileId((int) fireballs.get(i).x, (int) (fireballs.get(i).y - .07f), objectLayer) == 0)
-							fireballs.get(i).y -= .07f;
+						if (map.getTileId((int) fireballs.get(i).x, (int) (fireballs.get(i).y - .07f), objectLayer) == 0) fireballs.get(i).y -= .07f;
 						fireballs.get(i).distFromGround += .07f;
 					}
 					if (fireballs.get(i).distFromGround >= 2) fireballs.get(i).isFalling = true;
-					if ((map.getTileId((int) (fireballs.get(i).x), (int) (fireballs.get(i).y - .01), objectLayer) != 0)
-							&& (map.getTileId((int) (fireballs.get(i).x), (int) (fireballs.get(i).y + .01), objectLayer) != 0))
-						fireballs.get(i).isDead = true;
+					if ((map.getTileId((int) (fireballs.get(i).x), (int) (fireballs.get(i).y - .01), objectLayer) != 0) && (map.getTileId((int) (fireballs.get(i).x), (int) (fireballs.get(i).y + .01), objectLayer) != 0)) fireballs.get(i).isDead = true;
 				}
 				
 				// check enemyKill
 				if (!fireballs.get(i).isDead) {
 					fireballs.get(i).x += (fireballs.get(i).isRight) ? fireballSpeed : -fireballSpeed;
 					for (int j = 0; j < enemies.length; j++) {
-						if (!enemies[j].isDead && fireballs.get(i).x - .7 <= enemies[j].x && fireballs.get(i).x + .7 >= enemies[j].x
-								&& fireballs.get(i).y - .1 <= enemies[j].y && fireballs.get(i).y + .1 >= enemies[j].y) {
+						if (!enemies[j].isDead && fireballs.get(i).x - .7 <= enemies[j].x && fireballs.get(i).x + .7 >= enemies[j].x && fireballs.get(i).y - .1 <= enemies[j].y && fireballs.get(i).y + .1 >= enemies[j].y) {
 							enemies[j].isDead = true;
 							fireballs.get(i).isDead = true;
 						}
@@ -745,10 +720,7 @@ public class Level01 extends BasicGameState {
 		try {
 			// isJumping
 			if (panda.isJumping) {
-				if (!won && (panda.y <= 1
-						|| (map.getTileId((int) panda.x, (int) (panda.y - .07f - (panda.isSmall ? 1.65 : 3.15)), objectLayer) == 0
-								&& map.getTileId((int) (panda.x + .8f), (int) (panda.y - .07f - (panda.isSmall ? 1.65 : 3.15)),
-										objectLayer) == 0))) {
+				if (!won && (panda.y <= 1 || (map.getTileId((int) panda.x, (int) (panda.y - .07f - (panda.isSmall ? 1.65 : 3.15)), objectLayer) == 0 && map.getTileId((int) (panda.x + .8f), (int) (panda.y - .07f - (panda.isSmall ? 1.65 : 3.15)), objectLayer) == 0))) {
 					switch (Mario.last) {
 						case 'l':
 							if (panda.isSmall) {
@@ -800,8 +772,7 @@ public class Level01 extends BasicGameState {
 			// isUnderFoot
 			if (!panda.isJumping) {
 				if (panda.y >= 28) panda.isDead = true;
-				else if (map.getTileId((int) (panda.x), (int) (panda.y + .07f), objectLayer) == 0
-						&& map.getTileId((int) (panda.x + .8f), (int) (panda.y + .07f), objectLayer) == 0) {
+				else if (map.getTileId((int) (panda.x), (int) (panda.y + .07f), objectLayer) == 0 && map.getTileId((int) (panda.x + .8f), (int) (panda.y + .07f), objectLayer) == 0) {
 					switch (Mario.last) {
 						case 'r':
 							if (input.isKeyDown(Input.KEY_DOWN)) {
@@ -1011,10 +982,7 @@ public class Level01 extends BasicGameState {
 			
 			Mario.last = 'l';
 			if (panda.y <= 1) panda.x -= .03f;
-			else if (panda.x - .03f >= mapXL
-					&& map.getTileId((int) (panda.x - 0.03f), (int) (panda.isSmall ? panda.y - 1f / 6f : panda.y - 1f / 6f),
-							objectLayer) == 0
-					&& map.getTileId((int) (panda.x - 0.03f), (int) (panda.isSmall ? panda.y - 1.65 : panda.y - 1.65), objectLayer) == 0
+			else if (panda.x - .03f >= mapXL && map.getTileId((int) (panda.x - 0.03f), (int) (panda.isSmall ? panda.y - 1f / 6f : panda.y - 1f / 6f), objectLayer) == 0 && map.getTileId((int) (panda.x - 0.03f), (int) (panda.isSmall ? panda.y - 1.65 : panda.y - 1.65), objectLayer) == 0
 					&& map.getTileId((int) (panda.x - 0.03f), (int) (panda.isSmall ? panda.y - 1.65 : panda.y - 3.15), objectLayer) == 0)
 				panda.x -= 0.03f;
 		}
@@ -1035,9 +1003,7 @@ public class Level01 extends BasicGameState {
 			}
 			Mario.last = 'r';
 			if (panda.y <= 1) panda.x += .03f;
-			else if (map.getTileId((int) (panda.x + .8f + 0.03f), (int) (panda.isSmall ? panda.y - .5 : panda.y - 1f / 6f),
-					objectLayer) == 0
-					&& map.getTileId((int) (panda.x + .8f + 0.03f), (int) (panda.isSmall ? panda.y - 1 : panda.y - .5), objectLayer) == 0
+			else if (map.getTileId((int) (panda.x + .8f + 0.03f), (int) (panda.isSmall ? panda.y - .5 : panda.y - 1f / 6f), objectLayer) == 0 && map.getTileId((int) (panda.x + .8f + 0.03f), (int) (panda.isSmall ? panda.y - 1 : panda.y - .5), objectLayer) == 0
 					&& map.getTileId((int) (panda.x + .8f + 0.03f), (int) (panda.isSmall ? panda.y - 1 : panda.y - 1), objectLayer) == 0)
 				panda.x += 0.03f;
 			if (panda.x >= 7.5 + mapXL) {
@@ -1109,17 +1075,11 @@ public class Level01 extends BasicGameState {
 							if (powerUps[i].x <= mapXL + 16f) {
 								if (!powerUps[i].isFalling) {
 									if (powerUps[i].isRight) {
-										if (map.getTileId((int) (powerUps[i].x + powerUpSpeed), (int) powerUps[i].y, objectLayer) == 0)
-											powerUps[i].x += powerUpSpeed;
-										if (powerUps[i].isRight && map.getTileId((int) (powerUps[i].x + .8 + powerUpSpeed),
-												(int) powerUps[i].y, objectLayer) != 0)
-											powerUps[i].isRight = false;
+										if (map.getTileId((int) (powerUps[i].x + powerUpSpeed), (int) powerUps[i].y, objectLayer) == 0) powerUps[i].x += powerUpSpeed;
+										if (powerUps[i].isRight && map.getTileId((int) (powerUps[i].x + .8 + powerUpSpeed), (int) powerUps[i].y, objectLayer) != 0) powerUps[i].isRight = false;
 									} else {
-										if (map.getTileId((int) (powerUps[i].x - powerUpSpeed), (int) powerUps[i].y, objectLayer) == 0)
-											powerUps[i].x -= powerUpSpeed;
-										if (!powerUps[i].isRight && map.getTileId((int) (powerUps[i].x - powerUpSpeed), (int) powerUps[i].y,
-												objectLayer) != 0)
-											powerUps[i].isRight = true;
+										if (map.getTileId((int) (powerUps[i].x - powerUpSpeed), (int) powerUps[i].y, objectLayer) == 0) powerUps[i].x -= powerUpSpeed;
+										if (!powerUps[i].isRight && map.getTileId((int) (powerUps[i].x - powerUpSpeed), (int) powerUps[i].y, objectLayer) != 0) powerUps[i].isRight = true;
 									}
 									
 								}
@@ -1128,9 +1088,7 @@ public class Level01 extends BasicGameState {
 								
 								if (!powerUps[i].isDead) {
 									if (powerUps[i].y >= 28) powerUps[i].isDead = true;
-									else if (map.getTileId((int) powerUps[i].x, (int) (powerUps[i].y + 0.07), objectLayer) == 0
-											&& map.getTileId((int) (powerUps[i].x + (Game.mushroom.getWidth() / (tileWidth * zoomFactor2))),
-													(int) (powerUps[i].y + 0.07f), objectLayer) == 0) {
+									else if (map.getTileId((int) powerUps[i].x, (int) (powerUps[i].y + 0.07), objectLayer) == 0 && map.getTileId((int) (powerUps[i].x + (Game.mushroom.getWidth() / (tileWidth * zoomFactor2))), (int) (powerUps[i].y + 0.07f), objectLayer) == 0) {
 										powerUps[i].y += .07f;
 									} else
 										powerUps[i].isFalling = false;
@@ -1173,9 +1131,7 @@ public class Level01 extends BasicGameState {
 				Game.marioFlag.stop();
 				Game.marioCastleComplete.play();
 			}
-			if (map.getTileId((int) (panda.x + 0.03f + (panda.pandaWidth / (tileWidth * zoomFactor))), (int) (panda.y), objectLayer) == 0
-					&& map.getTileId((int) (panda.x + 0.03f + (panda.pandaWidth / (tileWidth * zoomFactor))),
-							(int) (panda.y - (panda.pandaHeight / (tileHeight * zoomFactor))), objectLayer) == 0) {
+			if (map.getTileId((int) (panda.x + 0.03f + (panda.pandaWidth / (tileWidth * zoomFactor))), (int) (panda.y), objectLayer) == 0 && map.getTileId((int) (panda.x + 0.03f + (panda.pandaWidth / (tileWidth * zoomFactor))), (int) (panda.y - (panda.pandaHeight / (tileHeight * zoomFactor))), objectLayer) == 0) {
 				panda.x += .03f;
 				if (panda.isSmall) {
 					panda.panda = Game.marioPandaWalkRight;
@@ -1369,3 +1325,36 @@ class Star extends PowerUp {
 		type = super.STAR;
 	}
 }
+//
+// class s {
+//
+// private float minutes, seconds;
+//
+// public Timer(int minutes, int seconds) {
+// this.minutes = minutes;
+// this.seconds = seconds;
+// }
+//
+// public String getMinutes() {
+// return "" + (int) minutes;
+// }
+//
+// public String getSeconds() {
+// return String.format("%02d", (int) seconds);
+// }
+//
+// public boolean isDone() {
+// return minutes == 0 && seconds == 0;
+// }
+//
+// public void updateTimer(float delta) {
+// seconds -= delta * 1f / 1000f;
+// if (seconds < 0) {
+// if (minutes > 0) {
+// minutes--;
+// seconds += 60;
+// }
+// }
+//
+// }
+// }

@@ -128,6 +128,7 @@ public class Level04 extends BasicGameState {
 		if (totalTime == panda.timeOfWin + 1) Game.dkWin.play(1f, .75f);
 		if (!Game.dkWin.playing() && totalTime > panda.timeOfWin + 1) {
 			sbg.enterState(Game.roam);
+			Game.pollyWolly.loop();
 			Game.pet4Found = true;
 			Game.charLock4 = '9';
 			try {

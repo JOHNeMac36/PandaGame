@@ -1,8 +1,14 @@
 package game;
 
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Formatter;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.AppGameContainer;
@@ -11,14 +17,15 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
+import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.state.StateBasedGame;
 
 public class Game extends StateBasedGame {
 	
 	public static int song;
+	public static int standardFPS = 350;
 	// attributes
 	public static final int splash = -1, menu = 0, roam = -99, lvl01 = 1, lvl02 = 2, lvl03 = 3, lvl04 = 4, lvlLava = 99, lvlBoss = 100;
-	public static int currentState;
 	public static Animation pandaStillDown, pandaStillUp, pandaStillLeft, pandaStillRight;
 	public static Animation pandaWalkUp, pandaWalkDown, pandaWalkLeft, pandaWalkRight;
 	public static Animation penguinStillDown, penguinStillUp, penguinStillLeft, penguinStillRight;
@@ -89,13 +96,18 @@ public class Game extends StateBasedGame {
 	public static Animation lmStill, lmDodgeR, lmDodgeL, lmSheild, lmJabL, lmJabR, lmUpperCutL, lmUpperCutR, lmHitL, lmHitR, lmLose, lmWin, lmFatigue;
 	public static Animation lmCutScene1, lmCutScene2, lmCutScene3;
 	
-	public static Animation vkStill, vkDodgeR, vkDodgeL, vkSheild, vkJabL, vkJabR, vkUpperCutL, vkUpperCutR, vkHitL, vkHitR, vkLose, vkWin, vkFatigue;
+	public static Animation vkStill, vkDodgeR, vkDodgeL, vkSheild, vkJab, vkUpperCut, vkHitLow, vkHitHighL, vkHitHighR;
 	public static Animation vkCutScene1, vkCutScene2, vkCutScene3;
+	
+	public static Animation rmStill, rmWalk, rmFight, rmCount, rmKO, rmTKO, rmSatanWin, rmYouWin;
 	
 	public static Music panda;
 	public static AppGameContainer appgc;
 	// end of attributes
 	public static Animation pwrCoin, pwrFlower, pwrMush, pwrStar;
+	
+	public static Font font;
+	public static TrueTypeFont ttFont;
 	
 	public static void main(String[] args) {
 		
@@ -103,7 +115,7 @@ public class Game extends StateBasedGame {
 			appgc = new AppGameContainer(new Game(gamename));
 			appgc.setDisplayMode(640, 640, false);
 			appgc.setShowFPS(true);
-			appgc.setTargetFrameRate(350);
+			appgc.setTargetFrameRate(standardFPS);
 			appgc.setUpdateOnlyWhenVisible(false);
 			appgc.setSmoothDeltas(false);
 			appgc.start();
@@ -115,58 +127,84 @@ public class Game extends StateBasedGame {
 	public Game(String gamename) {
 		super(gamename);
 		this.addState(new Splash(splash));
-		this.addState(new MainMenu(menu));
-		this.addState(new Roam(roam));
-		this.addState(new Level01(lvl01));
-		this.addState(new Level02(lvl02));
-		this.addState(new Level03(lvl03));
-		this.addState(new Level04(lvl04));
-		this.addState(new Lava(lvlLava));
-		this.addState(new LevelBoss(lvlBoss));
+		// this.addState(new MainMenu(menu));
+		// this.addState(new Roam(roam));
+		// this.addState(new Level01(lvl01));
+		// this.addState(new Level02(lvl02));
+		// this.addState(new Level03(lvl03));
+		// this.addState(new Level04(lvl04));
+		// this.addState(new Lava(lvlLava));
+		// this.addState(new LevelBoss(lvlBoss));
 	}
 	
 	@Override
-	public void initStatesList(GameContainer gc) {
-		initAnimations();
-		initSounds();
-		initImages();
-		isMusicOn = true;
+	public void initStatesList(GameContainer gc) throws SlickException {
+		// try {
+		// GraphicsEnvironment ge =
+		// GraphicsEnvironment.getLocalGraphicsEnvironment();
+		// ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new
+		// File("res/po.ttf")));
+		// } catch (IOException | FontFormatException e) {
+		// System.exit(0);
+		// }
+		// font = new Font("Punch-Out!! NES", Font.PLAIN, 20);
+		// ttFont = new TrueTypeFont(font, false);
+		//
+		Image blocks = new Image("res/pngs/marioBlocks.png");
 		
-		pet1Found = false;
-		pet2Found = false;
-		pet3Found = false;
-		pet4Found = false;
+		bBlockBreak = new Animation();
+		bBlockBreak.addFrame(blocks.getSubImage(1, 65, 90, 90), 150);
+		bBlockBreak.addFrame(blocks.getSubImage(81, 65, 90, 90), 150);
+		bBlockBreak.addFrame(blocks.getSubImage(192, 65, 90, 90), 300);
+		bBlockBreak.addFrame(blocks.getSubImage(1, 1, 1, 1), 100000);
+		//
+		// // initAnimations();
+		// // initSounds();
+		// // initImages();
+		// isMusicOn = true;
+		//
+		// pet1Found = false;
+		// pet2Found = false;
+		// pet3Found = false;
+		// pet4Found = false;
+		//
+		// charLock1 = '_';
+		// charLock2 = '_';
+		// charLock3 = '_';
+		// charLock4 = '_';
 		
-		charLock1 = '_';
-		charLock2 = '_';
-		charLock3 = '_';
-		charLock4 = '_';
 		try {
-			this.getState(menu).init(gc, this);
 			this.getState(splash).init(gc, this);
-			this.getState(roam).init(gc, this);
-			this.getState(lvl01).init(gc, this);
-			this.getState(lvl02).init(gc, this);
-			this.getState(lvl03).init(gc, this);
-			this.getState(lvl04).init(gc, this);
-			this.getState(lvlLava).init(gc, this);
-			this.getState(lvlBoss).init(gc, this);
-			
-			this.enterState(menu);
+			this.enterState(splash);
+			// this.getState(splash).init(gc, this);
+			// this.getState(roam).init(gc, this);
+			// this.getState(lvl01).init(gc, this);
+			// this.getState(lvl02).init(gc, this);
+			// this.getState(lvl03).init(gc, this);
+			// this.getState(lvl04).init(gc, this);
+			// this.getState(lvlLava).init(gc, this);
+			// this.getState(lvlBoss).init(gc, this);
+			//
+			// this.enterState(lvlLava);
 			
 		} catch (SlickException e) {
 		}
 		
 	}
 	
-	public void initSounds() {
+	public static void initSounds1() {
 		try {
 			pandaPunchInPuss = new Sound("res/oggs/PandaPunch.ogg");
 			sadPanda = new Sound("res/oggs/Sad Panda.ogg");
 			itsPanda = new Sound("res/oggs/itsPanda.ogg");
 			pandaIcecream = new Sound("res/oggs/pandaIcecream.ogg");
 			pollyWolly = new Music("res/oggs/music.ogg");
-			
+		} catch (SlickException e) {
+		}
+	}
+	
+	public static void initSounds2() {
+		try {
 			marioTheme = new Music("res/oggs/mario01-ThemeSong.ogg");
 			marioUnderworld = new Music("res/oggs/mario02-underworld.ogg");
 			marioCastle = new Music("res/oggs/mario04-castle.ogg");
@@ -176,7 +214,12 @@ public class Game extends StateBasedGame {
 			marioDead = new Music("res/oggs/mario08-you-re-dead.ogg");
 			marioGameOver = new Music("res/oggs/mario09-game-over.ogg");
 			marioHurryUp = new Music("res/oggs/mario14-hurry-underground-.ogg");
-			
+		} catch (SlickException e) {
+		}
+	}
+	
+	public static void initSounds3() {
+		try {
 			marioBump = new Sound("res/oggs/marioBump.ogg");
 			marioCoin = new Sound("res/oggs/marioCoin.ogg");
 			marioFireball = new Sound("res/oggs/marioFireball.ogg");
@@ -191,83 +234,108 @@ public class Game extends StateBasedGame {
 			marioBlockBreak = new Sound("res/oggs/marioBlockBreak.ogg");
 			marioPowerDown = new Sound("res/oggs/marioPowerDown.ogg");
 			marioStomp = new Sound("res/oggs/marioStomp.ogg");
-			
-			metal01Intro = new Music("res/oggs/metal01Intro.ogg");
-			metal01Loop = new Music("res/oggs/metal01Loop.ogg");
-			metal02Intro = new Music("res/oggs/metal02Intro.ogg");
-			metal02Loop = new Music("res/oggs/metal02Loop.ogg");
-			metal03Intro = new Music("res/oggs/metal03Intro.ogg");
-			metal03Loop = new Music("res/oggs/metal03Loop.ogg");
-			metal04Intro = new Music("res/oggs/metal04Intro.ogg");
-			metal04Loop = new Music("res/oggs/metal04Loop.ogg");
-			metal05Intro = new Music("res/oggs/metal05Intro.ogg");
-			metal05Loop = new Music("res/oggs/metal05Loop.ogg");
-			metal06Intro = new Music("res/oggs/metal06Intro.ogg");
-			metal06Loop = new Music("res/oggs/metal06Loop.ogg");
-			metal07Intro = new Music("res/oggs/metal07Intro.ogg");
-			metal07Loop = new Music("res/oggs/metal07Loop.ogg");
-			metal08Intro = new Music("res/oggs/metal08Intro.ogg");
-			metal08Loop = new Music("res/oggs/metal08Loop.ogg");
-			metal09Intro = new Music("res/oggs/metal09Intro.ogg");
-			metal09Loop = new Music("res/oggs/metal09Loop.ogg");
-			metal10Intro = new Music("res/oggs/metal10Intro.ogg");
-			metal10Loop = new Music("res/oggs/metal10Loop.ogg");
-			metal11Intro = new Music("res/oggs/metal11Intro.ogg");
-			metal11Loop = new Music("res/oggs/metal11Loop.ogg");
-			
+		} catch (SlickException e) {
+		}
+	}
+	
+	public static void initSounds4() {
+		try {
+			metal11Intro = new Music("res/oggs/Metal11Intro.ogg");
+			metal11Loop = new Music("res/oggs/Metal11Loop.ogg");
+			//
 			DateFormat df = new SimpleDateFormat("dd");
 			Date date = new Date();
 			song = Integer.parseInt(df.format(date));
-			switch (song % 11) {
-				
-				case 1:
-					Game.menuMusicIntro = new Music("res/oggs/Metal01Intro.ogg");
-					Game.menuMusicLoop = new Music("res/oggs/Metal01Loop.ogg");
-					break;
-				case 2:
-					Game.menuMusicIntro = new Music("res/oggs/Metal02Intro.ogg");
-					Game.menuMusicLoop = new Music("res/oggs/Metal02Loop.ogg");
-					break;
-				case 3:
-					Game.menuMusicIntro = new Music("res/oggs/Metal03Intro.ogg");
-					Game.menuMusicLoop = new Music("res/oggs/Metal03Loop.ogg");
-					break;
-				case 4:
-					Game.menuMusicIntro = new Music("res/oggs/Metal04Intro.ogg");
-					Game.menuMusicLoop = new Music("res/oggs/Metal04Loop.ogg");
-					break;
-				case 5:
-					Game.menuMusicIntro = new Music("res/oggs/Metal05Intro.ogg");
-					Game.menuMusicLoop = new Music("res/oggs/Metal05Loop.ogg");
-					break;
-				case 6:
-					Game.menuMusicIntro = new Music("res/oggs/Metal06Intro.ogg");
-					Game.menuMusicLoop = new Music("res/oggs/Metal06Loop.ogg");
-					break;
-				case 7:
-					Game.menuMusicIntro = new Music("res/oggs/Metal07Intro.ogg");
-					Game.menuMusicLoop = new Music("res/oggs/Metal07Loop.ogg");
-					break;
-				case 8:
-					Game.menuMusicIntro = new Music("res/oggs/Metal08Intro.ogg");
-					Game.menuMusicLoop = new Music("res/oggs/Metal08Loop.ogg");
-					break;
-				case 9:
-					Game.menuMusicIntro = new Music("res/oggs/Metal09Intro.ogg");
-					Game.menuMusicLoop = new Music("res/oggs/Metal09Loop.ogg");
-					break;
-				case 10:
-					Game.menuMusicIntro = new Music("res/oggs/Metal10Intro.ogg");
-					Game.menuMusicLoop = new Music("res/oggs/Metal10Loop.ogg");
-					break;
-				case 11:
-					Game.menuMusicIntro = new Music("res/oggs/Metal11Intro.ogg");
-					Game.menuMusicLoop = new Music("res/oggs/Metal11Loop.ogg");
-					break;
-				default:
-					Game.menuMusicIntro = new Music("res/oggs/Metal01Intro.ogg");
-					Game.menuMusicLoop = new Music("res/oggs/Metal01Loop.ogg");
-			}
+			System.out.println("res/oggs/metal" + String.format("%02d", song % 11 + 1) + "Intro.ogg");
+			Game.menuMusicIntro = new Music("res/oggs/Metal" + String.format("%02d", song % 11 + 1) + "Intro.ogg");
+			
+			Game.menuMusicLoop = new Music("res/oggs/Metal" + String.format("%02d", song % 11 + 1) + "Loop.ogg");
+			// String[][] paths = new String[11][2];
+			//
+			// for (int x = 0; x < paths.length; x++) {
+			// paths[x][0] = "res/oggs/metal" + String.format("%02", x + 1) +
+			// "Intro.ogg";
+			// paths[x][1] = "res/oggs/metal" + String.format("%02", x + 1) +
+			// "Loop.ogg";
+			//
+			// }
+			// metal01Intro = new Music("res/oggs/metal01Intro.ogg");
+			// metal01Loop = new Music("res/oggs/metal01Loop.ogg");
+			// metal02Intro = new Music("res/oggs/metal02Intro.ogg");
+			// metal02Loop = new Music("res/oggs/metal02Loop.ogg");
+			// metal03Intro = new Music("res/oggs/metal03Intro.ogg");
+			// metal03Loop = new Music("res/oggs/metal03Loop.ogg");
+			// metal04Intro = new Music("res/oggs/metal04Intro.ogg");
+			// metal04Loop = new Music("res/oggs/metal04Loop.ogg");
+			// metal05Intro = new Music("res/oggs/metal05Intro.ogg");
+			// metal05Loop = new Music("res/oggs/metal05Loop.ogg");
+			// metal06Intro = new Music("res/oggs/metal06Intro.ogg");
+			// metal06Loop = new Music("res/oggs/metal06Loop.ogg");
+			// metal07Intro = new Music("res/oggs/metal07Intro.ogg");
+			// metal07Loop = new Music("res/oggs/metal07Loop.ogg");
+			// metal08Intro = new Music("res/oggs/metal08Intro.ogg");
+			// metal08Loop = new Music("res/oggs/metal08Loop.ogg");
+			// metal09Intro = new Music("res/oggs/metal09Intro.ogg");
+			// metal09Loop = new Music("res/oggs/metal09Loop.ogg");
+			// metal10Intro = new Music("res/oggs/metal10Intro.ogg");
+			// metal10Loop = new Music("res/oggs/metal10Loop.ogg");
+			
+			// switch (song % 11)
+			// {
+			// case 1:
+			// Game.menuMusicIntro = new Music("res/oggs/Metal01Intro.ogg");
+			// Game.menuMusicLoop = new Music("res/oggs/Metal01Loop.ogg");
+			// break;
+			// case 2:
+			// Game.menuMusicIntro = new Music("res/oggs/Metal02Intro.ogg");
+			// Game.menuMusicLoop = new Music("res/oggs/Metal02Loop.ogg");
+			// break;
+			// case 3:
+			// Game.menuMusicIntro = new Music("res/oggs/Metal03Intro.ogg");
+			// Game.menuMusicLoop = new Music("res/oggs/Metal03Loop.ogg");
+			// break;
+			// case 4:
+			// Game.menuMusicIntro = new Music("res/oggs/Metal04Intro.ogg");
+			// Game.menuMusicLoop = new Music("res/oggs/Metal04Loop.ogg");
+			// break;
+			// case 5:
+			// Game.menuMusicIntro = new Music("res/oggs/Metal05Intro.ogg");
+			// Game.menuMusicLoop = new Music("res/oggs/Metal05Loop.ogg");
+			// break;
+			// case 6:
+			// Game.menuMusicIntro = new Music("res/oggs/Metal06Intro.ogg");
+			// Game.menuMusicLoop = new Music("res/oggs/Metal06Loop.ogg");
+			// break;
+			// case 7:
+			// Game.menuMusicIntro = new Music("res/oggs/Metal07Intro.ogg");
+			// Game.menuMusicLoop = new Music("res/oggs/Metal07Loop.ogg");
+			// break;
+			// case 8:
+			// Game.menuMusicIntro = new Music("res/oggs/Metal08Intro.ogg");
+			// Game.menuMusicLoop = new Music("res/oggs/Metal08Loop.ogg");
+			// break;
+			// case 9:
+			// Game.menuMusicIntro = new Music("res/oggs/Metal09Intro.ogg");
+			// Game.menuMusicLoop = new Music("res/oggs/Metal09Loop.ogg");
+			// break;
+			// case 10:
+			// Game.menuMusicIntro = new Music("res/oggs/Metal10Intro.ogg");
+			// Game.menuMusicLoop = new Music("res/oggs/Metal10Loop.ogg");
+			// break;
+			// case 11:
+			// Game.menuMusicIntro = new Music("res/oggs/Metal11Intro.ogg");
+			// Game.menuMusicLoop = new Music("res/oggs/Metal11Loop.ogg");
+			// break;
+			// default:
+			// Game.menuMusicIntro = new Music("res/oggs/Metal01Intro.ogg");
+			// Game.menuMusicLoop = new Music("res/oggs/Metal01Loop.ogg");
+			// }
+		} catch (SlickException e) {
+		}
+	}
+	
+	public static void initSounds5() {
+		try {
 			dkBackground = new Sound("res/oggs/DKbacmusic.ogg");
 			dkDeath = new Sound("res/oggs/DKdeath.ogg");
 			dkHammer = new Sound("res/oggs/DKhammer.ogg");
@@ -278,7 +346,12 @@ public class Game extends StateBasedGame {
 			dkJumpBarrel = new Sound("res/oggs/DKjumpbar.ogg");
 			dkWalking = new Music("res/oggs/DKwalking.ogg");
 			dkWin = new Sound("res/oggs/DKwin1.ogg");
-			
+		} catch (SlickException e) {
+		}
+	}
+	
+	public static void initSounds6() {
+		try {
 			invaderMove1 = new Sound("res/oggs/fastinvader1.wav");
 			invaderMove2 = new Sound("res/oggs/fastinvader2.wav");
 			invaderMove3 = new Sound("res/oggs/fastinvader3.wav");
@@ -293,7 +366,7 @@ public class Game extends StateBasedGame {
 		}
 	}
 	
-	private static void initImages() {
+	public static void initImages() {
 		try {
 			menuScene = new Image("res/pngs/menuScene.png");
 			playNow = new Image("res/pngs/playNow.png");
@@ -325,26 +398,26 @@ public class Game extends StateBasedGame {
 		menuMusicIntro.stop();
 		menuMusicLoop.stop();
 		pollyWolly.stop();
-		metal01Intro.stop();
-		metal01Loop.stop();
-		metal02Intro.stop();
-		metal02Loop.stop();
-		metal03Intro.stop();
-		metal03Loop.stop();
-		metal04Intro.stop();
-		metal04Loop.stop();
-		metal05Intro.stop();
-		metal05Loop.stop();
-		metal06Intro.stop();
-		metal06Loop.stop();
-		metal07Intro.stop();
-		metal07Loop.stop();
-		metal08Intro.stop();
-		metal08Loop.stop();
-		metal09Intro.stop();
-		metal09Loop.stop();
-		metal10Intro.stop();
-		metal10Loop.stop();
+//		metal01Intro.stop();
+//		metal01Loop.stop();
+//		metal02Intro.stop();
+//		metal02Loop.stop();
+//		metal03Intro.stop();
+//		metal03Loop.stop();
+//		metal04Intro.stop();
+//		metal04Loop.stop();
+//		metal05Intro.stop();
+//		metal05Loop.stop();
+//		metal06Intro.stop();
+//		metal06Loop.stop();
+//		metal07Intro.stop();
+//		metal07Loop.stop();
+//		metal08Intro.stop();
+//		metal08Loop.stop();
+//		metal09Intro.stop();
+//		metal09Loop.stop();
+//		metal10Intro.stop();
+//		metal10Loop.stop();
 		metal11Intro.stop();
 		metal11Loop.stop();
 		
@@ -366,26 +439,26 @@ public class Game extends StateBasedGame {
 		menuMusicIntro.setVolume(0);
 		menuMusicLoop.setVolume(0);
 		pollyWolly.setVolume(0);
-		metal01Intro.setVolume(0);
-		metal01Loop.setVolume(0);
-		metal02Intro.setVolume(0);
-		metal02Loop.setVolume(0);
-		metal03Intro.setVolume(0);
-		metal03Loop.setVolume(0);
-		metal04Intro.setVolume(0);
-		metal04Loop.setVolume(0);
-		metal05Intro.setVolume(0);
-		metal05Loop.setVolume(0);
-		metal06Intro.setVolume(0);
-		metal06Loop.setVolume(0);
-		metal07Intro.setVolume(0);
-		metal07Loop.setVolume(0);
-		metal08Intro.setVolume(0);
-		metal08Loop.setVolume(0);
-		metal09Intro.setVolume(0);
-		metal09Loop.setVolume(0);
-		metal10Intro.setVolume(0);
-		metal10Loop.setVolume(0);
+//		metal01Intro.setVolume(0);
+//		metal01Loop.setVolume(0);
+//		metal02Intro.setVolume(0);
+//		metal02Loop.setVolume(0);
+//		metal03Intro.setVolume(0);
+//		metal03Loop.setVolume(0);
+//		metal04Intro.setVolume(0);
+//		metal04Loop.setVolume(0);
+//		metal05Intro.setVolume(0);
+//		metal05Loop.setVolume(0);
+//		metal06Intro.setVolume(0);
+//		metal06Loop.setVolume(0);
+//		metal07Intro.setVolume(0);
+//		metal07Loop.setVolume(0);
+//		metal08Intro.setVolume(0);
+//		metal08Loop.setVolume(0);
+//		metal09Intro.setVolume(0);
+//		metal09Loop.setVolume(0);
+//		metal10Intro.setVolume(0);
+//		metal10Loop.setVolume(0);
 		metal11Intro.setVolume(0);
 		metal11Loop.setVolume(0);
 		
@@ -407,32 +480,32 @@ public class Game extends StateBasedGame {
 		menuMusicIntro.setVolume(1);
 		menuMusicLoop.setVolume(1);
 		pollyWolly.setVolume(1);
-		metal01Intro.setVolume(1);
-		metal01Loop.setVolume(1);
-		metal02Intro.setVolume(1);
-		metal02Loop.setVolume(1);
-		metal03Intro.setVolume(1);
-		metal03Loop.setVolume(1);
-		metal04Intro.setVolume(1);
-		metal04Loop.setVolume(1);
-		metal05Intro.setVolume(1);
-		metal05Loop.setVolume(1);
-		metal06Intro.setVolume(1);
-		metal06Loop.setVolume(1);
-		metal07Intro.setVolume(1);
-		metal07Loop.setVolume(1);
-		metal08Intro.setVolume(1);
-		metal08Loop.setVolume(1);
-		metal09Intro.setVolume(1);
-		metal09Loop.setVolume(1);
-		metal10Intro.setVolume(1);
-		metal10Loop.setVolume(1);
+//		metal01Intro.setVolume(1);
+//		metal01Loop.setVolume(1);
+//		metal02Intro.setVolume(1);
+//		metal02Loop.setVolume(1);
+//		metal03Intro.setVolume(1);
+//		metal03Loop.setVolume(1);
+//		metal04Intro.setVolume(1);
+//		metal04Loop.setVolume(1);
+//		metal05Intro.setVolume(1);
+//		metal05Loop.setVolume(1);
+//		metal06Intro.setVolume(1);
+//		metal06Loop.setVolume(1);
+//		metal07Intro.setVolume(1);
+//		metal07Loop.setVolume(1);
+//		metal08Intro.setVolume(1);
+//		metal08Loop.setVolume(1);
+//		metal09Intro.setVolume(1);
+//		metal09Loop.setVolume(1);
+//		metal10Intro.setVolume(1);
+//		metal10Loop.setVolume(1);
 		metal11Intro.setVolume(1);
 		metal11Loop.setVolume(1);
 		
 	}
 	
-	private void initAnimations() {
+	public static void initAnimations() {
 		try {
 			pandaWalkUp = new Animation();
 			pandaWalkDown = new Animation();
@@ -787,9 +860,15 @@ public class Game extends StateBasedGame {
 			qBlock = new Animation();
 			qBlockDead = new Animation();
 			bBlock = new Animation();
-			bBlockBreak = new Animation();
 			
 			Image blocks = new Image("res/pngs/marioBlocks.png");
+			// bBlockBreak = new Animation();
+			// bBlockBreak.addFrame(blocks.getSubImage(1, 65, 90, 90), 150);
+			// bBlockBreak.addFrame(blocks.getSubImage(81, 65, 90, 90), 150);
+			// bBlockBreak.addFrame(blocks.getSubImage(192, 65, 90, 90), 300);
+			// bBlockBreak.addFrame(blocks.getSubImage(1, 1, 1, 1), 100000);
+			//
+			
 			blocks.setFilter(Image.FILTER_NEAREST);
 			bBlock.addFrame(blocks.getSubImage(1, 1, 40, 40), 150);
 			qBlockDead.addFrame(blocks.getSubImage(42, 1, 40, 40), 150);
@@ -797,11 +876,6 @@ public class Game extends StateBasedGame {
 			qBlock.addFrame(blocks.getSubImage(83, 1, 40, 40), 270 * 2);
 			qBlock.addFrame(blocks.getSubImage(124, 1, 40, 40), 200);
 			qBlock.addFrame(blocks.getSubImage(165, 1, 40, 40), 200);
-			
-			bBlockBreak.addFrame(blocks.getSubImage(1, 65, 90, 90), 150);
-			bBlockBreak.addFrame(blocks.getSubImage(81, 65, 90, 90), 150);
-			bBlockBreak.addFrame(blocks.getSubImage(192, 65, 90, 90), 300);
-			bBlockBreak.addFrame(blocks.getSubImage(1, 1, 1, 1), 100000);
 			
 			// powerUps
 			pwrCoin = new Animation();
@@ -1065,15 +1139,11 @@ public class Game extends StateBasedGame {
 			vkDodgeR = new Animation();
 			vkDodgeL = new Animation();
 			vkSheild = new Animation();
-			vkJabL = new Animation();
-			vkJabR = new Animation();
-			vkUpperCutL = new Animation();
-			vkUpperCutR = new Animation();
-			vkHitL = new Animation();
-			vkHitR = new Animation();
-			vkLose = new Animation();
-			vkWin = new Animation();
-			vkFatigue = new Animation();
+			vkJab = new Animation();
+			vkUpperCut = new Animation();
+			vkHitLow = new Animation();
+			vkHitHighL = new Animation();
+			vkHitHighR = new Animation();
 			vkCutScene1 = new Animation();
 			vkCutScene2 = new Animation();
 			vkCutScene3 = new Animation();
@@ -1081,25 +1151,24 @@ public class Game extends StateBasedGame {
 			Image lm = new Image("res/tilesets/PunchOutTileset/lm.png");
 			lm.setFilter(Image.FILTER_NEAREST);
 			Image vk = new Image("res/tilesets/PunchOutTileset/vk.png");
+			vk.setFilter(Image.FILTER_NEAREST);
 			
 			int w = 31, h = 81;
 			int punchFrames = 100;
 			
-			lmStill.addFrame(lm.getSubImage(0, 0, 31, 81), 250);
-			lmStill.addFrame(lm.getSubImage(w, 0, 31, h), 250);
-			
-			lmDodgeL.addFrame(lm.getSubImage(0, 81, 31, 81), 250);
-			lmDodgeL.addFrame(lm.getSubImage(w, 81, 31, 81), 250);
-			lmDodgeL.addFrame(lm.getSubImage(2 * w, 81, 31, 81), 5000);
+			lmDodgeL.addFrame(lm.getSubImage(w, h, w, h).getFlippedCopy(false, false), 250);
+			lmDodgeL.addFrame(lm.getSubImage(2 * w, h, w, h).getFlippedCopy(false, false), 250);
 			
 			lmDodgeL.setAutoUpdate(false);
 			
-			lmDodgeR.addFrame(lm.getSubImage(0, 81, 31, 81).getFlippedCopy(true, false), 250);
-			lmDodgeR.addFrame(lm.getSubImage(w, 81, 31, 81).getFlippedCopy(true, false), 250);
-			lmDodgeR.addFrame(lm.getSubImage(2 * w, 81, 31, 81).getFlippedCopy(true, false), 5000);
+			lmDodgeR.addFrame(lm.getSubImage(w, h, w, h).getFlippedCopy(true, false), 250);
+			lmDodgeR.addFrame(lm.getSubImage(2 * w, h, w, h).getFlippedCopy(true, false), 250);
 			lmDodgeR.setAutoUpdate(false);
 			
-			lmSheild.addFrame(lm.getSubImage(w, 3 * h, w, h), 250);
+			lmStill.addFrame(lm.getSubImage(0, 0, 31, 81), 250);
+			lmStill.addFrame(lm.getSubImage(w, 0, 31, h), 250);
+			
+			lmSheild.addFrame(lm.getSubImage(w, 2 * h, w, h), 250);
 			
 			lmJabL.addFrame(lm.getSubImage(0, 3 * h, w, h), punchFrames);
 			lmJabL.addFrame(lm.getSubImage(w, 3 * h, w, h), punchFrames);
@@ -1138,10 +1207,10 @@ public class Game extends StateBasedGame {
 			lmUpperCutR.setLooping(false);
 			
 			lmHitL.addFrame(lm.getSubImage(0, 8 * h, w, h).getFlippedCopy(false, false), 250);
-			lmHitL.addFrame(lm.getSubImage(w, 8 * h, w, h).getFlippedCopy(false, false), 250);
+			lmHitL.addFrame(lm.getSubImage(w, 8 * h, w, h).getFlippedCopy(false, false), 2500000);
 			
 			lmHitR.addFrame(lm.getSubImage(0, 8 * h, w, h).getFlippedCopy(true, false), 250);
-			lmHitR.addFrame(lm.getSubImage(w, 8 * h, w, h).getFlippedCopy(true, false), 250);
+			lmHitR.addFrame(lm.getSubImage(w, 8 * h, w, h).getFlippedCopy(true, false), 2500000);
 			
 			lmLose.addFrame(lm.getSubImage(3 * w, 9 * h, w, h).getFlippedCopy(false, false), 2500);
 			
@@ -1168,7 +1237,107 @@ public class Game extends StateBasedGame {
 			lmCutScene3.addFrame(lm.getSubImage(0 * (w + o2), 2 * h + o1 + o2, w, h), 250);
 			lmCutScene3.addFrame(lm.getSubImage(1 * (w + o2), 2 * h + o1 + o2, w, h), 250);
 			lmCutScene3.addFrame(lm.getSubImage(2 * (w + o2), 2 * h + o1 + o2, w, h), 250);
-			lmCutScene3.addFrame(lm.getSubImage(3 * (w + o2), 2 * h + o1 + o2, w, h), 250);
+			vkCutScene3.addFrame(vk.getSubImage(3 * (w + o2), 2 * h + o1 + o2, w, h), 250);
+			
+			w = 45;
+			h = 104;
+			
+			vkStill.addFrame(vk.getSubImage(0, h, w, h), 2 * punchFrames);
+			vkStill.addFrame(vk.getSubImage(w, h, w, h), 2 * punchFrames);
+			vkStill.addFrame(vk.getSubImage(w * 2, h, w, h), 2 * punchFrames);
+			vkStill.addFrame(vk.getSubImage(w * 3, h, w, h), 2 * punchFrames);
+			
+			vkDodgeL.addFrame(vk.getSubImage(0, 11 * h, w, h), punchFrames * 2);
+			
+			vkDodgeL.setAutoUpdate(false);
+			
+			vkDodgeR.addFrame(vk.getSubImage(0, 11 * h, w, h).getFlippedCopy(true, false), punchFrames * 2);
+			
+			vkDodgeR.setAutoUpdate(false);
+			
+			vkJab.addFrame(vk.getSubImage(2 * w, 4 * h, w, h), punchFrames * 3);
+			vkJab.addFrame(vk.getSubImage(3 * w, 4 * h, w, h), punchFrames * 3);
+			vkJab.addFrame(vk.getSubImage(4 * w, 4 * h, w, h), punchFrames * 3);
+			vkJab.addFrame(vk.getSubImage(5 * w, 4 * h, w, h), punchFrames * 2);
+			vkJab.addFrame(vk.getSubImage(4 * w, 4 * h, w, h), punchFrames * 3);
+			vkJab.addFrame(vk.getSubImage(3 * w, 4 * h, w, h), punchFrames * 3);
+			vkJab.addFrame(vk.getSubImage(2 * w, 4 * h, w, h), punchFrames * 3);
+			
+			vkJab.setAutoUpdate(false);
+			vkJab.setLooping(false);
+			
+			vkUpperCut.addFrame(vk.getSubImage(0 * w, 5 * h, w, h), punchFrames * 4);
+			vkUpperCut.addFrame(vk.getSubImage(1 * w, 5 * h, w, h), punchFrames * 4);
+			vkUpperCut.addFrame(vk.getSubImage(2 * w, 5 * h, w, h), punchFrames * 4);
+			vkUpperCut.addFrame(vk.getSubImage(3 * w, 5 * h, w, h), punchFrames * 4);
+			vkUpperCut.setAutoUpdate(false);
+			vkUpperCut.setLooping(false);
+			
+			vkHitLow.addFrame(vk.getSubImage(3 * w, 8 * h, w, h), punchFrames);
+			
+			vkHitHighL.addFrame(vk.getSubImage(1 * w, 8 * h, w, h), punchFrames);
+			
+			vkHitHighR.addFrame(vk.getSubImage(2 * w, 8 * h, w, h), punchFrames);
+			
+			w = 80;
+			h = 77;
+			o1 = 1280;
+			o2 = 3;
+			
+			vkCutScene1.addFrame(vk.getSubImage(0 * (w + o2), h * 0 + o1 + o2, w, h), punchFrames);
+			vkCutScene1.addFrame(vk.getSubImage(1 * (w + o2), h * 0 + o1 + o2, w, h), punchFrames);
+			vkCutScene1.addFrame(vk.getSubImage(2 * (w + o2), h * 0 + o1 + o2, w, h), punchFrames);
+			vkCutScene1.addFrame(vk.getSubImage(3 * (w + o2), h * 0 + o1 + o2, w, h), punchFrames);
+			
+			vkCutScene2.addFrame(vk.getSubImage(0 * (w + o2), h + o1 + o2, w, h), punchFrames);
+			vkCutScene2.addFrame(vk.getSubImage(1 * (w + o2), h + o1 + o2, w, h), punchFrames);
+			vkCutScene2.addFrame(vk.getSubImage(2 * (w + o2), h + o1 + o2, w, h), punchFrames);
+			vkCutScene2.addFrame(vk.getSubImage(3 * (w + o2), h + o1 + o2, w, h), punchFrames);
+			
+			vkCutScene3.addFrame(vk.getSubImage(0 * (w + o2), 2 * h + o1 + o2, w, h), punchFrames);
+			vkCutScene3.addFrame(vk.getSubImage(1 * (w + o2), 2 * h + o1 + o2, w, h), punchFrames);
+			vkCutScene3.addFrame(vk.getSubImage(2 * (w + o2), 2 * h + o1 + o2, w, h), punchFrames);
+			vkCutScene3.addFrame(vk.getSubImage(3 * (w + o2), 2 * h + o1 + o2, w, h), punchFrames);
+			
+			w = 62;
+			h = 48;
+			int x = 37;
+			Image rm = new Image("res/tilesets/PunchOutTileset/rm.png");
+			
+			rmWalk = new Animation();
+			rmFight = new Animation();
+			rmCount = new Animation();
+			rmKO = new Animation();
+			rmTKO = new Animation();
+			rmSatanWin = new Animation();
+			rmYouWin = new Animation();
+			rmStill = new Animation();
+			
+			rm.setFilter(Image.FILTER_NEAREST);
+			rmStill.addFrame(rm.getSubImage(0, 0, w, h), 250);
+			
+			rmWalk.addFrame(rm.getSubImage(0, 0, w, h), 150);
+			rmWalk.addFrame(rm.getSubImage(w, 0, w, h), 150);
+			
+			rmFight.addFrame(rm.getSubImage(0, 3 * h, w, h), 250);
+			
+			rmCount.addFrame(rm.getSubImage(3 * w, h, w, h), 1000);
+			rmCount.addFrame(rm.getSubImage(4 * w, h, w, h), 1000);
+			rmCount.addFrame(rm.getSubImage(5 * w, h, w, h), 1000);
+			rmCount.addFrame(rm.getSubImage(6 * w, h, w, h), 1000);
+			rmCount.addFrame(rm.getSubImage(0 * w, 2 * h, w, h), 1000);
+			rmCount.addFrame(rm.getSubImage(1 * w, 2 * h, w, h), 1000);
+			rmCount.addFrame(rm.getSubImage(2 * w, 2 * h, w, h), 1000);
+			rmCount.addFrame(rm.getSubImage(3 * w, 2 * h, w, h), 1000);
+			rmCount.addFrame(rm.getSubImage(4 * w, 2 * h, w, h), 1000);
+			rmCount.addFrame(rm.getSubImage(5 * w, 2 * h, w, h), 1000);
+			
+			rmKO.addFrame(rm.getSubImage(2 * w, 4 * h, w + x, h), 1000);
+			
+			rmTKO.addFrame(rm.getSubImage(2 * w, 4 * h, w + x, h), 1000);
+			
+			rmSatanWin.addFrame(rm.getSubImage(w, 4 * h, w, h), 1000);
+			rmYouWin.addFrame(rm.getSubImage(0, 5 * h, w, h), 1000);
 			
 		} catch (SlickException e) {
 		}

@@ -62,6 +62,7 @@ public class Level03 extends BasicGameState {
 		input = gc.getInput();
 		tileHeight = map.getTileHeight();
 		tileWidth = map.getTileWidth();
+		//Game.appgc.setTargetFrameRate(65);
 	}
 	
 	@Override
@@ -76,6 +77,8 @@ public class Level03 extends BasicGameState {
 	
 	@Override
 	public void update(GameContainer gc, StateBasedGame sbg, int t) throws SlickException {
+		if(sbg.getCurrentStateID() == Game.lvl03) Game.appgc.setTargetFrameRate(200); else Game.appgc.setTargetFrameRate(Game.standardFPS);
+
 		if (Game.isMusicOn) Game.unmuteAllMusic();
 		else
 			Game.muteAllMusic();
@@ -199,7 +202,9 @@ public class Level03 extends BasicGameState {
 	private void renderScene(GameContainer gc, StateBasedGame sbg, Graphics g) {
 		g.scale(zoomFactor, zoomFactor);
 		Game.barrellStack.draw(0, (84 - Game.barrellStack.getHeight()) * tileHeight);
-		Game.girraffe.draw(11f * tileWidth, (56f - Game.girraffe.getHeight()) * tileHeight);
+		if (won) Game.giraffeLove.draw(11f * tileWidth, (56f - Game.girraffe.getHeight()) * tileHeight);
+		else
+			Game.girraffe.draw(11f * tileWidth, (56f - Game.girraffe.getHeight()) * tileHeight);
 		g.scale(1f / zoomFactor, 1f / zoomFactor);
 		g.scale(zoomFactor2, zoomFactor2);
 		Game.oilFire.draw(2f * tileWidth * zoomFactor / zoomFactor2, (248f) * tileHeight * zoomFactor / zoomFactor2 - Game.oilFire.getHeight());
@@ -480,9 +485,14 @@ public class Level03 extends BasicGameState {
 			Game.dkWalking.stop();
 			Game.dkBackground.stop();
 			panda.panda = Game.jmStillLeft;
+			dk.dk = Game.dkStill;
 		}
-		if(totalTime == timeOfWin + 2)Game.dkWin.play();
-		if (!Game.dkWin.playing() && totalTime > timeOfWin + 1) sbg.enterState(Game.roam);
+		if (totalTime == timeOfWin + 2) Game.dkWin.play();
+		if (!Game.dkWin.playing() && totalTime > timeOfWin + 1) {
+			Game.pet3Found = true;
+			sbg.enterState(Game.roam);
+			Game.pollyWolly.loop();
+		}
 	}
 	
 	public static void resetState(GameContainer gc, StateBasedGame sbg, int t) {
