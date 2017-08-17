@@ -384,13 +384,7 @@ public class Level04 extends BasicGameState {
 			}
 			
 		}
-		
 		updateEnemyRate -= t;
-		// wave1
-		// wave2
-		// wave3
-		// wave4
-		
 	}
 	
 	private void updateMovement(GameContainer gc, StateBasedGame sbg, int t) {

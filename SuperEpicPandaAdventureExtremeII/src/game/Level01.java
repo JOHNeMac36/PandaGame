@@ -41,9 +41,7 @@ public class Level01 extends BasicGameState {
 	private static Enemy[] enemies;
 	private int score = 0;
 	private Timer timer;
-	// public static char still = 's', hit = 'h', hitDown = 'd', broke = 'b',
-	// deadStill = 'S', deadHit = 'H', deadHitDown = 'D';
-	
+
 	private static boolean isStalled = false;
 	public static boolean isMenuUp = true;
 	private static boolean won = false;
@@ -328,7 +326,6 @@ public class Level01 extends BasicGameState {
 	
 	private static void renderBlocks(GameContainer gc, StateBasedGame sbg, Graphics g) {
 		// g.scale(zoomFactor, zoomFactor);
-		
 		for (int i = 0; i < blocks.length; i++) {
 			if (blocks[i].x >= mapXL - 1 && blocks[i].x <= mapXL + 25) {
 				switch (blocks[i].type) {
@@ -594,12 +591,7 @@ public class Level01 extends BasicGameState {
 					blocks[i].state = Block.STILL;
 				}
 			}
-			
-			// if (i > 0 && blocks[i].timeOfHit != -1 && blocks[i - 1].timeOfHit
-			// != -1) {
-			// blocks[i - 1].timeOfHit = -1;
-			// blocks[i - 1].state = Block.STILL;
-			// }
+
 			if (blocks[i].type == Block.B && blocks[i].state == Block.BROKE) {
 				blocks[i].y += fireballSpeed;
 				blocks[i].isDead = true;
@@ -619,7 +611,6 @@ public class Level01 extends BasicGameState {
 							if (map.getTileId((int) (enemies[i].x - enemySpeed), (int) enemies[i].y, objectLayer) == 0) enemies[i].x -= enemySpeed;
 							if (!enemies[i].isRight && map.getTileId((int) (enemies[i].x - enemySpeed), (int) enemies[i].y, objectLayer) != 0) enemies[i].isRight = true;
 						}
-						
 					}
 					
 					if (enemies[i].x + .75 <= mapXL) enemies[i].isDead = true;
@@ -673,7 +664,6 @@ public class Level01 extends BasicGameState {
 						}
 					}
 				}
-				
 			} catch (ArrayIndexOutOfBoundsException e) {
 				fireballs.remove(i);
 			}
@@ -870,7 +860,6 @@ public class Level01 extends BasicGameState {
 				panda.isFalling = false;
 				panda.isJumping = false;
 			}
-			
 		} catch (ArrayIndexOutOfBoundsException e) {
 		}
 	}
@@ -1325,36 +1314,3 @@ class Star extends PowerUp {
 		type = super.STAR;
 	}
 }
-//
-// class s {
-//
-// private float minutes, seconds;
-//
-// public Timer(int minutes, int seconds) {
-// this.minutes = minutes;
-// this.seconds = seconds;
-// }
-//
-// public String getMinutes() {
-// return "" + (int) minutes;
-// }
-//
-// public String getSeconds() {
-// return String.format("%02d", (int) seconds);
-// }
-//
-// public boolean isDone() {
-// return minutes == 0 && seconds == 0;
-// }
-//
-// public void updateTimer(float delta) {
-// seconds -= delta * 1f / 1000f;
-// if (seconds < 0) {
-// if (minutes > 0) {
-// minutes--;
-// seconds += 60;
-// }
-// }
-//
-// }
-// }

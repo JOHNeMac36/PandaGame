@@ -261,62 +261,9 @@ public class LevelBoss extends BasicGameState {
 			panda.attackCountdown = panda.attack.attackWindUp;
 		}
 	}
-	/*
-	 * if (panda.isDown) { panda.panda = Game.lmFatigue; } else { // punchL if
-	 * (input.isKeyPressed(Input.KEY_Z) && panda.coolDown <= 0 &&
-	 * !panda.isPunching && panda.punchCoolDown <= 0) { //
-	 * input.clearKeyPressedRecord(); satan.isHitL = true; panda.isAttacking=
-	 * true; panda.punchCoolDown = LittleMac.jabAnimationTime; panda.coolDown =
-	 * LittleMac.punchDelay; panda.panda = Game.lmJabL; if (panda.isUp) {
-	 * panda.panda = Game.lmUpperCutL; panda.punchCoolDown =
-	 * LittleMac.upperCutAnimationTime; satan.health -= panda.uppercutDamage; }
-	 * 
-	 * } else { // punchR if (input.isKeyPressed(Input.KEY_X) && panda.coolDown
-	 * <= 0 && panda.punchCoolDown <= 0) { // input.clearKeyPressedRecord();
-	 * satan.isHitR = true; panda.isPunching = true; panda.punchCoolDown =
-	 * LittleMac.jabPunchTime; panda.coolDown = LittleMac.punchDelay;
-	 * panda.panda = Game.lmJabR; if (panda.isUp) { panda.panda =
-	 * Game.lmUpperCutR; panda.punchCoolDown = LittleMac.upperCutPunchTime;
-	 * satan.health -= panda.uppercutDamage; } } else {
-	 * 
-	 * satan.isHitL = false; satan.isHitR = false;
-	 * 
-	 * } } if (input.isKeyPressed(Input.KEY_RIGHT)) { panda.panda =
-	 * Game.lmDodgeR; panda.punchCoolDown = panda.getDuration(panda.panda);
-	 * panda.isPunching = true; satan.health -= panda.jabDamage; } if
-	 * (input.isKeyPressed(Input.KEY_LEFT)) { panda.panda = Game.lmDodgeL;
-	 * panda.punchCoolDown = panda.getDuration(panda.panda); panda.isPunching =
-	 * true; satan.health -= panda.jabDamage; } } } } }
-	 */
 
 	private void updateSatanMovement(GameContainer gc, StateBasedGame sbg, int t) {
-		/*
-		 * if (satan.isPunching) {
-		 * 
-		 * satan.satan.update(t);
-		 * 
-		 * satan.punchCoolDown -= t; satan.coolDown = VonKaiser.punchDelay; if
-		 * (satan.punchCoolDown <= 0) satan.isPunching = false; } else { if
-		 * (satan.isHitL || satan.isHitR) { satan.isPunching = false;
-		 * satan.coolDown = VonKaiser.punchDelay; if (satan.isHitL) satan.satan
-		 * = Game.vkHitHighL; else satan.satan = Game.vkHitHighR; } else {
-		 * panda.coolDown -= t; resetSatanAnimations(); if (rand.nextInt(100) ==
-		 * 5) { if (rand.nextBoolean()) { // jab satan.satan = Game.vkJab;
-		 * satan.isAttacking= true; satan.punchCoolDown =
-		 * satan.getDuration(satan.satan); panda.health -= satan.jabDamage;
-		 * panda.isHitL = true; } else { // uppercut satan.satan =
-		 * Game.vkUpperCut; satan.isPunching = true; satan.punchCoolDown =
-		 * satan.getDuration(satan.satan); panda.health -= satan.uppercutDamage;
-		 * panda.isHitR = true; } } } }
-		 * 
-		 * }
-		 * 
-		 * public static void resetState() {
-		 * 
-		 * }
-		 * 
-		 * }
-		 */
+		
 	}
 }
 
