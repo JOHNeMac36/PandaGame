@@ -77,37 +77,56 @@ public class LevelBoss extends BasicGameState {
 		} else if (opening) {
 			updateOpening(gc, sbg, t);
 		} else {
+			/*
+			 * GAME LOGIC:
+			 * 1: updateTimer()
+			 * 2: pandaTurn()
+			 * 3: satanTurn()
+			 * 
+			 * TURN:
+			 *		(idle animation)
+			 *               |
+			 *    [idle for "think" time]
+			 *  |       |        |               |
+			 *[jab]  [hook] [uppercut] [special (if under 50% HP, else go back to idle)]
+			 *                 |
+			 *         [go back to idle]
+			 *         
+			 * STUNNDED:
+			 * [Stunned] ("Stun Amount" +1)
+             * 			|
+       		 * 	wait 20 frames
+			 * 			|                        |
+			 * [Attacked before 20 frames] [Not attacked before 20 frames]
+			 * |                                  |
+			 * [ Is "Stunned amount" < 5?]           [go to "idle"]
+   			 * |                   |
+			 * [yes]                 [no]
+   			 * |                   |
+			 * [go to "Stunned"]   [go to "idle"]
+			 */
 			timer.updateTimer(t);
-			sendAttacks();
-			updatePandaMovement(gc, sbg, t);
-			updateSatanMovement(gc, sbg, t);
-			checkWin(gc, sbg, t);
-			checkEndOfRound(gc, sbg, t);
-			panda.attackCountdown -= t;
-			satan.attackCountdown -= t;
+			pandaTurn();
+			satanTurn();
 		}
 
+	}
+
+	private void pandaTurn() {
+		// TODO idle animation
+		// TODO think time > check stunned amount; else
+		// TODO check for attack type
+		// TODO go back to idle
+	}
+
+	private void satanTurn() {
+		// TODO idle animation
+		// TODO think time > check stunned amount; else
+		// TODO check for attack type
+		// TODO go back to idle
 	}
 
 	// supplementary methods
-	private void sendAttacks() {
-		if (panda.attackCountdown <= 0) {
-			if (panda.attack.type != Attack.Type.NILL) {
-				satan.health -= panda.attack.damage;
-				satan.isHit = true;
-				satan.attackCountdown = satan.attack.attackWindUp;
-
-			}
-		}
-		if (satan.attackCountdown <= 0) {
-			if (satan.attack.type != Attack.Type.NILL) {
-				panda.health -= satan.attack.damage;
-				panda.isHit = true;
-				panda.attackCountdown = panda.attack.attackWindUp;
-			}
-		}
-	}
-
 	private void checkEndOfRound(GameContainer gc, StateBasedGame sbg, int t) {
 		// TODO Auto-generated method stub
 
@@ -322,12 +341,6 @@ abstract class Fighter extends Sprite {
 		opponent.health -= attack.damage;
 	}
 }
-/*
- * ATTACK LOGIC: fighter attempts attack > attack takes time > end of attack
- * time, attack is sent to opponent, fighter losses stamina > opponent takes
- * damage > opponent's pending attack is cancelled > opponent recovers for
- * alloted time... and is susceptible to more attacks
- */
 
 class Attack {
 	public float damage;
