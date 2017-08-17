@@ -78,32 +78,15 @@ public class LevelBoss extends BasicGameState {
 			updateOpening(gc, sbg, t);
 		} else {
 			/*
-			 * GAME LOGIC:
-			 * 1: updateTimer()
-			 * 2: pandaTurn()
-			 * 3: satanTurn()
+			 * GAME LOGIC: 1: updateTimer() 2: pandaTurn() 3: satanTurn()
 			 * 
-			 * TURN:
-			 *		(idle animation)
-			 *               |
-			 *    [idle for "think" time]
-			 *  |       |        |               |
-			 *[jab]  [hook] [uppercut] [special (if under 50% HP, else go back to idle)]
-			 *                 |
-			 *         [go back to idle]
-			 *         
-			 * STUNNDED:
-			 * [Stunned] ("Stun Amount" +1)
-             * 			|
-       		 * 	wait 20 frames
-			 * 			|                        |
-			 * [Attacked before 20 frames] [Not attacked before 20 frames]
-			 * |                                  |
-			 * [ Is "Stunned amount" < 5?]           [go to "idle"]
-   			 * |                   |
-			 * [yes]                 [no]
-   			 * |                   |
-			 * [go to "Stunned"]   [go to "idle"]
+			 * TURN: (idle animation) | [idle for "think" time] | | | | [jab] [hook]
+			 * [uppercut] [special (if under 50% HP, else go back to idle)] | [go back to
+			 * idle]
+			 * 
+			 * STUNNDED: [Stunned] ("Stun Amount" +1) | wait 20 frames | | [Attacked before
+			 * 20 frames] [Not attacked before 20 frames] | | [ Is "Stunned amount" < 5?]
+			 * [go to "idle"] | | [yes] [no] | | [go to "Stunned"] [go to "idle"]
 			 */
 			timer.updateTimer(t);
 			pandaTurn();
@@ -257,33 +240,6 @@ public class LevelBoss extends BasicGameState {
 
 	}
 
-	private void updatePandaMovement(GameContainer gc, StateBasedGame sbg, int t) {
-		if (input.isKeyPressed(Input.KEY_X)) {
-			if (input.isKeyDown(Input.KEY_UP)) {
-				panda.attack = new Attack(Attack.Type.UR);
-				panda.panda = Game.lmUpperCutR;
-			} else {
-				panda.attack = new Attack(Attack.Type.JR);
-				panda.panda = Game.lmJabR;
-			}
-			panda.attackCountdown = panda.attack.attackWindUp;
-		}
-		if (input.isKeyPressed(Input.KEY_Z)) {
-
-			if (input.isKeyDown(Input.KEY_UP)) {
-				panda.attack = new Attack(Attack.Type.UL);
-				panda.panda = Game.lmUpperCutL;
-			} else {
-				panda.attack = new Attack(Attack.Type.JL);
-				panda.panda = Game.lmJabL;
-			}
-			panda.attackCountdown = panda.attack.attackWindUp;
-		}
-	}
-
-	private void updateSatanMovement(GameContainer gc, StateBasedGame sbg, int t) {
-		
-	}
 }
 
 abstract class Sprite {
@@ -312,17 +268,14 @@ abstract class Fighter extends Sprite {
 	public float maxStamina = 100f;
 	public float attackCountdown = 0f;
 	public float punchDelay;
-	public Attack attack;
 	public float recoverTime;
 	public boolean isHit = false;
 	public boolean isKnockedDown = false;
 	public boolean isRecovering = false;
 	public boolean isAttacking = false;
-	// public Attack[] pendingAttacks;
 
 	public Fighter(float x, float y) {
 		super(x, y);
-		attack = new Attack(Attack.Type.NILL);
 	}
 
 	float getDuration(Animation a) {
@@ -332,45 +285,14 @@ abstract class Fighter extends Sprite {
 		}
 		return duration;
 	}
-
-	private boolean isAttackable(Attack attack) {
-		return recoverTime <= 0 && stamina >= attack.energy;
-	}
-
-	public void sendAttack(Fighter opponent, Attack attack) {
-		opponent.health -= attack.damage;
-	}
 }
 
-class Attack {
-	public float damage;
-	public float energy;
-	public float animationTime;
-	public float attackWindUp;
-	public Type type;
-
-	public enum Type {
-		UL, UR, JL, JR, NILL,
-	};
-
-	public Attack(Type type) {
-		this.type = type;
-		switch (type) {
-		case UL:
-		case UR:
-			damage = 10f;
-			energy = 25f;
-
-		case JL:
-		case JR:
-			damage = 5f;
-			energy = 15f;
-		default:
-			damage = 0f;
-			energy = 0f;
-		}
-	}
-}
+// class Attack {
+// public float damage;
+// // public float energy;
+// public float animationTime;
+// // public float attackWindUp;
+// }
 
 class LittleMac extends Fighter {
 	public Animation panda;
@@ -384,7 +306,6 @@ class LittleMac extends Fighter {
 		isLeft = false;
 		isDown = false;
 		isUp = false;
-		punchDelay = 0f;
 		health = super.maxHealth;
 		// jabAnimationTime = getDuration(Game.lmJabL);
 		// upperCutAnimationTime = getDuration(Game.lmUpperCutL);
