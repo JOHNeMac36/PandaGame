@@ -78,36 +78,56 @@ public class LevelBoss extends BasicGameState {
 			updateOpening(gc, sbg, t);
 		} else {
 			/*
-			 * GAME LOGIC: 1: updateTimer() 2: pandaTurn() 3: satanTurn()
 			 * 
-			 * TURN: (idle animation) | [idle for "think" time] | | | | [jab] [hook]
-			 * [uppercut] [special (if under 50% HP, else go back to idle)] | [go back to
-			 * idle]
-			 * 
-			 * STUNNDED: [Stunned] ("Stun Amount" +1) | wait 20 frames | | [Attacked before
-			 * 20 frames] [Not attacked before 20 frames] | | [ Is "Stunned amount" < 5?]
-			 * [go to "idle"] | | [yes] [no] | | [go to "Stunned"] [go to "idle"]
+(idle animation)
+                |
+     [idle for "think" time]
+  |       |        |               |
+[jab]  [hook] [uppercut] [special (if under 50% HP, else go back to idle)]
+                  |
+          [go back to idle]
+
+          [Stunned] ("Stun Amount" +1)
+             			  |
+        			wait 20 frames
+             |                        |
+[Attacked before 20 frames] [Not attacked before 20 frames]
+        |                                  |
+[ Is "Stunned amount" < 5?]           [go to "idle"]
+   |                   |
+[yes]                 [no]
+   |                   |
+[go to "Stunned"]   [go to "idle"]
+
 			 */
 			timer.updateTimer(t);
-			pandaTurn();
-			satanTurn();
+			// panda turn
+			if(panda.stunAmount < 5) {
+				//updateAnimation(panda);
+				getPandaInput();
+			}else {
+				// stunned
+				updateStunnedAnimation(panda);
+			}
 		}
 
 	}
 
-	private void pandaTurn() {
-		// TODO idle animation
-		// TODO think time > check stunned amount; else
-		// TODO check for attack type
-		// TODO go back to idle
+	private void updateAnimation(Fighter fighter, FighterState fs) {
+		// TODO Auto-generated method stub
+		
 	}
 
-	private void satanTurn() {
-		// TODO idle animation
-		// TODO think time > check stunned amount; else
-		// TODO check for attack type
-		// TODO go back to idle
+	private void updateStunnedAnimation(Fighter fighter) {
+		// TODO Auto-generated method stub
+		
 	}
+
+	private void getPandaInput() {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 	// supplementary methods
 	private void checkEndOfRound(GameContainer gc, StateBasedGame sbg, int t) {
@@ -263,17 +283,10 @@ class RefereeMario extends Sprite {
 
 abstract class Fighter extends Sprite {
 	public float health;
-	public float maxHealth = 100f;
-	public float stamina;
-	public float maxStamina = 100f;
-	public float attackCountdown = 0f;
-	public float punchDelay;
-	public float recoverTime;
-	public boolean isHit = false;
-	public boolean isKnockedDown = false;
-	public boolean isRecovering = false;
-	public boolean isAttacking = false;
-
+	public final float maxHealth = 100f;
+	public float stunAmount = 0f;
+	
+	
 	public Fighter(float x, float y) {
 		super(x, y);
 	}
@@ -327,7 +340,6 @@ class VonKaiser extends Fighter {
 	public VonKaiser(float x, float y) {
 		super(x, y);
 		satan = Game.vkStill;
-		punchDelay = 200f;
 		health = super.maxHealth;
 		// jabAnimationTime = getDuration(Game.vkJab);
 		// upperCutAnimationTime = getDuration(Game.vkUpperCut);
@@ -368,5 +380,12 @@ class Timer {
 			}
 		}
 
+	}
+}
+
+class FighterState {
+	enum State{IDLE,JR,JL,UR,UL,DAMAGED,DOWN_FOR_COUNT,KNOCKED_OUT}
+	public FighterState(State state) {
+		
 	}
 }
