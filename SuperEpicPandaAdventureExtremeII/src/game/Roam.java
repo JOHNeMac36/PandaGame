@@ -79,7 +79,7 @@ public class Roam extends BasicGameState {
 		overheadLayer3 = map.getLayerIndex("Overhead3");
 		overheadLayer4 = map.getLayerIndex("Overhead4");
 
-		walkI = .02f;
+		walkI = .08f;
 		x = 10;
 		y = 10;
 		penX = 93.0f;
@@ -144,7 +144,7 @@ public class Roam extends BasicGameState {
 
 	@Override
 	public void update(GameContainer gc, StateBasedGame sbg, int t) throws SlickException {
-		if(sbg.getCurrentStateID() == Game.roam) Game.appgc.setTargetFrameRate(Game.standardFPS);
+		if(sbg.getCurrentStateID() == Game.roam) Game.appgc.setTargetFrameRate(200);
 
 		if (Game.isMusicOn)
 			Game.unmuteAllMusic();

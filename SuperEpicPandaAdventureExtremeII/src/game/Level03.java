@@ -25,9 +25,9 @@ public class Level03 extends BasicGameState {
 	private static int i = 0;
 	private int totalTime = 0;
 	private int timeOfWin = -1;
-	private float barrelSpeed = .048f, barrelFallSpeed = .25f, jumpSpeed = .25f, jumpTime = 150, pandaWalkSpeed = .035f, pandaClimbSpeed = .14f;
-	private final int barrelSpawnSpeed = 300;
-	private float barrelLockFallSpeed = .35f;
+	private float barrelSpeed = .096f, barrelFallSpeed = .50f, jumpSpeed = .5f, jumpTime = 75, pandaWalkSpeed = .07f, pandaClimbSpeed = .28f;
+	private final int barrelSpawnSpeed = 100;
+	private float barrelLockFallSpeed = 0.7f;
 	public static boolean quit, won;
 	public static Music music;
 	public static JumpMan panda;
@@ -71,7 +71,7 @@ public class Level03 extends BasicGameState {
 		renderScene(gc, sbg, g);
 		renderPanda(gc, sbg, g);
 		renderDK(gc, sbg, g);
-		renderInfo(gc, sbg, g);
+		//renderInfo(gc, sbg, g);
 		renderBarrels(gc, sbg, g);
 	}
 	

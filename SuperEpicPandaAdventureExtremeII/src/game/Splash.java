@@ -61,10 +61,10 @@ public class Splash extends BasicGameState implements MusicListener {
 		
 		switch (count) {
 			case 1:
-				Game.pet1Found = true;
-				Game.pet2Found = true;
-				Game.pet3Found = true;
-				Game.pet4Found = true;
+				Game.pet1Found = false;
+				Game.pet2Found = false;
+				Game.pet3Found = false;
+				Game.pet4Found = false;
 				message = "Loading Fonts";
 				break;
 			case 2:

@@ -23,7 +23,7 @@ import org.newdawn.slick.state.StateBasedGame;
 public class Game extends StateBasedGame {
 
 	public static int song;
-	public static int standardFPS = 350;
+	public static int standardFPS = 60;
 	public static final int splash = -1, menu = 0, roam = -99, lvl01 = 1, lvl02 = 2, lvl03 = 3, lvl04 = 4, lvlLava = 99,
 			lvlBoss = 100;
 	public static Animation pandaStillDown, pandaStillUp, pandaStillLeft, pandaStillRight;

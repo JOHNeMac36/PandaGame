@@ -37,7 +37,9 @@ public class Level01 extends BasicGameState {
 	private static float powerUpX, powerUpY;
 	public static Block[] blocks;
 	private static float cursorX, cursorY;
-	private final static float enemySpeed = .0096f, powerUpSpeed = .0096f, fireballSpeed = .0096f * 3;
+	private final static float jumpingSpeed = 0.28f;
+	private final static float walkingSpeed = 0.12f;
+	private final static float enemySpeed = .04f, powerUpSpeed = .04f, fireballSpeed = .004f * 3;
 	private static Enemy[] enemies;
 	private int score = 0;
 	private Timer timer;
@@ -676,13 +678,13 @@ public class Level01 extends BasicGameState {
 		
 		if (i != 0) {
 			i++;
-			i %= 250;
+			i %= 64;
 		}
-		if (i >= 125) {
+		if (i >= 16) {
 			panda.isJumping = false;
 			panda.isFalling = true;
 		}
-		if (i > 0 && i < 125) {
+		if (i > 0 && i < 32) {
 			panda.isJumping = true;
 			panda.isFalling = false;
 		}
@@ -690,9 +692,9 @@ public class Level01 extends BasicGameState {
 		if (panda.isFalling) panda.isJumping = false;
 		// powerUp
 		if (isPowerUpAvailable) {
-			powerUpX += .03f;
-			if (map.getTileId((int) (powerUpX), (int) (powerUpY + .03f), objectLayer) != 0) {
-				powerUpY += .03f;
+			powerUpX += walkingSpeed;
+			if (map.getTileId((int) (powerUpX), (int) (powerUpY + walkingSpeed), objectLayer) != 0) {
+				powerUpY += walkingSpeed;
 			}
 		}
 		
@@ -710,7 +712,7 @@ public class Level01 extends BasicGameState {
 		try {
 			// isJumping
 			if (panda.isJumping) {
-				if (!won && (panda.y <= 1 || (map.getTileId((int) panda.x, (int) (panda.y - .07f - (panda.isSmall ? 1.65 : 3.15)), objectLayer) == 0 && map.getTileId((int) (panda.x + .8f), (int) (panda.y - .07f - (panda.isSmall ? 1.65 : 3.15)), objectLayer) == 0))) {
+				if (!won && (panda.y <= 1 || (map.getTileId((int) panda.x, (int) (panda.y - jumpingSpeed - (panda.isSmall ? 1.65 : 3.15)), objectLayer) == 0 && map.getTileId((int) (panda.x + .8f), (int) (panda.y - jumpingSpeed - (panda.isSmall ? 1.65 : 3.15)), objectLayer) == 0))) {
 					switch (Mario.last) {
 						case 'l':
 							if (panda.isSmall) {
@@ -749,20 +751,20 @@ public class Level01 extends BasicGameState {
 							}
 							break;
 					}
-					panda.y -= .07;
+					panda.y -= jumpingSpeed;
 					panda.isUnderfoot = false;
 					panda.isFalling = false;
 				} else if (won) {
 					panda.isJumping = false;
 					panda.isFalling = true;
-					panda.y += .07;
+					panda.y += jumpingSpeed;
 				} else
 					i = 125;
 			}
 			// isUnderFoot
 			if (!panda.isJumping) {
 				if (panda.y >= 28) panda.isDead = true;
-				else if (map.getTileId((int) (panda.x), (int) (panda.y + .07f), objectLayer) == 0 && map.getTileId((int) (panda.x + .8f), (int) (panda.y + .07f), objectLayer) == 0) {
+				else if (map.getTileId((int) (panda.x), (int) (panda.y + jumpingSpeed), objectLayer) == 0 && map.getTileId((int) (panda.x + .8f), (int) (panda.y + jumpingSpeed), objectLayer) == 0) {
 					switch (Mario.last) {
 						case 'r':
 							if (input.isKeyDown(Input.KEY_DOWN)) {
@@ -843,7 +845,7 @@ public class Level01 extends BasicGameState {
 							}
 							break;
 					}
-					panda.y += .07f;
+					panda.y += jumpingSpeed;
 					panda.isUnderfoot = false;
 					panda.isFalling = true;
 				} else {
@@ -970,10 +972,10 @@ public class Level01 extends BasicGameState {
 			}
 			
 			Mario.last = 'l';
-			if (panda.y <= 1) panda.x -= .03f;
-			else if (panda.x - .03f >= mapXL && map.getTileId((int) (panda.x - 0.03f), (int) (panda.isSmall ? panda.y - 1f / 6f : panda.y - 1f / 6f), objectLayer) == 0 && map.getTileId((int) (panda.x - 0.03f), (int) (panda.isSmall ? panda.y - 1.65 : panda.y - 1.65), objectLayer) == 0
-					&& map.getTileId((int) (panda.x - 0.03f), (int) (panda.isSmall ? panda.y - 1.65 : panda.y - 3.15), objectLayer) == 0)
-				panda.x -= 0.03f;
+			if (panda.y <= 1) panda.x -= walkingSpeed;
+			else if (panda.x - walkingSpeed >= mapXL && map.getTileId((int) (panda.x - walkingSpeed), (int) (panda.isSmall ? panda.y - 1f / 6f : panda.y - 1f / 6f), objectLayer) == 0 && map.getTileId((int) (panda.x - walkingSpeed), (int) (panda.isSmall ? panda.y - 1.65 : panda.y - 1.65), objectLayer) == 0
+					&& map.getTileId((int) (panda.x - walkingSpeed), (int) (panda.isSmall ? panda.y - 1.65 : panda.y - 3.15), objectLayer) == 0)
+				panda.x -= walkingSpeed;
 		}
 		// right
 		if (input.isKeyDown(Input.KEY_RIGHT) && !input.isKeyDown(Input.KEY_DOWN)) {
@@ -992,11 +994,11 @@ public class Level01 extends BasicGameState {
 			}
 			Mario.last = 'r';
 			if (panda.y <= 1) panda.x += .03f;
-			else if (map.getTileId((int) (panda.x + .8f + 0.03f), (int) (panda.isSmall ? panda.y - .5 : panda.y - 1f / 6f), objectLayer) == 0 && map.getTileId((int) (panda.x + .8f + 0.03f), (int) (panda.isSmall ? panda.y - 1 : panda.y - .5), objectLayer) == 0
-					&& map.getTileId((int) (panda.x + .8f + 0.03f), (int) (panda.isSmall ? panda.y - 1 : panda.y - 1), objectLayer) == 0)
-				panda.x += 0.03f;
+			else if (map.getTileId((int) (panda.x + .8f + walkingSpeed), (int) (panda.isSmall ? panda.y - .5 : panda.y - 1f / 6f), objectLayer) == 0 && map.getTileId((int) (panda.x + .8f + walkingSpeed), (int) (panda.isSmall ? panda.y - 1 : panda.y - .5), objectLayer) == 0
+					&& map.getTileId((int) (panda.x + .8f + walkingSpeed), (int) (panda.isSmall ? panda.y - 1 : panda.y - 1), objectLayer) == 0)
+				panda.x += walkingSpeed;
 			if (panda.x >= 7.5 + mapXL) {
-				mapXL += 0.03f;
+				mapXL += walkingSpeed;
 			}
 		}
 		// down
@@ -1097,7 +1099,7 @@ public class Level01 extends BasicGameState {
 			if (Game.isMusicOn) Game.marioFlag.play();
 			Game.marioTheme.stop();
 			panda.isFalling = true;
-			panda.isJumping = false;
+			panda.isJumping	 = false;
 			panda.isUnderfoot = false;
 		}
 		
